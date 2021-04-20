@@ -29,7 +29,7 @@ export default function MapSelectionRadio() {
     <div className='App'>
       <Container>
         <FormControl component="fieldset" className={classes.formControl}>
-          <FormLabel component="legend">Gender</FormLabel>
+          <FormLabel component="legend">Map Type</FormLabel>
           <RadioGroup row aria-label="gender" name="gender1" value={mapType} onChange={handleChange}>
             <FormControlLabel value="signal" control={<Radio />} label="Signal" />
             <FormControlLabel value="uploadSpeed" control={<Radio />} label="Upload Speed" />
