@@ -1,27 +1,36 @@
 import React from 'react';
-import logo from './logo.svg';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import './App.css';
-import Test1 from './Test';
-
+import MapSelectionRadio from './MapSelectionRadio';
+import 'fontsource-roboto';
 class App extends React.Component<{}, {}> {
+  useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      root: {
+        flexGrow: 1,
+      },
+      paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+      },
+    }),
+  );
   render() {
     return (
       <div className='App'>
-        <header className='App-header'>
-          <img src={logo} className='App-logo' alt='logo' />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className='App-link'
-            href='https://reactjs.org'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Learn React
-          </a>
-          <Test1></Test1>
-        </header>
+        <Container>
+          <Grid container spacing={3}>
+            <Grid item xs={3}>
+              <h1>Sidebar</h1>
+            </Grid>
+            <Grid item xs={9}>
+              <MapSelectionRadio />
+            </Grid>
+          </Grid>
+        </Container>
       </div>
     );
   }
