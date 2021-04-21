@@ -85,33 +85,28 @@ class Stationary:
       datum['data_since_last_report'] = None
       # datum.signal_strength = min(5, 5 * 50 / distance)
       datum['ping'] = distance * 1000 / 343
+      datum['site'] = self.site.name
+      datum['device_id'] = self.id
       data.append(datum)
       curr = curr + self.step
 
     return data
 
 
-def compare_time(a, b):
-  if a['timestamp'] > b['timestamp']:
-    return 1
-  elif a['timestamp'] < b['timestamp']:
-    return -1
-  else:
-    return 0
-
-
 def get_timestamp(a):
   return a['timestamp']
 
 
-DEVICES_PER_SITE = 500
-STEP = timedelta(hours=1)
+DEVICES_PER_SITE = 100
+STEP = timedelta(minutes=15)
 DEVICE_MU = 20
-DEVICE_SIGMA = 20
+DEVICE_SIGMA = 7
 START_DATE = datetime(year=2021, month=1, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc)
-END_DATE = datetime(year=2021, month=7, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc)
+END_DATE = datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc)
 TIME_RANGE = END_DATE - START_DATE
 HOUR = timedelta(hours=1)
+
+# bit per second
 DOWN_SPEED = 1000 * 1000 * 1000
 UP_SPEED = 200 * 1000 * 1000
 
@@ -134,8 +129,7 @@ def main():
     _measurements: List[Dict[Any, Any]] = []
     print(site)
     for _ in range(DEVICES_PER_SITE):
-      print(f'   {_}')
-      distance = abs(random.normalvariate(50, 20))
+      distance = abs(random.normalvariate(DEVICE_MU, DEVICE_SIGMA)) / 1000
       angle = random.uniform(0, 360)
 
       latitude, longitude = geo_displace(site.latitude, site.longitude, distance, angle)
@@ -173,7 +167,7 @@ def main():
     measurement['timestamp'] = measurement['timestamp'].isoformat()
   
   with open('./data-small.json', 'w') as output:
-    output.write(json.dumps(measurements[0:10000], indent=2))
+    output.write(json.dumps(random.sample(measurements, 10000), indent=2))
 
   with open('./data.json', 'w') as output:
     output.write(json.dumps(measurements, indent=2))
