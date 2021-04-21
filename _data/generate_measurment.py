@@ -171,10 +171,12 @@ def main():
   
   for measurement in measurements:
     measurement['timestamp'] = measurement['timestamp'].isoformat()
+  
+  with open('./data-small.json', 'w') as output:
+    output.write(json.dumps(measurements[0:10000], indent=2))
 
   with open('./data.json', 'w') as output:
     output.write(json.dumps(measurements, indent=2))
-  
 
 
 if __name__ == '__main__':
