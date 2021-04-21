@@ -99,8 +99,8 @@ def get_timestamp(a):
 
 DEVICES_PER_SITE = 100
 STEP = timedelta(minutes=15)
-DEVICE_MU = 20
-DEVICE_SIGMA = 7
+DEVICE_MU = 10
+DEVICE_SIGMA = 10
 START_DATE = datetime(year=2021, month=1, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc)
 END_DATE = datetime(year=2021, month=6, day=1, hour=0, minute=0, second=0, tzinfo=timezone.utc)
 TIME_RANGE = END_DATE - START_DATE
