@@ -4,7 +4,10 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import './App.css';
 import MapSelectionRadio from './MapSelectionRadio';
+import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 import 'fontsource-roboto';
+
 class App extends React.Component<{}, {}> {
   useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -18,16 +21,21 @@ class App extends React.Component<{}, {}> {
       },
     }),
   );
+  componentDidMount() {
+    document.title = "Performance Evaluation";
+  }
   render() {
     return (
       <div className='App'>
+        <Navbar />
         <Container>
           <Grid container spacing={3}>
             <Grid item xs={3}>
-              <h1>Sidebar</h1>
+              <Sidebar />
             </Grid>
             <Grid item xs={9}>
               <MapSelectionRadio />
+              <img alt="placeholder" src="https://via.placeholder.com/350x150" />
             </Grid>
           </Grid>
         </Container>
