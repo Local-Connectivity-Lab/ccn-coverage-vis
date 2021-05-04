@@ -53,6 +53,7 @@
     "@types/leaflet": "^1.7.0",
     "move-cli": "^1.2.1",
     "prettier": "^2.2.1",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "serve": "^11.3.2"
   }
 }
