@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Map from './Map';
 import 'fontsource-roboto';
+import './index.css';
 
 function App() {
   document.title = 'Performance Evaluation';
