@@ -33,9 +33,9 @@ const SiteMarker = (props: SiteMarkerProps) => {
     <Marker key={props.name} position={[props.latitude, props.longitude]}>
       <Popup>
         {props.name}
-        <span
-          style={{ backgroundColor: statusColor(props.status) }}
-        >[{props.status}]</span>
+        <span style={{ backgroundColor: statusColor(props.status) }}>
+          [{props.status}]
+        </span>
         <br />
         {props.address}
       </Popup>

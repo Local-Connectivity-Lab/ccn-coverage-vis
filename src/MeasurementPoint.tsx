@@ -18,10 +18,12 @@ interface MeasurementPointProps extends MeasurementDatum {
 }
 
 const MeasurementPoint = (props: MeasurementPointProps) => {
-  return <Circle
-    center={[props.latitude, props.longitude]}
-    pathOptions={{ color: props.color, fillColor: props.color }}
-  ></Circle>;
+  return (
+    <Circle
+      center={[props.latitude, props.longitude]}
+      pathOptions={{ color: props.color, fillColor: props.color }}
+    ></Circle>
+  );
 };
 
 export default MeasurementPoint;

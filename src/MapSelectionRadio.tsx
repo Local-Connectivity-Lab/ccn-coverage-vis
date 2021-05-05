@@ -24,7 +24,6 @@ interface MapSelectionRadioProps {
 }
 
 export default function MapSelectionRadio(props: MapSelectionRadioProps) {
-
   type InputEvent = React.ChangeEvent<HTMLInputElement>;
   const handleChange = (event: InputEvent) => {
     const _mapType = event.target.value;
@@ -37,16 +36,28 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
   return (
     <div className='App'>
       <Container>
-        <FormControl component="fieldset">
-          <Typography variant="overline">
-            Map Type
-          </Typography>
-          <RadioGroup row aria-label="gender" name="gender1" value={props.mapType} onChange={handleChange}>
+        <FormControl component='fieldset'>
+          <Typography variant='overline'>Map Type</Typography>
+          <RadioGroup
+            row
+            aria-label='gender'
+            name='gender1'
+            value={props.mapType}
+            onChange={handleChange}
+          >
             {/* remove signal for now because we don't have "signal" in our mock data */}
             {/* <FormControlLabel value="signal" control={<Radio />} label="Signal" /> */}
-            <FormControlLabel value="upload_speed" control={<Radio />} label="Upload Speed" />
-            <FormControlLabel value="download_speed" control={<Radio />} label="Download Speed" />
-            <FormControlLabel value="ping" control={<Radio />} label="Ping" />
+            <FormControlLabel
+              value='upload_speed'
+              control={<Radio />}
+              label='Upload Speed'
+            />
+            <FormControlLabel
+              value='download_speed'
+              control={<Radio />}
+              label='Download Speed'
+            />
+            <FormControlLabel value='ping' control={<Radio />} label='Ping' />
           </RadioGroup>
         </FormControl>
       </Container>
