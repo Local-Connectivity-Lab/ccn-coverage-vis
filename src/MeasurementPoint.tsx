@@ -1,8 +1,7 @@
 import React from 'react';
 import { Circle } from 'react-leaflet';
-import { ScaleSequential } from 'd3';
 
-interface MeasurementPointProps {
+export interface MeasurementDatum {
   latitude: number;
   longitude: number;
   timestamp: string;
@@ -12,14 +11,16 @@ interface MeasurementPointProps {
   ping: number;
   site: string;
   device_id: number;
-  color: ScaleSequential<string, never>
+}
+
+interface MeasurementPointProps extends MeasurementDatum {
+  color: string;
 }
 
 const MeasurementPoint = (props: MeasurementPointProps) => {
   return <Circle
-    key={`${props.device_id}-${props.timestamp}`}
     center={[props.latitude, props.longitude]}
-    color={props.color(props.ping)}
+    pathOptions={{ color: props.color, fillColor: props.color }}
   ></Circle>;
 };
 

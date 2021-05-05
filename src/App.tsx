@@ -1,7 +1,7 @@
 import React from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import MapSelectionRadio from './MapSelectionRadio';
+import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Map from './Map';
@@ -9,6 +9,8 @@ import 'fontsource-roboto';
 import './index.css';
 
 function App() {
+  const [mapType, setMapType] = React.useState<MapType>('ping');
+
   document.title = 'Performance Evaluation';
   return (
     <div className='App'>
@@ -19,8 +21,8 @@ function App() {
             <Sidebar />
           </Grid>
           <Grid item xs={9}>
-            <MapSelectionRadio />
-            <Map />
+            <MapSelectionRadio mapType={mapType} setMapType={setMapType} />
+            <Map mapType={mapType} />
           </Grid>
         </Grid>
       </Container>
