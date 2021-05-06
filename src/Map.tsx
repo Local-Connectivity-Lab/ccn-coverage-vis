@@ -16,6 +16,7 @@ function isSiteMarkerPropsArray(sites: any[]): sites is SiteMarkerProps[] {
 
 interface MapProps {
   mapType: MapType;
+  selectedSites: SidebarOption[];
 }
 
 const Map = (props: MapProps) => {
@@ -44,6 +45,8 @@ const Map = (props: MapProps) => {
     );
   }, [props.mapType]);
 
+  const selectedSites = props.selectedSites.map(ss => ss.label);
+
   return (
     <MapContainer
       style={{ height: 600, width: 1000 }}
@@ -54,10 +57,10 @@ const Map = (props: MapProps) => {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
-      {sites.map(site => (
+      {sites.filter(site => selectedSites.includes(site.name)).map(site => (
         <SiteMarker key={site.name} {...site} />
       ))}
-      {data.map(datum => (
+      {data.filter(datum => selectedSites.includes(datum.site)).map(datum => (
         <MeasurementPoint
           key={`${datum.device_id}-${datum.timestamp}`}
           {...datum}
