@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
@@ -9,7 +9,8 @@ import 'fontsource-roboto';
 import './index.css';
 
 function App() {
-  const [mapType, setMapType] = React.useState<MapType>('ping');
+  const [mapType, setMapType] = useState<MapType>('ping');
+  const [selectedSites, setSelectedSites] = useState<SidebarOption[]>([]);
 
   document.title = 'Performance Evaluation';
   return (
@@ -18,11 +19,14 @@ function App() {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={3}>
-            <Sidebar />
+            <Sidebar
+              selectedSites={selectedSites}
+              setSelectedSites={setSelectedSites}
+            />
           </Grid>
           <Grid item xs={9}>
             <MapSelectionRadio mapType={mapType} setMapType={setMapType} />
-            <Map mapType={mapType} />
+            <Map mapType={mapType} selectedSites={selectedSites} />
           </Grid>
         </Grid>
       </Container>
