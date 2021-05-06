@@ -57,16 +57,20 @@ const Map = (props: MapProps) => {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
-      {sites.filter(site => selectedSites.includes(site.name)).map(site => (
-        <SiteMarker key={site.name} {...site} />
-      ))}
-      {data.filter(datum => selectedSites.includes(datum.site)).map(datum => (
-        <MeasurementPoint
-          key={`${datum.device_id}-${datum.timestamp}`}
-          {...datum}
-          color={colorScale(datum[props.mapType])}
-        />
-      ))}
+      {sites
+        .filter(site => selectedSites.includes(site.name))
+        .map(site => (
+          <SiteMarker key={site.name} {...site} />
+        ))}
+      {data
+        .filter(datum => selectedSites.includes(datum.site))
+        .map(datum => (
+          <MeasurementPoint
+            key={`${datum.device_id}-${datum.timestamp}`}
+            {...datum}
+            color={colorScale(datum[props.mapType])}
+          />
+        ))}
     </MapContainer>
   );
 };

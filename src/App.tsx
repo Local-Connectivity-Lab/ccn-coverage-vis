@@ -19,7 +19,10 @@ function App() {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={3}>
-            <Sidebar selectedSites={selectedSites} setSelectedSites={setSelectedSites} />
+            <Sidebar
+              selectedSites={selectedSites}
+              setSelectedSites={setSelectedSites}
+            />
           </Grid>
           <Grid item xs={9}>
             <MapSelectionRadio mapType={mapType} setMapType={setMapType} />
