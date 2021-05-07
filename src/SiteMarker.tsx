@@ -6,7 +6,7 @@ type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
 const colorDomain: SiteStatus[] = ['active', 'confirmed', 'in-conversation'];
 const colorRange = ['green', 'yellow', 'red'] as const;
 const statusColor = d3
-  .scaleOrdinal<string>()
+  .scaleOrdinal<SiteStatus, string>()
   .domain(colorDomain)
   .range(colorRange);
 
