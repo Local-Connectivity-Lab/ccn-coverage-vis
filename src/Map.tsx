@@ -10,12 +10,15 @@ import { MapType } from './MapSelectionRadio';
 
 const DEFAULT_POSITION: [number, number] = [47.44846, -122.29217];
 
-const ATTRIBUTION = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
+const ATTRIBUTION =
+  'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
   'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ' +
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? "@2x" : ""}.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 function isSiteMarkerPropsArray(sites: any[]): sites is SiteMarkerProps[] {
   return sites.every(isSiteMarkerProps);
