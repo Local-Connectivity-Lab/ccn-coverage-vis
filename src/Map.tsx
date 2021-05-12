@@ -8,7 +8,14 @@ import MeasurementPoint from './MeasurementPoint';
 import { ScaleSequential } from 'd3';
 import { MapType } from './MapSelectionRadio';
 
-const position: [number, number] = [47.44846, -122.29217];
+const DEFAULT_POSITION: [number, number] = [47.44846, -122.29217];
+
+const ATTRIBUTION = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
+  'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ' +
+  'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
+  'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
+
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? "@2x" : ""}.png`;
 
 function isSiteMarkerPropsArray(sites: any[]): sites is SiteMarkerProps[] {
   return sites.every(isSiteMarkerProps);
@@ -50,13 +57,10 @@ const Map = (props: MapProps) => {
   return (
     <MapContainer
       style={{ height: 600, width: 1000 }}
-      center={position}
+      center={DEFAULT_POSITION}
       zoom={10}
     >
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      />
+      <TileLayer attribution={ATTRIBUTION} url={URL} opacity={0.5} />
       {sites
         .filter(site => selectedSites.includes(site.name))
         .map(site => (
