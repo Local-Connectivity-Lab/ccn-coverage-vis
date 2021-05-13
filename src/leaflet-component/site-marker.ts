@@ -22,7 +22,7 @@ export function isSite(prop: any): prop is Site {
 
 export default function siteMarker(site: Site) {
   return L.marker([site.latitude, site.longitude]).bindPopup(
-    `${site.name} <span stype="background-color: ${statusColor.get(
+    `${site.name} <span style="background-color: ${statusColor.get(
       site.status,
     )}">[${site.status}]</span><br />${site.address}`,
   );
