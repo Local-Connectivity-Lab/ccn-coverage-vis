@@ -26,7 +26,10 @@ function App() {
           </Grid>
           <Grid item xs={9}>
             <MapSelectionRadio mapType={mapType} setMapType={setMapType} />
-            <Map mapType={mapType} selectedSites={selectedSites} />
+            <Map
+              mapType={mapType}
+              selectedSites={selectedSites.map(s => s.label)}
+            />
           </Grid>
         </Grid>
       </Container>
