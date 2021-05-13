@@ -20,12 +20,10 @@ export function isSite(prop: any): prop is Site {
   );
 }
 
-export default function siteMarker(map: L.Map, site: Site) {
-  L.marker([site.latitude, site.longitude])
-    .addTo(map)
-    .bindPopup(
-      `${site.name} <span stype="background-color: ${statusColor.get(
-        site.status,
-      )}">[${site.status}]</span><br />${site.address}`,
-    );
+export default function siteMarker(site: Site) {
+  return L.marker([site.latitude, site.longitude]).bindPopup(
+    `${site.name} <span stype="background-color: ${statusColor.get(
+      site.status,
+    )}">[${site.status}]</span><br />${site.address}`,
+  );
 }
