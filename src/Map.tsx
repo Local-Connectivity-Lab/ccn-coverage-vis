@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
 import * as d3 from 'd3';
 import sites from './sites.json';
 import data from './data-small.json';
-import SiteMarker, { isSiteMarkerProps, SiteMarkerProps } from './SiteMarker';
-import MeasurementPoint from './MeasurementPoint';
-import { ScaleSequential } from 'd3';
 import { MapType } from './MapSelectionRadio';
+import * as L from 'leaflet';
+import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
+import measurementPoint from './leaflet-component/measurement-point';
 
 const DEFAULT_POSITION: [number, number] = [47.44846, -122.29217];
 
@@ -20,66 +19,59 @@ const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
   devicePixelRatio > 1 ? '@2x' : ''
 }.png`;
 
-function isSiteMarkerPropsArray(sites: any[]): sites is SiteMarkerProps[] {
-  return sites.every(isSiteMarkerProps);
+function createColorScale(data: Measurement[], mapType: MapType) {
+  return d3
+    .scaleSequentialLog(d3.interpolateInferno)
+    .domain([
+      d3.max(data, d => d[mapType]) ?? 1,
+      d3.min(data, d => d[mapType]) ?? 0,
+    ]);
 }
 
 interface MapProps {
   mapType: MapType;
-  selectedSites: SidebarOption[];
+  selectedSites: string[];
 }
 
 const Map = (props: MapProps) => {
-  const [colorScale, setColorScale] = useState<ScaleSequential<string, never>>(
-    () =>
-      d3
-        .scaleSequentialLog(d3.interpolateInferno)
-        .domain([
-          d3.max(data, d => d.ping) ?? 1,
-          d3.min(data, d => d.ping) ?? 0,
-        ]),
-  );
-
-  if (!isSiteMarkerPropsArray(sites)) {
-    throw new Error('data has incorrect type');
-  }
+  const [map, setMap] = useState<L.Map>();
 
   useEffect(() => {
-    setColorScale(() =>
-      d3
-        .scaleSequentialLog(d3.interpolateInferno)
-        .domain([
-          d3.max(data, d => d[props.mapType]) ?? 1,
-          d3.min(data, d => d[props.mapType]) ?? 0,
-        ]),
-    );
-  }, [props.mapType]);
+    const map = L.map('map-id').setView(DEFAULT_POSITION, 10);
+    setMap(map);
 
-  const selectedSites = props.selectedSites.map(ss => ss.label);
+    L.tileLayer(URL, {
+      attribution: ATTRIBUTION,
+      maxZoom: 15,
+      minZoom: 10,
+      opacity: 0.5,
+    }).addTo(map);
+  }, []);
 
-  return (
-    <MapContainer
-      style={{ height: 600, width: 1000 }}
-      center={DEFAULT_POSITION}
-      zoom={10}
-    >
-      <TileLayer attribution={ATTRIBUTION} url={URL} opacity={0.5} />
-      {sites
-        .filter(site => selectedSites.includes(site.name))
-        .map(site => (
-          <SiteMarker key={site.name} {...site} />
-        ))}
-      {data
-        .filter(datum => selectedSites.includes(datum.site))
-        .map(datum => (
-          <MeasurementPoint
-            key={`${datum.device_id}-${datum.timestamp}`}
-            {...datum}
-            color={colorScale(datum[props.mapType])}
-          />
-        ))}
-    </MapContainer>
-  );
+  useEffect(() => {
+    if (!isSiteArray(sites)) {
+      throw new Error('data has incorrect type');
+    }
+
+    if (!map) return;
+
+    sites
+      .filter(site => props.selectedSites.includes(site.name))
+      .forEach(site => siteMarker(map, site));
+  }, [map, props.selectedSites]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const scale = createColorScale(data, props.mapType);
+    data
+      .filter(data => props.selectedSites.includes(data.site))
+      .forEach(datum =>
+        measurementPoint(map, datum, scale(datum[props.mapType])),
+      );
+  }, [map, props.selectedSites, props.mapType]);
+
+  return <div id='map-id' style={{ height: 600, width: 1000 }}></div>;
 };
 
 export default Map;
