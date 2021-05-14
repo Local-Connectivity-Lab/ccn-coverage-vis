@@ -9,6 +9,7 @@ const options = sites.map(({ name }) => ({ label: name, value: name }));
 interface SidebarProps {
   selectedSites: SidebarOption[];
   setSelectedSites: React.Dispatch<React.SetStateAction<SidebarOption[]>>;
+  loading: boolean;
 }
 
 const Sidebar = (props: SidebarProps) => {
@@ -20,6 +21,7 @@ const Sidebar = (props: SidebarProps) => {
         value={props.selectedSites}
         onChange={props.setSelectedSites}
         labelledBy='Select'
+        disabled={props.loading}
       />
     </div>
   );

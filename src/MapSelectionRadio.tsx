@@ -21,6 +21,7 @@ function isMapType(m: any): m is MapType {
 interface MapSelectionRadioProps {
   mapType: MapType;
   setMapType: React.Dispatch<React.SetStateAction<MapType>>;
+  loading: boolean;
 }
 
 export default function MapSelectionRadio(props: MapSelectionRadioProps) {
@@ -36,7 +37,7 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
   return (
     <div className='App'>
       <Container>
-        <FormControl component='fieldset'>
+        <FormControl component='fieldset' disabled={props.loading}>
           <Typography variant='overline'>Map Type</Typography>
           <RadioGroup
             row
