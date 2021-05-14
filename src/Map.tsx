@@ -6,6 +6,8 @@ import * as L from 'leaflet';
 import * as d3 from 'd3';
 import {} from 'leaflet.heat';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
+import getDataRange from './utils/get-data-range';
+import setBounds from './utils/set-bounds';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -17,7 +19,6 @@ const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
   devicePixelRatio > 1 ? '@2x' : ''
 }.png`;
 
-const [WIDTH, HEIGHT] = [1000, 600];
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
 
@@ -25,62 +26,39 @@ interface MapProps {
   mapType: MapType;
   selectedSites: SidebarOption[];
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  width: number;
+  height: number;
 }
 
-const MeasurementMap = ({ mapType, selectedSites, setLoading }: MapProps) => {
+const MeasurementMap = ({
+  mapType,
+  selectedSites,
+  setLoading,
+  width,
+  height,
+}: MapProps) => {
   const map = useRef<L.Map>();
   const bins = useRef<(Measurement[] | null)[]>();
-  const width = useRef<number>();
-  const height = useRef<number>();
+  const binW = useRef<number>();
+  const binH = useRef<number>();
   const top = useRef<number>();
   const left = useRef<number>();
 
   useEffect(() => {
-    const all = [...data, ...sites];
-    const [minLat, maxLat] = d3
-      .extent(all, d => d.latitude)
-      .map((d: number | undefined) => d ?? NaN);
-    const [minLon, maxLon] = d3
-      .extent(all, d => d.longitude)
-      .map((d: number | undefined) => d ?? NaN);
-    const center: [number, number] = [
-      (minLat + maxLat) / 2,
-      (minLon + maxLon) / 2,
-    ];
+    const dataRange = getDataRange([...data, ...sites]);
 
-    const _map = L.map('map-id').setView(center, DEFAULT_ZOOM);
+    const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
 
-    const { x, y } = _map.project(center, DEFAULT_ZOOM);
-    const _bottomleft = _map.project([minLat, minLon], DEFAULT_ZOOM);
-    const bottomleft: [number, number] = [
-      Math.floor(Math.min(x - WIDTH / 2, _bottomleft.x - WIDTH / 10)),
-      Math.ceil(Math.max(y + HEIGHT / 2, _bottomleft.y + HEIGHT / 10)),
-    ];
-    const _topright = _map.project([maxLat, maxLon], DEFAULT_ZOOM);
-    const topright: [number, number] = [
-      Math.ceil(Math.max(x + WIDTH / 2, _topright.x + WIDTH / 10)),
-      Math.floor(Math.min(y - HEIGHT / 2, _topright.y - HEIGHT / 10)),
-    ];
-    const sw = _map.unproject(bottomleft, DEFAULT_ZOOM);
-    const ne = _map.unproject(topright, DEFAULT_ZOOM);
-    const bounds = L.latLngBounds(sw, ne);
-    _map
-      .setMaxBounds(bounds)
-      .on('drag', () => _map.panInsideBounds(bounds, { animate: false }));
-
-    const _width = topright[0] - bottomleft[0];
-    const _height = bottomleft[1] - topright[1];
+    const bounds = setBounds({ ...dataRange, map: _map, width, height });
 
     const _bin = new Array<Measurement[] | null>(
-      (_width * _height) >> BIN_SIZE_SHIFT,
+      (bounds.width * bounds.height) >> BIN_SIZE_SHIFT,
     );
-    const _left = bottomleft[0];
-    const _top = topright[1];
     data.forEach(d => {
       const { x, y } = _map.project([d.latitude, d.longitude], DEFAULT_ZOOM);
       const index =
-        ((x - _left) >> BIN_SIZE_SHIFT) * _height +
-        ((y - _top) >> BIN_SIZE_SHIFT);
+        ((x - bounds.left) >> BIN_SIZE_SHIFT) * bounds.height +
+        ((y - bounds.top) >> BIN_SIZE_SHIFT);
       (_bin[index] = _bin[index] ?? []).push(d);
     });
 
@@ -93,13 +71,13 @@ const MeasurementMap = ({ mapType, selectedSites, setLoading }: MapProps) => {
 
     map.current = _map;
     bins.current = _bin;
-    width.current = _width;
-    height.current = _height;
-    top.current = topright[1];
-    left.current = bottomleft[0];
+    binW.current = bounds.width;
+    binH.current = bounds.height;
+    top.current = bounds.top;
+    left.current = bounds.left;
 
     setLoading(false);
-  }, [setLoading]);
+  }, [setLoading, width, height]);
 
   const markers = useRef(new Map<string, L.Marker>());
   useEffect(() => {
@@ -126,10 +104,10 @@ const MeasurementMap = ({ mapType, selectedSites, setLoading }: MapProps) => {
   const layer = useRef<L.LayerGroup>();
   useEffect(() => {
     const _map = map.current;
-    const _height = height.current;
+    const _binH = binH.current;
     const _top = top.current;
     const _left = left.current;
-    if (!_map || !_height || !_top || !_left) return;
+    if (!_map || !_binH || !_top || !_left) return;
 
     const _bins = (bins.current ?? []).map(b =>
       d3.mean(
@@ -150,23 +128,25 @@ const MeasurementMap = ({ mapType, selectedSites, setLoading }: MapProps) => {
 
     _bins.forEach((bin, idx) => {
       if (bin && layer.current) {
-        const x = ((idx / _height) << BIN_SIZE_SHIFT) + _left;
-        const y = (idx % _height << BIN_SIZE_SHIFT) + _top;
+        const x = ((idx / _binH) << BIN_SIZE_SHIFT) + _left;
+        const y = (idx % _binH << BIN_SIZE_SHIFT) + _top;
+
         const sw = _map.unproject([x, y], DEFAULT_ZOOM);
         const ne = _map.unproject(
           [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
           DEFAULT_ZOOM,
         );
+
         L.rectangle(L.latLngBounds(sw, ne), {
           fillColor: scale(bin),
-          fillOpacity: 0.8,
+          fillOpacity: 0.75,
           stroke: false,
         }).addTo(layer.current);
       }
     });
   }, [selectedSites, mapType]);
 
-  return <div id='map-id' style={{ height: HEIGHT, width: WIDTH }}></div>;
+  return <div id='map-id' style={{ height, width }}></div>;
 };
 
 export default MeasurementMap;
