@@ -4,7 +4,7 @@ import data from './data-small.json';
 import { MapType } from './MapSelectionRadio';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import {} from 'leaflet.heat';
+import { } from 'leaflet.heat';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
 
 const ATTRIBUTION =
@@ -13,9 +13,8 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? '@2x' : ''
-}.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
+  }.png`;
 
 const [WIDTH, HEIGHT] = [1000, 600];
 const BIN_SIZE_SHIFT = 1;
@@ -71,12 +70,7 @@ const MeasurementMap = ({ mapType, selectedSites, setLoading }: MapProps) => {
     const _width = topright[0] - bottomleft[0];
     const _height = bottomleft[1] - topright[1];
 
-    const _bin = new Array<Measurement[] | null>(
-      (_width * _height) >> BIN_SIZE_SHIFT,
-    );
-    for (let i = 0; i < _bin.length; i++) {
-      _bin[i] = null;
-    }
+    const _bin = new Array<Measurement[] | null>((_width * _height) >> BIN_SIZE_SHIFT);
     const _left = bottomleft[0];
     const _top = topright[1];
     data.forEach(d => {
@@ -129,28 +123,29 @@ const MeasurementMap = ({ mapType, selectedSites, setLoading }: MapProps) => {
   const layer = useRef<L.LayerGroup>();
   useEffect(() => {
     const _map = map.current;
-    const __bins = bins.current;
     const _height = height.current;
     const _top = top.current;
     const _left = left.current;
-    if (!_map || !__bins || !_height || !_top || !_left) return;
+    if (!_map || !_height || !_top || !_left) return;
 
-    const _bins = __bins.map(b =>
-      d3.mean(
-        (b ?? []).filter(d => selectedSites.some(s => s.label === d.site)),
-        d => d[mapType],
-      ),
+    const _bins = (bins.current ?? []).map(
+      b =>
+        d3.mean(
+          (b ?? []).filter(d => selectedSites.some(s => s.label === d.site)),
+          d => d[mapType],
+        ),
     );
-
-    const scale = d3
-      .scaleSequentialLog(d3.interpolateInferno)
-      .domain([d3.max(_bins, d => d) ?? 1, d3.min(_bins, d => d) ?? 0]);
 
     if (!layer.current) {
       layer.current = L.layerGroup().addTo(_map);
     } else {
-      layer.current.clearLayers();
+      layer.current.clearLayers()
     }
+
+
+    const scale = d3
+      .scaleSequentialLog(d3.interpolateInferno)
+      .domain([d3.max(_bins, d => d) ?? 1, d3.min(_bins, d => d) ?? 0]);
 
     _bins.forEach((bin, idx) => {
       if (bin && layer.current) {
