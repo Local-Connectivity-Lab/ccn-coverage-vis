@@ -14,8 +14,9 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
@@ -120,21 +121,18 @@ const MeasurementMap = ({
       layer.current.clearLayers();
     }
 
-    const colorDomain = [d3.max(_bins, d => d) ?? 1, d3.min(_bins, d => d) ?? 0];
+    const colorDomain = [
+      d3.max(_bins, d => d) ?? 1,
+      d3.min(_bins, d => d) ?? 0,
+    ];
 
     const colorScale = d3
       .scaleSequentialLog(d3.interpolateInferno)
       .domain(colorDomain);
 
-    const xScale = d3
-      .scaleBand()
-      .domain(['0', '1'])
-      .range([0, width]);
+    const xScale = d3.scaleBand().domain(['0', '1']).range([0, width]);
 
-    const yScale = d3
-      .scaleLinear()
-      .domain(colorDomain)
-      .range([height, 0]);
+    const yScale = d3.scaleLinear().domain(colorDomain).range([height, 0]);
 
     _bins.forEach((bin, idx) => {
       if (bin && layer.current) {
