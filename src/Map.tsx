@@ -4,7 +4,6 @@ import data from './data-small.json';
 import { MapType } from './MapSelectionRadio';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import {} from 'leaflet.heat';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
 import getDataRange from './utils/get-data-range';
 import setBounds from './utils/set-bounds';
@@ -15,9 +14,8 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? '@2x' : ''
-}.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
+  }.png`;
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
@@ -122,9 +120,21 @@ const MeasurementMap = ({
       layer.current.clearLayers();
     }
 
-    const scale = d3
+    const colorDomain = [d3.max(_bins, d => d) ?? 1, d3.min(_bins, d => d) ?? 0];
+
+    const colorScale = d3
       .scaleSequentialLog(d3.interpolateInferno)
-      .domain([d3.max(_bins, d => d) ?? 1, d3.min(_bins, d => d) ?? 0]);
+      .domain(colorDomain);
+
+    const xScale = d3
+      .scaleBand()
+      .domain(['0', '1'])
+      .range([0, width]);
+
+    const yScale = d3
+      .scaleLinear()
+      .domain(colorDomain)
+      .range([height, 0]);
 
     _bins.forEach((bin, idx) => {
       if (bin && layer.current) {
@@ -138,7 +148,7 @@ const MeasurementMap = ({
         );
 
         L.rectangle(L.latLngBounds(sw, ne), {
-          fillColor: scale(bin),
+          fillColor: colorScale(bin),
           fillOpacity: 0.75,
           stroke: false,
         }).addTo(layer.current);
