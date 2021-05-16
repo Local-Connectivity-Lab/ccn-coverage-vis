@@ -4,13 +4,14 @@ import Grid from '@material-ui/core/Grid';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import MeasurementMap from './Map';
+import MeasurementMap from './MeasurementMap';
 import 'fontsource-roboto';
 import './index.css';
 
 function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
   const [selectedSites, setSelectedSites] = useState<SidebarOption[]>([]);
+  const [loading, setLoading] = useState(true);
 
   document.title = 'Performance Evaluation';
   return (
@@ -22,11 +23,22 @@ function App() {
             <Sidebar
               selectedSites={selectedSites}
               setSelectedSites={setSelectedSites}
+              loading={loading}
             />
           </Grid>
           <Grid item xs={9}>
-            <MapSelectionRadio mapType={mapType} setMapType={setMapType} />
-            <MeasurementMap mapType={mapType} selectedSites={selectedSites} />
+            <MapSelectionRadio
+              mapType={mapType}
+              setMapType={setMapType}
+              loading={loading}
+            />
+            <MeasurementMap
+              mapType={mapType}
+              selectedSites={selectedSites}
+              setLoading={setLoading}
+              width={910}
+              height={600}
+            />
           </Grid>
         </Grid>
       </Container>
