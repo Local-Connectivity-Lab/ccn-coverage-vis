@@ -3,10 +3,10 @@ import * as d3 from 'd3';
 import { createCanvas } from 'node-canvas';
 
 const tickSize = 6;
-const height = 600;
+const height = 150;
 const marginTop = 40;
-const marginRight = 0;
-const marginBottom = 30;
+const marginRight = 15;
+const marginBottom = 0;
 const marginLeft = 0;
 const ticks = height / 64;
 
@@ -65,7 +65,7 @@ const MapLegend = ({ colorDomain, title, width }: MapProps) => {
       .attr('width', width - marginLeft - marginRight)
       .attr('height', height - marginTop - marginBottom)
       .attr('preserveAspectRatio', 'none')
-      .attr('xlink:href', ramp(color.interpolator()).toDataURL());
+      .attr('xlink:href', ramp(color.interpolator(), height - marginTop - marginBottom).toDataURL());
 
     const n = Math.round(ticks + 1);
     const tickValues = d3
@@ -88,7 +88,7 @@ const MapLegend = ({ colorDomain, title, width }: MapProps) => {
       .call(g =>
         g
           .append('text')
-          .attr('y', marginTop - 6)
+          .attr('y', marginTop - 12)
           .attr('x', width - marginRight - marginLeft - 2)
           .attr('fill', 'currentColor')
           .attr('text-anchor', 'begin')

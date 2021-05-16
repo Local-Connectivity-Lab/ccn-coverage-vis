@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import MeasurementMap from './Map';
+import MeasurementMap from './MeasurementMap';
 import 'fontsource-roboto';
 import './index.css';
 
