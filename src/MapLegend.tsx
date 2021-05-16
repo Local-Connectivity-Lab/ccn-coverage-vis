@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import * as d3 from 'd3';
 import { createCanvas } from 'node-canvas';
 
@@ -28,13 +28,19 @@ interface MapProps {
   width: number;
 }
 
-const MapLegend = ({ colorDomain, title, width }: MapProps) => {
-  if (colorDomain) {
+const MapLegend = ({
+  colorDomain,
+  title,
+  width,
+}: MapProps) => {
+  const _svg = useRef<SVGSVGElement>(null);
+
+  if (colorDomain && _svg.current) {
     const color = d3.scaleSequential(colorDomain, d3.interpolateViridis);
     const tickFormat = d3.format('.2f');
 
     const svg = d3
-      .select<SVGElement, unknown>('#map-legend')
+      .select<SVGElement, unknown>(_svg.current)
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', [0, 0, width, height].join(' '))
@@ -44,7 +50,7 @@ const MapLegend = ({ colorDomain, title, width }: MapProps) => {
     svg.selectAll('*').remove();
 
     let tickAdjust = (
-      g: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+      g: d3.Selection<SVGGElement, unknown, null, unknown>,
     ) => g.selectAll('.tick line').attr('x1', width - marginRight - marginLeft);
     let x = Object.assign(
       color
@@ -97,7 +103,13 @@ const MapLegend = ({ colorDomain, title, width }: MapProps) => {
       );
   }
 
-  return <svg id='map-legend' className={'leaflet-control'}></svg>;
+  return (
+    <svg
+      id='map-legend'
+      ref={_svg}
+      className={"leaflet-control"}
+    ></svg>
+  );
 };
 
 export default MapLegend;
