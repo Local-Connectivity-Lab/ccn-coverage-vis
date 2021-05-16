@@ -28,11 +28,7 @@ interface MapProps {
   width: number;
 }
 
-const MapLegend = ({
-  colorDomain,
-  title,
-  width,
-}: MapProps) => {
+const MapLegend = ({ colorDomain, title, width }: MapProps) => {
   const _svg = useRef<SVGSVGElement>(null);
 
   if (colorDomain && _svg.current) {
@@ -49,9 +45,8 @@ const MapLegend = ({
 
     svg.selectAll('*').remove();
 
-    let tickAdjust = (
-      g: d3.Selection<SVGGElement, unknown, null, unknown>,
-    ) => g.selectAll('.tick line').attr('x1', width - marginRight - marginLeft);
+    let tickAdjust = (g: d3.Selection<SVGGElement, unknown, null, unknown>) =>
+      g.selectAll('.tick line').attr('x1', width - marginRight - marginLeft);
     let x = Object.assign(
       color
         .copy()
@@ -103,13 +98,7 @@ const MapLegend = ({
       );
   }
 
-  return (
-    <svg
-      id='map-legend'
-      ref={_svg}
-      className={"leaflet-control"}
-    ></svg>
-  );
+  return <svg id='map-legend' ref={_svg} className={'leaflet-control'}></svg>;
 };
 
 export default MapLegend;
