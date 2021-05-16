@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import sites from './sites.json';
 import data from './data-small.json';
 import { MapType } from './MapSelectionRadio';
@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
 import getDataRange from './utils/get-data-range';
 import setBounds from './utils/set-bounds';
-import legend from './utils/legend';
+import MapLegend from './MapLegend';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -20,6 +20,7 @@ const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${d
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
+const LEGEND_WIDTH = 25
 
 interface MapProps {
   mapType: MapType;
@@ -36,6 +37,7 @@ const MeasurementMap = ({
   width,
   height,
 }: MapProps) => {
+  const [cDomain, setCDomain] = useState<number[]>();
   const map = useRef<L.Map>();
   const bins = useRef<(Measurement[] | null)[]>();
   const binW = useRef<number>();
@@ -126,9 +128,8 @@ const MeasurementMap = ({
       d3.min(_bins, d => d) ?? 0,
     ];
 
-    const colorScale = d3.scaleSequential(colorDomain, d3.interpolateInferno);
-
-    legend({ color: colorScale, title: mapType, tickFormat: '.2f' });
+    const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
+    setCDomain(colorDomain);
 
     _bins.forEach((bin, idx) => {
       if (bin && layer.current) {
@@ -153,11 +154,9 @@ const MeasurementMap = ({
   return (
     <div style={{ position: 'relative' }}>
       <div id='map-id' style={{ height, width, position: 'absolute' }}></div>
-      <svg
-        id='map-legend'
-        style={{ position: 'absolute', left: width - 25 - 10 }}
-        className={"leaflet-control"}
-      ></svg>
+      <div style={{ position: 'absolute', left: width - LEGEND_WIDTH - 10 }}>
+        <MapLegend colorDomain={cDomain} title={mapType} width={LEGEND_WIDTH}></MapLegend>
+      </div>
     </div>
   );
 };
