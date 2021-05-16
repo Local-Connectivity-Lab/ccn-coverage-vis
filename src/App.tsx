@@ -36,7 +36,7 @@ function App() {
               mapType={mapType}
               selectedSites={selectedSites}
               setLoading={setLoading}
-              width={1000}
+              width={910}
               height={600}
             />
           </Grid>

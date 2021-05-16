@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
 import getDataRange from './utils/get-data-range';
 import setBounds from './utils/set-bounds';
+import legend from './utils/legend';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -120,21 +121,14 @@ const MeasurementMap = ({
       layer.current.clearLayers();
     }
 
-    const colorDomain = [d3.max(_bins, d => d) ?? 1, d3.min(_bins, d => d) ?? 0];
+    const colorDomain = [
+      d3.max(_bins, d => d) ?? 1,
+      d3.min(_bins, d => d) ?? 0,
+    ];
 
-    const colorScale = d3
-      .scaleSequentialLog(d3.interpolateInferno)
-      .domain(colorDomain);
+    const colorScale = d3.scaleSequential(colorDomain, d3.interpolateInferno);
 
-    const xScale = d3
-      .scaleBand()
-      .domain(['0', '1'])
-      .range([0, width]);
-
-    const yScale = d3
-      .scaleLinear()
-      .domain(colorDomain)
-      .range([height, 0]);
+    legend({ color: colorScale, title: mapType, tickFormat: '.2f' });
 
     _bins.forEach((bin, idx) => {
       if (bin && layer.current) {
@@ -156,7 +150,16 @@ const MeasurementMap = ({
     });
   }, [selectedSites, mapType]);
 
-  return <div id='map-id' style={{ height, width }}></div>;
+  return (
+    <div style={{ position: 'relative' }}>
+      <div id='map-id' style={{ height, width, position: 'absolute' }}></div>
+      <svg
+        id='map-legend'
+        style={{ position: 'absolute', left: width - 25 - 10 }}
+        className={"leaflet-control"}
+      ></svg>
+    </div>
+  );
 };
 
 export default MeasurementMap;
