@@ -15,12 +15,13 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
-const LEGEND_WIDTH = 25
+const LEGEND_WIDTH = 25;
 
 interface MapProps {
   mapType: MapType;
@@ -155,7 +156,11 @@ const MeasurementMap = ({
     <div style={{ position: 'relative' }}>
       <div id='map-id' style={{ height, width, position: 'absolute' }}></div>
       <div style={{ position: 'absolute', left: width - LEGEND_WIDTH - 10 }}>
-        <MapLegend colorDomain={cDomain} title={mapType} width={LEGEND_WIDTH}></MapLegend>
+        <MapLegend
+          colorDomain={cDomain}
+          title={mapType}
+          width={LEGEND_WIDTH}
+        ></MapLegend>
       </div>
     </div>
   );

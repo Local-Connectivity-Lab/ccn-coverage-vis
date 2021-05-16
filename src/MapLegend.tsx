@@ -23,16 +23,12 @@ function ramp(color: (t: number) => string, n = 256) {
 }
 
 interface MapProps {
-  colorDomain: number[] | undefined,
-  title: string,
-  width: number,
+  colorDomain: number[] | undefined;
+  title: string;
+  width: number;
 }
 
-const MapLegend = ({
-  colorDomain,
-  title,
-  width,
-}: MapProps) => {
+const MapLegend = ({ colorDomain, title, width }: MapProps) => {
   if (colorDomain) {
     const color = d3.scaleSequential(colorDomain, d3.interpolateViridis);
     const tickFormat = d3.format('.2f');
@@ -101,12 +97,7 @@ const MapLegend = ({
       );
   }
 
-  return (
-    <svg
-      id='map-legend'
-      className={"leaflet-control"}
-    ></svg>
-  );
+  return <svg id='map-legend' className={'leaflet-control'}></svg>;
 };
 
 export default MapLegend;
