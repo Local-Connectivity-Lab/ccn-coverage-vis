@@ -15,8 +15,9 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;

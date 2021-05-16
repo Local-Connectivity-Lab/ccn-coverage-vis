@@ -65,7 +65,13 @@ const MapLegend = ({ colorDomain, title, width }: MapProps) => {
       .attr('width', width - marginLeft - marginRight)
       .attr('height', height - marginTop - marginBottom)
       .attr('preserveAspectRatio', 'none')
-      .attr('xlink:href', ramp(color.interpolator(), height - marginTop - marginBottom).toDataURL());
+      .attr(
+        'xlink:href',
+        ramp(
+          color.interpolator(),
+          height - marginTop - marginBottom,
+        ).toDataURL(),
+      );
 
     const n = Math.round(ticks + 1);
     const tickValues = d3
