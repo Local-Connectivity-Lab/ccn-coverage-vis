@@ -16,7 +16,7 @@ const ATTRIBUTION =
 const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
   }.png`;
 
-const API = 'http://attu.cs.washington.edu:8000/';
+const API = 'http://attu.cs.washington.edu:7593/';
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
