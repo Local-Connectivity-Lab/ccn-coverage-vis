@@ -13,8 +13,9 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 const API = 'http://attu.cs.washington.edu:7593/';
 
@@ -39,7 +40,8 @@ const MeasurementMap = ({
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
-  const [bounds, setBounds] = useState<{ left: number, top: number, width: number, height: number }>();
+  const [bounds, setBounds] =
+    useState<{ left: number; top: number; width: number; height: number }>();
   const [markers, setMarkers] = useState(new Map<string, L.Marker>());
   const [layer, setLayer] = useState<L.LayerGroup>();
 
@@ -88,16 +90,20 @@ const MeasurementMap = ({
 
     setLoading(true);
     (async () => {
-      const bins: number[] = await fetchToJson(API + 'data?' + new URLSearchParams([
-        ['width', bounds.width + ''],
-        ['height', bounds.height + ''],
-        ['left', bounds.left + ''],
-        ['top', bounds.top + ''],
-        ['binSizeShift', BIN_SIZE_SHIFT + ''],
-        ['zoom', DEFAULT_ZOOM + ''],
-        ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-        ['mapType', mapType]
-      ]));
+      const bins: number[] = await fetchToJson(
+        API +
+          'data?' +
+          new URLSearchParams([
+            ['width', bounds.width + ''],
+            ['height', bounds.height + ''],
+            ['left', bounds.left + ''],
+            ['top', bounds.top + ''],
+            ['binSizeShift', BIN_SIZE_SHIFT + ''],
+            ['zoom', DEFAULT_ZOOM + ''],
+            ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+            ['mapType', mapType],
+          ]),
+      );
 
       const colorDomain = [
         d3.max(bins, d => d) ?? 1,
