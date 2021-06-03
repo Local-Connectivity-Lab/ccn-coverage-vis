@@ -1,13 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import sites from './sites.json';
-import data from './data-small.json';
+import React, { useEffect, useState } from 'react';
 import { MapType } from './MapSelectionRadio';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
-import getDataRange from './utils/get-data-range';
-import setBounds from './utils/set-bounds';
+import getBounds from './utils/get-bounds';
 import MapLegend from './MapLegend';
+import fetchToJson from './utils/fetch-to-json';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -18,6 +16,8 @@ const ATTRIBUTION =
 const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
   devicePixelRatio > 1 ? '@2x' : ''
 }.png`;
+
+const API = 'http://attu.cs.washington.edu:7593/';
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
@@ -39,118 +39,102 @@ const MeasurementMap = ({
   height,
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
-  const map = useRef<L.Map>();
-  const bins = useRef<(Measurement[] | null)[]>();
-  const binW = useRef<number>();
-  const binH = useRef<number>();
-  const top = useRef<number>();
-  const left = useRef<number>();
+  const [map, setMap] = useState<L.Map>();
+  const [bounds, setBounds] =
+    useState<{ left: number; top: number; width: number; height: number }>();
+  const [markers, setMarkers] = useState(new Map<string, L.Marker>());
+  const [layer, setLayer] = useState<L.LayerGroup>();
 
   useEffect(() => {
-    const dataRange = getDataRange([...data, ...sites]);
+    (async () => {
+      const dataRange = await fetchToJson(API + 'dataRange');
+      const _sites = await fetchToJson(API + 'sites');
+      const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
+      const _bounds = getBounds({ ...dataRange, map: _map, width, height });
+      const _markers = new Map<string, L.Marker>();
 
-    const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
+      if (!isSiteArray(_sites)) {
+        throw new Error('data has incorrect type');
+      }
+      _sites.forEach(site => _markers.set(site.name, siteMarker(site)));
 
-    const bounds = setBounds({ ...dataRange, map: _map, width, height });
+      L.tileLayer(URL, {
+        attribution: ATTRIBUTION,
+        maxZoom: 15,
+        minZoom: 10,
+        opacity: 0.5,
+      }).addTo(_map);
 
-    const _bin = new Array<Measurement[] | null>(
-      (bounds.width * bounds.height) >> BIN_SIZE_SHIFT,
-    );
-    data.forEach(d => {
-      const { x, y } = _map.project([d.latitude, d.longitude], DEFAULT_ZOOM);
-      const index =
-        ((x - bounds.left) >> BIN_SIZE_SHIFT) * bounds.height +
-        ((y - bounds.top) >> BIN_SIZE_SHIFT);
-      (_bin[index] = _bin[index] ?? []).push(d);
-    });
-
-    L.tileLayer(URL, {
-      attribution: ATTRIBUTION,
-      maxZoom: 15,
-      minZoom: 10,
-      opacity: 0.5,
-    }).addTo(_map);
-
-    map.current = _map;
-    bins.current = _bin;
-    binW.current = bounds.width;
-    binH.current = bounds.height;
-    top.current = bounds.top;
-    left.current = bounds.left;
-
-    setLoading(false);
+      setMarkers(_markers);
+      setBounds(_bounds);
+      setMap(_map);
+      setLayer(L.layerGroup().addTo(_map));
+      setLoading(false);
+    })();
   }, [setLoading, width, height]);
 
-  const markers = useRef(new Map<string, L.Marker>());
   useEffect(() => {
-    if (!isSiteArray(sites)) {
-      throw new Error('data has incorrect type');
-    }
+    if (!map || !markers) return;
 
-    const _map = map.current;
-    if (!_map) return;
-
-    if (markers.current.size === 0) {
-      sites.forEach(site => markers.current.set(site.name, siteMarker(site)));
-    }
-
-    markers.current.forEach((marker, site) => {
+    markers.forEach((marker, site) => {
       if (selectedSites.some(s => s.label === site)) {
-        marker.addTo(_map);
+        marker.addTo(map);
       } else {
-        marker.removeFrom(_map);
+        marker.removeFrom(map);
       }
     });
-  }, [selectedSites]);
+  }, [selectedSites, map, markers]);
 
-  const layer = useRef<L.LayerGroup>();
   useEffect(() => {
-    const _map = map.current;
-    const _binH = binH.current;
-    const _top = top.current;
-    const _left = left.current;
-    if (!_map || !_binH || !_top || !_left) return;
+    if (!map || !bounds || !layer) return;
 
-    const _bins = (bins.current ?? []).map(b =>
-      d3.mean(
-        (b ?? []).filter(d => selectedSites.some(s => s.label === d.site)),
-        d => d[mapType],
-      ),
-    );
+    setLoading(true);
+    (async () => {
+      const bins: number[] = await fetchToJson(
+        API +
+          'data?' +
+          new URLSearchParams([
+            ['width', bounds.width + ''],
+            ['height', bounds.height + ''],
+            ['left', bounds.left + ''],
+            ['top', bounds.top + ''],
+            ['binSizeShift', BIN_SIZE_SHIFT + ''],
+            ['zoom', DEFAULT_ZOOM + ''],
+            ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+            ['mapType', mapType],
+          ]),
+      );
 
-    if (!layer.current) {
-      layer.current = L.layerGroup().addTo(_map);
-    } else {
-      layer.current.clearLayers();
-    }
+      const colorDomain = [
+        d3.max(bins, d => d) ?? 1,
+        d3.min(bins, d => d) ?? 0,
+      ];
 
-    const colorDomain = [
-      d3.max(_bins, d => d) ?? 1,
-      d3.min(_bins, d => d) ?? 0,
-    ];
+      const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
+      setCDomain(colorDomain);
 
-    const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
-    setCDomain(colorDomain);
+      layer.clearLayers();
+      bins.forEach((bin, idx) => {
+        if (bin) {
+          const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
+          const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
 
-    _bins.forEach((bin, idx) => {
-      if (bin && layer.current) {
-        const x = ((idx / _binH) << BIN_SIZE_SHIFT) + _left;
-        const y = (idx % _binH << BIN_SIZE_SHIFT) + _top;
+          const sw = map.unproject([x, y], DEFAULT_ZOOM);
+          const ne = map.unproject(
+            [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
+            DEFAULT_ZOOM,
+          );
 
-        const sw = _map.unproject([x, y], DEFAULT_ZOOM);
-        const ne = _map.unproject(
-          [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
-          DEFAULT_ZOOM,
-        );
-
-        L.rectangle(L.latLngBounds(sw, ne), {
-          fillColor: colorScale(bin),
-          fillOpacity: 0.75,
-          stroke: false,
-        }).addTo(layer.current);
-      }
-    });
-  }, [selectedSites, mapType]);
+          L.rectangle(L.latLngBounds(sw, ne), {
+            fillColor: colorScale(bin),
+            fillOpacity: 0.75,
+            stroke: false,
+          }).addTo(layer);
+        }
+      });
+      setLoading(false);
+    })();
+  }, [selectedSites, mapType, setLoading, map, layer, bounds]);
 
   return (
     <div style={{ position: 'relative' }}>
