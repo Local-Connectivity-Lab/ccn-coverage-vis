@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import sites from './sites.json';
-import data from './data-small.json';
 import { MapType } from './MapSelectionRadio';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
-import getDataRange from './utils/get-data-range';
 import setBounds from './utils/set-bounds';
 import MapLegend from './MapLegend';
 
@@ -15,9 +12,10 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? '@2x' : ''
-}.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
+  }.png`;
+
+const API = 'http://localhost:8000/';
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
@@ -40,116 +38,107 @@ const MeasurementMap = ({
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const map = useRef<L.Map>();
-  const bins = useRef<(Measurement[] | null)[]>();
-  const binW = useRef<number>();
-  const binH = useRef<number>();
-  const top = useRef<number>();
-  const left = useRef<number>();
+  const bounds = useRef<{ left: number, top: number, width: number, height: number }>();
 
   useEffect(() => {
-    const dataRange = getDataRange([...data, ...sites]);
+    (async () => {
+      const response = await fetch(API + 'dataRange');
+      const dataRange = await response.json();
+      const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
+      const _bounds = setBounds({ ...dataRange, map: _map, width, height });
 
-    const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
+      L.tileLayer(URL, {
+        attribution: ATTRIBUTION,
+        maxZoom: 15,
+        minZoom: 10,
+        opacity: 0.5,
+      }).addTo(_map);
 
-    const bounds = setBounds({ ...dataRange, map: _map, width, height });
+      map.current = _map;
+      bounds.current = _bounds;
 
-    const _bin = new Array<Measurement[] | null>(
-      (bounds.width * bounds.height) >> BIN_SIZE_SHIFT,
-    );
-    data.forEach(d => {
-      const { x, y } = _map.project([d.latitude, d.longitude], DEFAULT_ZOOM);
-      const index =
-        ((x - bounds.left) >> BIN_SIZE_SHIFT) * bounds.height +
-        ((y - bounds.top) >> BIN_SIZE_SHIFT);
-      (_bin[index] = _bin[index] ?? []).push(d);
-    });
-
-    L.tileLayer(URL, {
-      attribution: ATTRIBUTION,
-      maxZoom: 15,
-      minZoom: 10,
-      opacity: 0.5,
-    }).addTo(_map);
-
-    map.current = _map;
-    bins.current = _bin;
-    binW.current = bounds.width;
-    binH.current = bounds.height;
-    top.current = bounds.top;
-    left.current = bounds.left;
-
-    setLoading(false);
+      setLoading(false);
+    })();
   }, [setLoading, width, height]);
 
   const markers = useRef(new Map<string, L.Marker>());
   useEffect(() => {
-    if (!isSiteArray(sites)) {
-      throw new Error('data has incorrect type');
-    }
-
-    const _map = map.current;
-    if (!_map) return;
-
-    if (markers.current.size === 0) {
-      sites.forEach(site => markers.current.set(site.name, siteMarker(site)));
-    }
-
-    markers.current.forEach((marker, site) => {
-      if (selectedSites.some(s => s.label === site)) {
-        marker.addTo(_map);
-      } else {
-        marker.removeFrom(_map);
+    (async () => {
+      const response = await fetch(API + 'sites');
+      const sites = await response.json();
+      if (!isSiteArray(sites)) {
+        throw new Error('data has incorrect type');
       }
-    });
+
+      const _map = map.current;
+      if (!_map) return;
+
+      if (markers.current.size === 0) {
+        sites.forEach(site => markers.current.set(site.name, siteMarker(site)));
+      }
+
+      markers.current.forEach((marker, site) => {
+        if (selectedSites.some(s => s.label === site)) {
+          marker.addTo(_map);
+        } else {
+          marker.removeFrom(_map);
+        }
+      });
+    })();
   }, [selectedSites]);
 
   const layer = useRef<L.LayerGroup>();
   useEffect(() => {
     const _map = map.current;
-    const _binH = binH.current;
-    const _top = top.current;
-    const _left = left.current;
-    if (!_map || !_binH || !_top || !_left) return;
+    const _bounds = bounds.current
+    if (!_map || !_bounds) return;
 
-    const _bins = (bins.current ?? []).map(b =>
-      d3.mean(
-        (b ?? []).filter(d => selectedSites.some(s => s.label === d.site)),
-        d => d[mapType],
-      ),
-    );
+    (async () => {
+      const response = await fetch(API + 'data?' + new URLSearchParams([
+        ['width', _bounds.width + ''],
+        ['height', _bounds.height + ''],
+        ['left', _bounds.left + ''],
+        ['top', _bounds.top + ''],
+        ['binSizeShift', BIN_SIZE_SHIFT + ''],
+        ['zoom', DEFAULT_ZOOM + ''],
+        ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+        ['mapType', mapType]
+      ]));
+      const bins: number[] = await response.json();
 
-    if (!layer.current) {
-      layer.current = L.layerGroup().addTo(_map);
-    } else {
-      layer.current.clearLayers();
-    }
-
-    const colorDomain = [
-      d3.max(_bins, d => d) ?? 1,
-      d3.min(_bins, d => d) ?? 0,
-    ];
-
-    const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
-    setCDomain(colorDomain);
-
-    _bins.forEach((bin, idx) => {
-      if (bin && layer.current) {
-        const x = ((idx / _binH) << BIN_SIZE_SHIFT) + _left;
-        const y = (idx % _binH << BIN_SIZE_SHIFT) + _top;
-
-        const sw = _map.unproject([x, y], DEFAULT_ZOOM);
-        const ne = _map.unproject(
-          [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
-          DEFAULT_ZOOM,
-        );
-
-        L.rectangle(L.latLngBounds(sw, ne), {
-          fillColor: colorScale(bin),
-          fillOpacity: 0.75,
-          stroke: false,
-        }).addTo(layer.current);
+      if (!layer.current) {
+        layer.current = L.layerGroup().addTo(_map);
+      } else {
+        layer.current.clearLayers();
       }
-    });
+
+      const colorDomain = [
+        d3.max(bins, d => d) ?? 1,
+        d3.min(bins, d => d) ?? 0,
+      ];
+
+      const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
+      setCDomain(colorDomain);
+
+      bins.forEach((bin, idx) => {
+        if (bin && layer.current) {
+          const x = ((idx / _bounds.height) << BIN_SIZE_SHIFT) + _bounds.left;
+          const y = (idx % _bounds.height << BIN_SIZE_SHIFT) + _bounds.top;
+
+          const sw = _map.unproject([x, y], DEFAULT_ZOOM);
+          const ne = _map.unproject(
+            [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
+            DEFAULT_ZOOM,
+          );
+
+          L.rectangle(L.latLngBounds(sw, ne), {
+            fillColor: colorScale(bin),
+            fillOpacity: 0.75,
+            stroke: false,
+          }).addTo(layer.current);
+        }
+      });
+    })();
   }, [selectedSites, mapType]);
 
   return (
