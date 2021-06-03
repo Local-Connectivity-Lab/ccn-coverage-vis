@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapType } from './MapSelectionRadio';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
-import setBounds from './utils/set-bounds';
+import getBounds from './utils/get-bounds';
 import MapLegend from './MapLegend';
+import fetchToJson from './utils/fetch-to-json';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -15,7 +16,7 @@ const ATTRIBUTION =
 const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
   }.png`;
 
-const API = 'http://localhost:8000/';
+const API = 'http://attu.cs.washington.edu:8000/';
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
@@ -37,15 +38,23 @@ const MeasurementMap = ({
   height,
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
-  const map = useRef<L.Map>();
-  const bounds = useRef<{ left: number, top: number, width: number, height: number }>();
+  const [map, setMap] = useState<L.Map>();
+  const [bounds, setBounds] = useState<{ left: number, top: number, width: number, height: number }>();
+  const [markers, setMarkers] = useState(new Map<string, L.Marker>());
+  const [layer, setLayer] = useState<L.LayerGroup>();
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(API + 'dataRange');
-      const dataRange = await response.json();
+      const dataRange = await fetchToJson(API + 'dataRange');
+      const _sites = await fetchToJson(API + 'sites');
       const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
-      const _bounds = setBounds({ ...dataRange, map: _map, width, height });
+      const _bounds = getBounds({ ...dataRange, map: _map, width, height });
+      const _markers = new Map<string, L.Marker>();
+
+      if (!isSiteArray(_sites)) {
+        throw new Error('data has incorrect type');
+      }
+      _sites.forEach(site => _markers.set(site.name, siteMarker(site)));
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
@@ -54,63 +63,41 @@ const MeasurementMap = ({
         opacity: 0.5,
       }).addTo(_map);
 
-      map.current = _map;
-      bounds.current = _bounds;
-
+      setMarkers(_markers);
+      setBounds(_bounds);
+      setMap(_map);
+      setLayer(L.layerGroup().addTo(_map));
       setLoading(false);
     })();
   }, [setLoading, width, height]);
 
-  const markers = useRef(new Map<string, L.Marker>());
   useEffect(() => {
-    (async () => {
-      const response = await fetch(API + 'sites');
-      const sites = await response.json();
-      if (!isSiteArray(sites)) {
-        throw new Error('data has incorrect type');
+    if (!map || !markers) return;
+
+    markers.forEach((marker, site) => {
+      if (selectedSites.some(s => s.label === site)) {
+        marker.addTo(map);
+      } else {
+        marker.removeFrom(map);
       }
+    });
+  }, [selectedSites, map, markers]);
 
-      const _map = map.current;
-      if (!_map) return;
-
-      if (markers.current.size === 0) {
-        sites.forEach(site => markers.current.set(site.name, siteMarker(site)));
-      }
-
-      markers.current.forEach((marker, site) => {
-        if (selectedSites.some(s => s.label === site)) {
-          marker.addTo(_map);
-        } else {
-          marker.removeFrom(_map);
-        }
-      });
-    })();
-  }, [selectedSites]);
-
-  const layer = useRef<L.LayerGroup>();
   useEffect(() => {
-    const _map = map.current;
-    const _bounds = bounds.current
-    if (!_map || !_bounds) return;
+    if (!map || !bounds || !layer) return;
 
+    setLoading(true);
     (async () => {
-      const response = await fetch(API + 'data?' + new URLSearchParams([
-        ['width', _bounds.width + ''],
-        ['height', _bounds.height + ''],
-        ['left', _bounds.left + ''],
-        ['top', _bounds.top + ''],
+      const bins: number[] = await fetchToJson(API + 'data?' + new URLSearchParams([
+        ['width', bounds.width + ''],
+        ['height', bounds.height + ''],
+        ['left', bounds.left + ''],
+        ['top', bounds.top + ''],
         ['binSizeShift', BIN_SIZE_SHIFT + ''],
         ['zoom', DEFAULT_ZOOM + ''],
         ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
         ['mapType', mapType]
       ]));
-      const bins: number[] = await response.json();
-
-      if (!layer.current) {
-        layer.current = L.layerGroup().addTo(_map);
-      } else {
-        layer.current.clearLayers();
-      }
 
       const colorDomain = [
         d3.max(bins, d => d) ?? 1,
@@ -120,13 +107,14 @@ const MeasurementMap = ({
       const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
       setCDomain(colorDomain);
 
+      layer.clearLayers();
       bins.forEach((bin, idx) => {
-        if (bin && layer.current) {
-          const x = ((idx / _bounds.height) << BIN_SIZE_SHIFT) + _bounds.left;
-          const y = (idx % _bounds.height << BIN_SIZE_SHIFT) + _bounds.top;
+        if (bin) {
+          const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
+          const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
 
-          const sw = _map.unproject([x, y], DEFAULT_ZOOM);
-          const ne = _map.unproject(
+          const sw = map.unproject([x, y], DEFAULT_ZOOM);
+          const ne = map.unproject(
             [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
             DEFAULT_ZOOM,
           );
@@ -135,11 +123,12 @@ const MeasurementMap = ({
             fillColor: colorScale(bin),
             fillOpacity: 0.75,
             stroke: false,
-          }).addTo(layer.current);
+          }).addTo(layer);
         }
       });
+      setLoading(false);
     })();
-  }, [selectedSites, mapType]);
+  }, [selectedSites, mapType, setLoading, map, layer, bounds]);
 
   return (
     <div style={{ position: 'relative' }}>

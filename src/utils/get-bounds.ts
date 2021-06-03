@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 
-type SetBoundsParams = {
+type GetBoundsParams = {
   map: L.Map;
   center: [number, number];
   minLat: number;
@@ -11,7 +11,7 @@ type SetBoundsParams = {
   height: number;
 };
 
-export default function setBounds({
+export default function getBounds({
   map,
   center,
   minLat,
@@ -20,7 +20,7 @@ export default function setBounds({
   maxLon,
   width,
   height,
-}: SetBoundsParams) {
+}: GetBoundsParams) {
   const { x, y } = map.project(center);
 
   const _bottomleft = map.project([minLat, minLon]);
