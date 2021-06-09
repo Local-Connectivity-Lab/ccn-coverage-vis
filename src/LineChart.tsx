@@ -167,6 +167,17 @@ const LineChart = ({
       // ----------------------------------------- CHART --------------------------------------------------
 
       const svg = d3.select('#line-chart');
+      const tooltip = d3
+        .select('#line-tooltip')
+        .style('position', 'absolute')
+        .style('background-color', 'white')
+        .style('border', 'solid')
+        .style('border-width', '2px')
+        .style('border-radius', '3px')
+        .style('padding', '3px')
+        .style('font-size', 'small')
+        .style('opacity', 1)
+        .style('display', 'none');
 
       svg.attr('width', width).attr('height', height);
 
@@ -198,7 +209,22 @@ const LineChart = ({
               .style('stroke', d => d.color)
               .style('stroke-width', 2)
               .style('stroke-linejoin', 'round')
-              .style('opacity', 0),
+              .style('opacity', 0)
+              .on('mouseover', function (event, d) {
+                tooltip.style('display', 'inline').html(d.key);
+                console.log('over');
+              })
+              .on('mousemove', function (event, d) {
+                tooltip
+                  .html(d.key)
+                  .style('left', event.pageX + 10 + 'px')
+                  .style('top', event.pageY + 20 + 'px');
+                console.log('move');
+              })
+              .on('mouseout', function (event, d) {
+                // tooltip.style('opacity', 0);
+                // console.log('out');
+              }),
           update => update,
           exit => exit.remove(),
         )
@@ -210,9 +236,12 @@ const LineChart = ({
     })();
   }, [mapType, xAxis, yAxis, lines, yTitle, selectedSites]);
   return (
-    <div style={{ height, width, position: 'relative', top: offset }}>
-      <svg id='line-chart'></svg>
-    </div>
+    <>
+      <div style={{ height, width, position: 'relative', top: offset }}>
+        <svg id='line-chart'></svg>
+      </div>
+      <div id='line-tooltip' style={{ position: 'absolute', opacity: 0 }}></div>
+    </>
   );
 };
 
