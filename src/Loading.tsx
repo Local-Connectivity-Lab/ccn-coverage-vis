@@ -19,6 +19,7 @@ const Loading = (props: LoadingProps) => {
         opacity: 0.5,
         display: props.loading ? 'inline' : 'none',
       }}
+      alt='source: https://tenor.com/view/loading-buffering-spinning-waiting-gif-17313179'
     />
   );
 };

@@ -36,46 +36,6 @@ const mapTypeConvert = {
   download_speed: 'Download Speed (Gbps)',
 };
 
-// data parser
-const parseLineData = (
-  data: {
-    date: string;
-    values: {
-      [site: string]: number;
-    };
-  }[],
-) => {
-  const output: {
-    key: string;
-    color: string;
-    data: { date: Date; value: number }[];
-  }[] = [];
-
-  const colNames = new Set<string>();
-  data.forEach(d => Object.keys(d.values).forEach(dd => colNames.add(dd)));
-  colNames.forEach(col => {
-    const o = {
-      key: col,
-      color: colors(col) + '',
-      data: [] as { date: Date; value: number }[],
-    };
-
-    for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
-      let d0 = data[i0];
-
-      if (d0.values[col]) {
-        o.data.push({
-          date: new Date(d0.date),
-          value: d0.values[col],
-        });
-      }
-    }
-    output.push(o);
-  });
-
-  return output;
-};
-
 const LineChart = ({
   mapType,
   offset,
@@ -116,39 +76,42 @@ const LineChart = ({
       setLoading(true);
       const _selectedSites = selectedSites.map(ss => ss.label);
 
-      const aggData2: {
-        date: string;
-        values: {
-          [site: string]: number;
-        };
-      }[] = await fetchToJson(
-        API +
-          'lineSummary?' +
-          new URLSearchParams([
-            ['mapType', mapType],
-            ['selectedSites', _selectedSites.join(',')],
-          ]),
-      );
+      const data: {
+        site: string;
+        values: { date: Date; value: number }[];
+      }[] = (
+        await fetchToJson(
+          API +
+            'lineSummary?' +
+            new URLSearchParams([
+              ['mapType', mapType],
+              ['selectedSites', _selectedSites.join(',')],
+            ]),
+        )
+      ).map((d: any) => ({
+        site: d.site,
+        values: d.values.map((v: any) => ({
+          date: new Date(v.date),
+          value: v.value,
+        })),
+      }));
 
       const chartWidth = width - margin.left - margin.right;
       const chartHeight = height - margin.top - margin.bottom;
 
+      const flat = data.map(a => a.values).flat();
       const xScale = d3
         .scaleTime()
         .domain(
           d3
-            .extent(aggData2, d => new Date(d.date))
+            .extent(flat, d => new Date(d.date))
             .map((d?: Date) => d ?? new Date(0)),
         )
         .range([0, chartWidth]);
 
       const yScale = d3
         .scaleLinear()
-        .domain([
-          0,
-          (d3.max(aggData2, d => Math.max(...Object.values(d.values))) ?? 1) *
-            MULTIPLIERS[mapType],
-        ])
+        .domain([0, (d3.max(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType]])
         .range([chartHeight, 0]);
 
       const xAxisGenerator = d3.axisBottom(xScale);
@@ -159,8 +122,6 @@ const LineChart = ({
         .line<{ date: Date; value: number }>()
         .x(d => xScale(d.date))
         .y(d => yScale(d.value * MULTIPLIERS[mapType]));
-
-      const lineData = parseLineData(aggData2);
 
       // ----------------------------------------- CHART --------------------------------------------------
 
@@ -181,14 +142,20 @@ const LineChart = ({
 
       xAxis
         .attr('transform', `translate(0, ${chartHeight})`)
+        .style('user-select', 'none')
         .transition()
         .duration(1000)
         .call(xAxisGenerator);
 
-      yAxis.transition().duration(1000).call(yAxisGenerator);
+      yAxis
+        .style('user-select', 'none')
+        .transition()
+        .duration(1000)
+        .call(yAxisGenerator);
 
       yTitle
         .attr('x', 3)
+        .style('user-select', 'none')
         .attr('font-size', 12)
         .attr('text-anchor', 'start')
         .attr('font-weight', 'bold')
@@ -196,26 +163,26 @@ const LineChart = ({
 
       lines
         .selectAll('.line')
-        .data(lineData, (d: any) => d.key)
+        .data(data, (d: any) => d.site)
         .join(
           enter =>
             enter
               .append('path')
               .attr('d', d =>
-                lineGenerator(d.data.map(({ date }) => ({ date, value: 0 }))),
+                lineGenerator(d.values.map(({ date }) => ({ date, value: 0 }))),
               )
               .attr('class', 'line')
               .style('fill', 'none')
-              .style('stroke', d => d.color)
+              .style('stroke', d => colors(d.site) + '')
               .style('stroke-width', 2)
               .style('stroke-linejoin', 'round')
               .style('opacity', 0)
               .on('mouseover', (_, d) =>
-                tooltip.style('display', 'inline').html(d.key),
+                tooltip.style('display', 'inline').html(d.site),
               )
               .on('mousemove', (event, d) =>
                 tooltip
-                  .html(d.key)
+                  .html(d.site)
                   .style('left', event.pageX + 10 + 'px')
                   .style('top', event.pageY + 20 + 'px'),
               )
@@ -226,7 +193,7 @@ const LineChart = ({
         .transition()
         .duration(1000)
         .style('opacity', 1)
-        .attr('d', d => lineGenerator(d.data));
+        .attr('d', d => lineGenerator(d.values));
       setLoading(false);
     })();
   }, [
