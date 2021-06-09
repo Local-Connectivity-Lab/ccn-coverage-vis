@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
 
 import { MapType } from './MapSelectionRadio';
-import data1 from './data-small.json';
 
 import sites from './sites.json';
 import { API, MULTIPLIERS } from './MeasurementMap';
@@ -50,30 +49,26 @@ const parseLineData = (
     data: { date: Date; value: number }[];
   }[] = [];
 
-  let i = 0;
   const colNames = new Set<string>();
   data.forEach(d => Object.keys(d.values).forEach(dd => colNames.add(dd)));
   colNames.forEach(col => {
-    if (col !== 'date') {
-      const o = {
-        key: col,
-        color: colors(col) + '',
-        data: [] as { date: Date; value: number }[],
-      };
+    const o = {
+      key: col,
+      color: colors(col) + '',
+      data: [] as { date: Date; value: number }[],
+    };
 
-      for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
-        let d0 = data[i0];
+    for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
+      let d0 = data[i0];
 
-        if (d0.values[col]) {
-          o.data.push({
-            date: new Date(d0.date),
-            value: d0.values[col],
-          });
-        }
+      if (d0.values[col]) {
+        o.data.push({
+          date: new Date(d0.date),
+          value: d0.values[col],
+        });
       }
-      output.push(o);
     }
-    i++;
+    output.push(o);
   });
 
   return output;
@@ -222,8 +217,7 @@ const LineChart = ({
                 console.log('move');
               })
               .on('mouseout', function (event, d) {
-                // tooltip.style('opacity', 0);
-                // console.log('out');
+                tooltip.style('display', 'none');
               }),
           update => update,
           exit => exit.remove(),
@@ -234,7 +228,17 @@ const LineChart = ({
         .attr('d', d => lineGenerator(d.data));
       setLoading(false);
     })();
-  }, [mapType, xAxis, yAxis, lines, yTitle, selectedSites]);
+  }, [
+    mapType,
+    xAxis,
+    yAxis,
+    lines,
+    yTitle,
+    selectedSites,
+    height,
+    setLoading,
+    width,
+  ]);
   return (
     <>
       <div style={{ height, width, position: 'relative', top: offset }}>
