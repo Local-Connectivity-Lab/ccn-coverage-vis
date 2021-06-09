@@ -38,9 +38,14 @@ function App() {
               selectedSites={selectedSites}
               setLoading={setLoading}
               width={910}
-              height={600}
+              height={500}
             />
-            <LineChart />
+            <LineChart
+              mapType={mapType}
+              offset={500}
+              width={910}
+              height={200}
+            />
           </Grid>
         </Grid>
       </Container>
