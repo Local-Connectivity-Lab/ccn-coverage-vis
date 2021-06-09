@@ -33,8 +33,14 @@ const colors = {
 const margin = {
   left: 70,
   bottom: 20,
-  right: 60,
-  top: 10,
+  right: 0,
+  top: 20,
+};
+
+const mapTypeConvert = {
+  ping: 'Ping (ms)',
+  upload_speed: 'Upload Speed (Mb/s)',
+  download_speed: 'Download Speed (Mb/s)',
 };
 
 // data parser
@@ -107,6 +113,8 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [lines, setLines] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
+  const [yTitle, setYTitle] =
+    useState<d3.Selection<SVGTextElement, unknown, HTMLElement, any>>();
 
   useEffect(() => {
     const svg = d3.select('#line-chart');
@@ -117,10 +125,14 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
     setXAxis(g.append('g'));
     setYAxis(g.append('g'));
     setLines(g.append('g'));
-  }, [setXAxis, setYAxis, setLines]);
+    setYTitle(
+      g.append('g').attr('transform', 'translate(0,10)').append('text'),
+    );
+    g.append('g').attr('transform', 'translate(0,0)').append('text');
+  }, [setXAxis, setYAxis, setLines, setYTitle]);
 
   useEffect(() => {
-    if (!xAxis || !yAxis || !lines) return;
+    if (!xAxis || !yAxis || !lines || !yTitle) return;
 
     const measurements = data1.map(d => {
       return {
@@ -239,17 +251,28 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .call(xAxisGenerator);
 
     yAxis
-      // .attr("transform", `translate(${margin.left},0)`)
-      // // .call(d3.axisLeft((d:tring) => mapType))
-      // .call(g => g.select(".domain").remove())
-      // .call(g => g.select(".tick:last-of-type text").clone()
-      //     .attr("x", 3)
-      //     .attr("text-anchor", "start")
-      //     .attr("font-weight", "bold")
-      //     .text(mapType)
+      // .attr('transform', `translate(0,0)`)
+      // .call(d3.axisLeft((d:string) => mapType))
+      // .call(g => g.select('.domain').remove())
       .transition()
       .duration(1000)
       .call(yAxisGenerator);
+    // .call(g =>
+    //   g
+    //     .select('.tick:last-of-type text')
+    //     // .clone()
+    //     .attr('x', 3)
+    //     .attr('text-anchor', 'start')
+    //     .attr('font-weight', 'bold')
+    //     .text(mapType),
+    // );
+
+    yTitle
+      .attr('x', 3)
+      .attr('font-size', 12)
+      .attr('text-anchor', 'start')
+      .attr('font-weight', 'bold')
+      .text(mapTypeConvert[mapType]);
 
     lines
       .selectAll('.line')
@@ -272,7 +295,7 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .duration(1000)
       .style('opacity', 1)
       .attr('d', d => lineGenerator(d.data));
-  }, [mapType, xAxis, yAxis, lines]);
+  }, [mapType, xAxis, yAxis, lines, yTitle]);
 
   // // ------------------------------------hover-----------------------------
   // (function hover(svg, path) {
