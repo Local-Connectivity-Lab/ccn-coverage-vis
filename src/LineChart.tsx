@@ -39,7 +39,10 @@ const parseLineData = (data: any) => {
 
   let i = 0;
   const colNames = new Set<any>();
-  data.forEach((d: any) => Object.keys(d).forEach(dd => colNames.add(dd)));
+  data.forEach((d: any) =>
+    Object.keys(d.values).forEach(dd => colNames.add(dd)),
+  );
+  console.log(colNames);
   colNames.forEach(col => {
     if (col !== 'date') {
       let o = {
@@ -51,10 +54,10 @@ const parseLineData = (data: any) => {
       for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
         let d0 = data[i0];
 
-        if (d0[col]) {
+        if (d0.values[col]) {
           o.data.push({
-            date: d0.date,
-            value: d0[col],
+            date: new Date(d0.date),
+            value: d0.values[col],
           });
         }
       }
@@ -63,23 +66,6 @@ const parseLineData = (data: any) => {
     i++;
   });
 
-  return output;
-};
-
-const parseData = (data: any) => {
-  const output = [];
-  for (let i = 0, l = data.length; i < l; i++) {
-    let d = data[i],
-      o: any = {};
-
-    o.date = new Date(d.date);
-
-    for (let col in d.values) {
-      o[col] = +d.values[col];
-    }
-
-    output.push(o);
-  }
   return output;
 };
 
@@ -127,8 +113,6 @@ const LineChart = ({
             timestamp: new Date(d.timestamp.substring(0, 10)),
           };
         });
-
-      if (measurements.length === 0) return;
 
       const aggData = measurements.reduce((acc, d) => {
         const time = d.timestamp.toISOString();
@@ -184,12 +168,7 @@ const LineChart = ({
         .x((d: any) => xScale(d.date))
         .y((d: any) => yScale(d.value * MULTIPLIERS[mapType]));
 
-      console.log(aggData2);
-      const data = parseData(
-        aggData2.sort((a, b) => (a.date < b.date ? -1 : 1)),
-      );
-      console.log(data);
-      const lineData = parseLineData(data);
+      const lineData = parseLineData(aggData2);
       console.log(lineData);
 
       // ----------------------------------------- CHART --------------------------------------------------
