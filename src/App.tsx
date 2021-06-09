@@ -12,7 +12,8 @@ import LineChart from './LineChart';
 function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
   const [selectedSites, setSelectedSites] = useState<SidebarOption[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingMap, setLoadingMap] = useState(true);
+  const [loadingLine, setLoadingLine] = useState(true);
 
   document.title = 'Performance Evaluation';
   return (
@@ -24,19 +25,19 @@ function App() {
             <Sidebar
               selectedSites={selectedSites}
               setSelectedSites={setSelectedSites}
-              loading={loading}
+              loading={loadingLine || loadingMap}
             />
           </Grid>
           <Grid item xs={9}>
             <MapSelectionRadio
               mapType={mapType}
               setMapType={setMapType}
-              loading={loading}
+              loading={loadingLine || loadingMap}
             />
             <MeasurementMap
               mapType={mapType}
               selectedSites={selectedSites}
-              setLoading={setLoading}
+              setLoading={setLoadingMap}
               width={910}
               height={500}
             />
@@ -46,6 +47,7 @@ function App() {
               width={910}
               height={200}
               selectedSites={selectedSites}
+              setLoading={setLoadingLine}
             />
           </Grid>
         </Grid>

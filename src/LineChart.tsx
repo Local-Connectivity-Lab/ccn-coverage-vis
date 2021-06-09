@@ -6,6 +6,7 @@ import data1 from './data-small.json';
 
 import sites from './sites.json';
 import { API, MULTIPLIERS } from './MeasurementMap';
+import fetchToJson from './utils/fetch-to-json';
 
 interface LineChartProps {
   mapType: MapType;
@@ -13,6 +14,7 @@ interface LineChartProps {
   width: number;
   height: number;
   selectedSites: SidebarOption[];
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const colors = d3
@@ -21,7 +23,7 @@ const colors = d3
   .range(d3.schemeTableau10);
 
 const margin = {
-  left: 70,
+  left: 50,
   bottom: 20,
   right: 0,
   top: 20,
@@ -51,7 +53,6 @@ const parseLineData = (
   let i = 0;
   const colNames = new Set<string>();
   data.forEach(d => Object.keys(d.values).forEach(dd => colNames.add(dd)));
-  console.log(colNames);
   colNames.forEach(col => {
     if (col !== 'date') {
       const o = {
@@ -84,6 +85,7 @@ const LineChart = ({
   width,
   height,
   selectedSites,
+  setLoading,
 }: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
@@ -107,45 +109,28 @@ const LineChart = ({
       g.append('g').attr('transform', 'translate(0,10)').append('text'),
     );
     g.append('g').attr('transform', 'translate(0,0)').append('text');
-  }, [setXAxis, setYAxis, setLines, setYTitle]);
+    setLoading(false);
+  }, [setXAxis, setYAxis, setLines, setYTitle, setLoading]);
 
   useEffect(() => {
     if (!xAxis || !yAxis || !lines || !yTitle) return;
     (async function () {
+      setLoading(true);
       const _selectedSites = selectedSites.map(ss => ss.label);
 
-      const measurements = data1
-        .filter(d => _selectedSites.includes(d.site))
-        .map(d => {
-          return {
-            ...d,
-            timestamp: new Date(d.timestamp.substring(0, 10)),
-          };
-        });
-
-      const aggData = measurements.reduce((acc, d) => {
-        const time = d.timestamp.toISOString();
-        acc[time] = acc[time] ?? {};
-        acc[time][d.site] = acc[time][d.site] ?? { sum: 0, count: 0 };
-        acc[time][d.site].sum += d[mapType];
-        acc[time][d.site].count++;
-        return acc;
-      }, {} as { [timestamp: string]: { [site: string]: { sum: number; count: number } } });
-
-      const aggData2 = Object.entries(aggData)
-        .map(([k, v]) => {
-          const avgV: { [site: string]: number } = {};
-          Object.entries(v).forEach(([_k, { sum, count }]) => {
-            avgV[_k] = sum / count;
-          });
-          return [k, avgV] as const;
-        })
-        .map(([date, values]) => ({
-          date,
-          values,
-        }));
-
-      aggData2.sort((a, b) => (a.date < b.date ? -1 : 1));
+      const aggData2: {
+        date: string;
+        values: {
+          [site: string]: number;
+        };
+      }[] = await fetchToJson(
+        API +
+          'lineSummary?' +
+          new URLSearchParams([
+            ['mapType', mapType],
+            ['selectedSites', _selectedSites.join(',')],
+          ]),
+      );
 
       const chartWidth = width - margin.left - margin.right;
       const chartHeight = height - margin.top - margin.bottom;
@@ -178,7 +163,6 @@ const LineChart = ({
         .y(d => yScale(d.value * MULTIPLIERS[mapType]));
 
       const lineData = parseLineData(aggData2);
-      console.log(lineData);
 
       // ----------------------------------------- CHART --------------------------------------------------
 
@@ -222,6 +206,7 @@ const LineChart = ({
         .duration(1000)
         .style('opacity', 1)
         .attr('d', d => lineGenerator(d.data));
+      setLoading(false);
     })();
   }, [mapType, xAxis, yAxis, lines, yTitle, selectedSites]);
   return (
