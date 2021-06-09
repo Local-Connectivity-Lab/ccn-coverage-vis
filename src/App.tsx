@@ -7,6 +7,7 @@ import Sidebar from './Sidebar';
 import MeasurementMap from './MeasurementMap';
 import 'fontsource-roboto';
 import './index.css';
+import LineChart from './LineChart';
 
 function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
@@ -37,7 +38,13 @@ function App() {
               selectedSites={selectedSites}
               setLoading={setLoading}
               width={910}
-              height={600}
+              height={500}
+            />
+            <LineChart
+              mapType={mapType}
+              offset={500}
+              width={910}
+              height={200}
             />
           </Grid>
         </Grid>
