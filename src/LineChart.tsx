@@ -6,6 +6,7 @@ import { MapType } from './MapSelectionRadio';
 import sites from './sites.json';
 import { API, MULTIPLIERS } from './MeasurementMap';
 import fetchToJson from './utils/fetch-to-json';
+import Loading from './Loading';
 
 interface LineChartProps {
   mapType: MapType;
@@ -14,6 +15,7 @@ interface LineChartProps {
   height: number;
   selectedSites: SidebarOption[];
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
 }
 
 const colors = d3
@@ -81,6 +83,7 @@ const LineChart = ({
   height,
   selectedSites,
   setLoading,
+  loading,
 }: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
@@ -198,27 +201,25 @@ const LineChart = ({
           enter =>
             enter
               .append('path')
-              .attr('d', d => lineGenerator(d.data))
+              .attr('d', d =>
+                lineGenerator(d.data.map(({ date }) => ({ date, value: 0 }))),
+              )
               .attr('class', 'line')
               .style('fill', 'none')
               .style('stroke', d => d.color)
               .style('stroke-width', 2)
               .style('stroke-linejoin', 'round')
               .style('opacity', 0)
-              .on('mouseover', function (event, d) {
-                tooltip.style('display', 'inline').html(d.key);
-                console.log('over');
-              })
-              .on('mousemove', function (event, d) {
+              .on('mouseover', (_, d) =>
+                tooltip.style('display', 'inline').html(d.key),
+              )
+              .on('mousemove', (event, d) =>
                 tooltip
                   .html(d.key)
                   .style('left', event.pageX + 10 + 'px')
-                  .style('top', event.pageY + 20 + 'px');
-                console.log('move');
-              })
-              .on('mouseout', function (event, d) {
-                tooltip.style('display', 'none');
-              }),
+                  .style('top', event.pageY + 20 + 'px'),
+              )
+              .on('mouseout', () => tooltip.style('display', 'none')),
           update => update,
           exit => exit.remove(),
         )
@@ -239,10 +240,17 @@ const LineChart = ({
     setLoading,
     width,
   ]);
+
   return (
     <>
       <div style={{ height, width, position: 'relative', top: offset }}>
         <svg id='line-chart'></svg>
+        <Loading
+          left={width / 2}
+          top={height / 2}
+          size={70}
+          loading={loading}
+        />
       </div>
       <div id='line-tooltip' style={{ position: 'absolute', opacity: 0 }}></div>
     </>

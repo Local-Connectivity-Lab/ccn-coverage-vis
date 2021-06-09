@@ -40,6 +40,7 @@ function App() {
               setLoading={setLoadingMap}
               width={910}
               height={500}
+              loading={loadingMap}
             />
             <LineChart
               mapType={mapType}
@@ -48,6 +49,7 @@ function App() {
               height={200}
               selectedSites={selectedSites}
               setLoading={setLoadingLine}
+              loading={loadingLine}
             />
           </Grid>
         </Grid>
