@@ -34,21 +34,30 @@ const mapTypeConvert = {
 };
 
 // data parser
-const parseLineData = (data: any) => {
-  const output: any[] = [];
+const parseLineData = (
+  data: {
+    date: string;
+    values: {
+      [site: string]: number;
+    };
+  }[],
+) => {
+  const output: {
+    key: string;
+    color: string;
+    data: { date: Date; value: number }[];
+  }[] = [];
 
   let i = 0;
-  const colNames = new Set<any>();
-  data.forEach((d: any) =>
-    Object.keys(d.values).forEach(dd => colNames.add(dd)),
-  );
+  const colNames = new Set<string>();
+  data.forEach(d => Object.keys(d.values).forEach(dd => colNames.add(dd)));
   console.log(colNames);
   colNames.forEach(col => {
     if (col !== 'date') {
-      let o = {
+      const o = {
         key: col,
-        color: colors(col),
-        data: [] as any[],
+        color: colors(col) + '',
+        data: [] as { date: Date; value: number }[],
       };
 
       for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
@@ -164,9 +173,9 @@ const LineChart = ({
       const yAxisGenerator = d3.axisLeft(yScale);
 
       const lineGenerator = d3
-        .line()
-        .x((d: any) => xScale(d.date))
-        .y((d: any) => yScale(d.value * MULTIPLIERS[mapType]));
+        .line<{ date: Date; value: number }>()
+        .x(d => xScale(d.date))
+        .y(d => yScale(d.value * MULTIPLIERS[mapType]));
 
       const lineData = parseLineData(aggData2);
       console.log(lineData);
