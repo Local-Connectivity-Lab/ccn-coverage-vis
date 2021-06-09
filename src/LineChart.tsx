@@ -1,39 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import * as aq from 'arquero';
-import { op } from 'arquero';
-import { constants } from 'fs';
 
 import { MapType } from './MapSelectionRadio';
 import data1 from './data-small.json';
-import { ExitStatus, updateLanguageServiceSourceFile } from 'typescript';
+
+import sites from './sites.json';
+import { API, MULTIPLIERS } from './MeasurementMap';
+import fetchToJson from './utils/fetch-to-json';
 
 interface LineChartProps {
   mapType: MapType;
   offset: number;
   width: number;
   height: number;
+  selectedSites: SidebarOption[];
 }
 
 const colors = d3
   .scaleOrdinal()
-  .domain(['SURGEtacoma', 'Filipino Community Center', 'David-TCN'])
+  .domain(sites.map(s => s.name))
   .range(d3.schemeTableau10);
-
-// const colors = {
-//   SURGEtacoma: {
-//     light: '#fb9a99',
-//     dark: '#e31a1c',
-//   },
-//   'Filipino Community Center': {
-//     light: '#a6cee3',
-//     dark: '#1f78b4',
-//   },
-//   'David-TCN': {
-//     light: '#fdbf6f',
-//     dark: '#ff7f00',
-//   },
-// };
 
 const margin = {
   left: 70,
@@ -44,8 +31,8 @@ const margin = {
 
 const mapTypeConvert = {
   ping: 'Ping (ms)',
-  upload_speed: 'Upload Speed (Mb/s)',
-  download_speed: 'Download Speed (Mb/s)',
+  upload_speed: 'Upload Speed (Gbps)',
+  download_speed: 'Download Speed (Gbps)',
 };
 
 // data parser
@@ -59,12 +46,7 @@ const parseLineData = (data: any) => {
     if (col !== 'date') {
       let o = {
         key: col,
-
-        // @ts-ignore
-        light: colors[col].light,
-
-        // @ts-ignore
-        dark: colors[col].dark,
+        color: colors(col),
         data: [] as any[],
       };
 
@@ -90,16 +72,12 @@ const parseData = (data: any) => {
   const output = [];
   for (let i = 0, l = data.length; i < l; i++) {
     let d = data[i],
-      o: any = {},
-      s = d.Date.split('/'),
-      yyyy = +s[0],
-      mm = s[1] - 1,
-      dd = +s[2];
+      o: any = {};
 
-    o.date = new Date(yyyy, mm, dd);
+    o.date = new Date(d.date);
 
     for (let col in d) {
-      if (col !== 'Date') {
+      if (col !== 'date') {
         o[col] = +d[col];
       }
     }
@@ -109,7 +87,7 @@ const parseData = (data: any) => {
   return output;
 };
 
-const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
+const LineChart = ({ mapType, offset, width, height, selectedSites }: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [yAxis, setYAxis] =
@@ -136,6 +114,8 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
 
   useEffect(() => {
     if (!xAxis || !yAxis || !lines || !yTitle) return;
+    (async function () {
+    const _selectedSites = selectedSites.map(ss => ss.label)
 
     const measurements = data1.map(d => {
       return {
@@ -147,14 +127,10 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
     const aqTable = aq
       .fromArrow(aq.toArrow(measurements))
       .groupby(['timestamp', 'site'])
-      .rollup({ avgPing: `d => op.mean(d.${mapType})` })
-      .orderby('timestamp');
+      .rollup({ avgPing: `d => op.mean(d.${mapType})` });
 
     const _timestamp = [...aqTable._data.timestamp].map(
-      d =>
-        `${d.getFullYear()}/${d.getMonth() > 8 ? '' : '0'}${d.getMonth() + 1}/${
-          d.getDate() > 9 ? '' : '0'
-        }${d.getDate()}`,
+      (d: Date) => d.toISOString()
     );
 
     const _site = [...aqTable._data.site];
@@ -176,20 +152,12 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       );
 
     const aggData2 = Object.entries(aggData).map(([k, v]) => ({
-      Date: k,
+      date: k,
       // @ts-ignore
       ...v,
     }));
 
-    d3.max(aggData2, d =>
-      Math.max(
-        d['SURGEtacoma'],
-        d['Filipino Community Center'],
-        d['David-TCN'],
-      ),
-    );
-
-    aggData2.sort((a, b) => (a.Date < b.Date ? -1 : 1));
+    aggData2.sort((a, b) => (a.date < b.date ? -1 : 1));
 
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
@@ -198,10 +166,9 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .scaleTime()
       .domain(
         d3
-          .extent(aggData2, d => d.Date)
+          .extent(aggData2, d => d.date)
           .map((date: any) => {
-            const [y, m, d] = date.split('/');
-            return new Date(+y, +m - 1, +d);
+            return new Date(date);
           }),
       )
       .range([0, chartWidth]);
@@ -210,13 +177,13 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .scaleLinear()
       .domain([
         0,
-        d3.max(aggData2, (d: any) =>
+        (d3.max(aggData2, (d: any) =>
           Math.max(
             d['SURGEtacoma'],
             d['Filipino Community Center'],
             d['David-TCN'],
           ),
-        ) ?? 1,
+        ) ?? 1) * MULTIPLIERS[mapType],
       ])
       .range([chartHeight, 0]);
 
@@ -227,9 +194,9 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
     const lineGenerator = d3
       .line()
       .x((d: any) => xScale(d.date))
-      .y((d: any) => yScale(d.value));
+      .y((d: any) => yScale(d.value * MULTIPLIERS[mapType]));
 
-    const data = parseData(aggData2.sort((a, b) => (a.Date < b.Date ? -1 : 1)));
+    const data = parseData(aggData2.sort((a, b) => (a.date < b.date ? -1 : 1)));
     const lineData = parseLineData(data);
 
     // ----------------------------------------- CHART --------------------------------------------------
@@ -263,7 +230,7 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
             .attr('d', d => lineGenerator(d.data))
             .attr('class', 'line')
             .style('fill', 'none')
-            .style('stroke', d => d.light)
+            .style('stroke', d => d.color)
             .style('stroke-width', 2)
             .style('stroke-linejoin', 'round')
             .style('opacity', 0),
@@ -274,7 +241,9 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .duration(1000)
       .style('opacity', 1)
       .attr('d', d => lineGenerator(d.data));
-  }, [mapType, xAxis, yAxis, lines, yTitle]);
+    })();
+
+  }, [mapType, xAxis, yAxis, lines, yTitle, selectedSites]);
   return (
     <div style={{ height, width, position: 'relative', top: offset }}>
       <svg id='line-chart'></svg>

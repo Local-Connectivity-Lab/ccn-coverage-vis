@@ -17,7 +17,7 @@ const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
   devicePixelRatio > 1 ? '@2x' : ''
 }.png`;
 
-const API = 'http://localhost:7593/';
+export const API = 'http://localhost:7593/';
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;

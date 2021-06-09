@@ -45,6 +45,7 @@ function App() {
               offset={500}
               width={910}
               height={200}
+              selectedSites={selectedSites}
             />
           </Grid>
         </Grid>
