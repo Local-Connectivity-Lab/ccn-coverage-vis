@@ -17,11 +17,29 @@ const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
   devicePixelRatio > 1 ? '@2x' : ''
 }.png`;
 
-const API = 'http://attu.cs.washington.edu:7593/';
+const API = 'http://localhost:7593/';
 
 const BIN_SIZE_SHIFT = 1;
 const DEFAULT_ZOOM = 10;
 const LEGEND_WIDTH = 25;
+
+export const UNITS = {
+  ping: 'ms',
+  download_speed: 'Gbps',
+  upload_speed: 'Gbps',
+} as const;
+
+export const MULTIPLIERS = {
+  ping: 1,
+  download_speed: 1 / 1000000,
+  upload_speed: 1 / 1000000,
+} as const;
+
+const MAP_TYPE_CONVERT = {
+  ping: 'Ping',
+  download_speed: 'Download Speed',
+  upload_speed: 'Upload Speed',
+} as const;
 
 interface MapProps {
   mapType: MapType;
@@ -49,6 +67,7 @@ const MeasurementMap = ({
     (async () => {
       const dataRange = await fetchToJson(API + 'dataRange');
       const _sites = await fetchToJson(API + 'sites');
+      const _siteSummary = await fetchToJson(API + 'sitesSummary');
       const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
       const _bounds = getBounds({ ...dataRange, map: _map, width, height });
       const _markers = new Map<string, L.Marker>();
@@ -56,7 +75,9 @@ const MeasurementMap = ({
       if (!isSiteArray(_sites)) {
         throw new Error('data has incorrect type');
       }
-      _sites.forEach(site => _markers.set(site.name, siteMarker(site)));
+      _sites.forEach(site =>
+        _markers.set(site.name, siteMarker(site, _siteSummary[site.name])),
+      );
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
@@ -106,8 +127,8 @@ const MeasurementMap = ({
       );
 
       const colorDomain = [
-        d3.max(bins, d => d) ?? 1,
-        d3.min(bins, d => d) ?? 0,
+        d3.max(bins, d => d * MULTIPLIERS[mapType]) ?? 1,
+        d3.min(bins, d => d * MULTIPLIERS[mapType]) ?? 0,
       ];
 
       const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
@@ -126,7 +147,7 @@ const MeasurementMap = ({
           );
 
           L.rectangle(L.latLngBounds(sw, ne), {
-            fillColor: colorScale(bin),
+            fillColor: colorScale(bin * MULTIPLIERS[mapType]),
             fillOpacity: 0.75,
             stroke: false,
           }).addTo(layer);
@@ -142,7 +163,7 @@ const MeasurementMap = ({
       <div style={{ position: 'absolute', left: width - LEGEND_WIDTH }}>
         <MapLegend
           colorDomain={cDomain}
-          title={mapType}
+          title={`${MAP_TYPE_CONVERT[mapType]} (${UNITS[mapType]})`}
           width={LEGEND_WIDTH}
         ></MapLegend>
       </div>
