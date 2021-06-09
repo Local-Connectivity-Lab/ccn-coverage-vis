@@ -15,20 +15,25 @@ interface LineChartProps {
   height: number;
 }
 
-const colors = {
-  SURGEtacoma: {
-    light: '#fb9a99',
-    dark: '#e31a1c',
-  },
-  'Filipino Community Center': {
-    light: '#a6cee3',
-    dark: '#1f78b4',
-  },
-  'David-TCN': {
-    light: '#fdbf6f',
-    dark: '#ff7f00',
-  },
-};
+const colors = d3
+  .scaleOrdinal()
+  .domain(['SURGEtacoma', 'Filipino Community Center', 'David-TCN'])
+  .range(d3.schemeTableau10);
+
+// const colors = {
+//   SURGEtacoma: {
+//     light: '#fb9a99',
+//     dark: '#e31a1c',
+//   },
+//   'Filipino Community Center': {
+//     light: '#a6cee3',
+//     dark: '#1f78b4',
+//   },
+//   'David-TCN': {
+//     light: '#fdbf6f',
+//     dark: '#ff7f00',
+//   },
+// };
 
 const margin = {
   left: 70,
@@ -101,8 +106,6 @@ const parseData = (data: any) => {
 
     output.push(o);
   }
-
-  // print(output);
   return output;
 };
 
@@ -178,12 +181,6 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       ...v,
     }));
 
-    // constants for config graphs
-    const max_date = d3.max(measurements, d => d.timestamp);
-    const min_date = d3.min(measurements, d => d.timestamp);
-    const max_upload = d3.max(measurements, (d: any) => d.upload_speed);
-    const min_upload = d3.min(measurements, (d: any) => d.upload_speed);
-
     d3.max(aggData2, d =>
       Math.max(
         d['SURGEtacoma'],
@@ -194,9 +191,6 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
 
     aggData2.sort((a, b) => (a.Date < b.Date ? -1 : 1));
 
-    // const width = 600;
-    // const height = width * 0.5;
-    // const last = array => array[array.length - 1];
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
 
@@ -250,22 +244,7 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .duration(1000)
       .call(xAxisGenerator);
 
-    yAxis
-      // .attr('transform', `translate(0,0)`)
-      // .call(d3.axisLeft((d:string) => mapType))
-      // .call(g => g.select('.domain').remove())
-      .transition()
-      .duration(1000)
-      .call(yAxisGenerator);
-    // .call(g =>
-    //   g
-    //     .select('.tick:last-of-type text')
-    //     // .clone()
-    //     .attr('x', 3)
-    //     .attr('text-anchor', 'start')
-    //     .attr('font-weight', 'bold')
-    //     .text(mapType),
-    // );
+    yAxis.transition().duration(1000).call(yAxisGenerator);
 
     yTitle
       .attr('x', 3)
@@ -296,55 +275,6 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       .style('opacity', 1)
       .attr('d', d => lineGenerator(d.data));
   }, [mapType, xAxis, yAxis, lines, yTitle]);
-
-  // // ------------------------------------hover-----------------------------
-  // (function hover(svg, path) {
-
-  //   if ("ontouchstart" in document) svg
-  //       .style("-webkit-tap-highlight-color", "transparent")
-  //       .on("touchmove", moved)
-  //       .on("touchstart", entered)
-  //       .on("touchend", left)
-  //   else svg
-  //       .on("mousemove", moved)
-  //       .on("mouseenter", entered)
-  //       .on("mouseleave", left);
-
-  //   const dot = svg.append("g")
-  //       .attr("display", "none");
-
-  //   dot.append("circle")
-  //       .attr("r", 2.5);
-
-  //   dot.append("text")
-  //       .attr("font-family", "sans-serif")
-  //       .attr("font-size", 10)
-  //       .attr("text-anchor", "middle")
-  //       .attr("y", -8);
-
-  //   function moved(event) {
-  //     event.preventDefault();
-  //     const pointer = d3.pointer(event, this);
-  //     const xm = x.invert(pointer[0]);
-  //     const ym = y.invert(pointer[1]);
-  //     const i = d3.bisectCenter(data.dates, xm);
-  //     const s = d3.least(data.series, d => Math.abs(d.values[i] - ym));
-  //     path.attr("stroke", d => d === s ? null : "#ddd").filter(d => d === s).raise();
-  //     dot.attr("transform", `translate(${x(data.dates[i])},${y(s.values[i])})`);
-  //     dot.select("text").text(s.name);
-  //   }
-
-  //   function entered() {
-  //     path.style("mix-blend-mode", null).attr("stroke", "#ddd");
-  //     dot.attr("display", null);
-  //   }
-
-  //   function left() {
-  //     path.style("mix-blend-mode", "multiply").attr("stroke", null);
-  //     dot.attr("display", "none");
-  //   }
-  // });
-  // // ------------------------------------hover ends---------------------------
   return (
     <div style={{ height, width, position: 'relative', top: offset }}>
       <svg id='line-chart'></svg>
