@@ -76,10 +76,8 @@ const parseData = (data: any) => {
 
     o.date = new Date(d.date);
 
-    for (let col in d) {
-      if (col !== 'date') {
-        o[col] = +d[col];
-      }
+    for (let col in d.values) {
+      o[col] = +d.values[col];
     }
 
     output.push(o);
@@ -87,7 +85,13 @@ const parseData = (data: any) => {
   return output;
 };
 
-const LineChart = ({ mapType, offset, width, height, selectedSites }: LineChartProps) => {
+const LineChart = ({
+  mapType,
+  offset,
+  width,
+  height,
+  selectedSites,
+}: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [yAxis, setYAxis] =
@@ -115,134 +119,138 @@ const LineChart = ({ mapType, offset, width, height, selectedSites }: LineChartP
   useEffect(() => {
     if (!xAxis || !yAxis || !lines || !yTitle) return;
     (async function () {
-    const _selectedSites = selectedSites.map(ss => ss.label)
+      const _selectedSites = selectedSites.map(ss => ss.label);
 
-    const measurements = data1.map(d => {
-      return {
-        ...d,
-        timestamp: new Date(d.timestamp.substring(0, 10)),
-      };
-    });
+      const measurements = data1
+        .filter(d => _selectedSites.includes(d.site))
+        .map(d => {
+          return {
+            ...d,
+            timestamp: new Date(d.timestamp.substring(0, 10)),
+          };
+        });
 
-    const aqTable = aq
-      .fromArrow(aq.toArrow(measurements))
-      .groupby(['timestamp', 'site'])
-      .rollup({ avgPing: `d => op.mean(d.${mapType})` });
+      if (measurements.length === 0) return;
 
-    const _timestamp = [...aqTable._data.timestamp].map(
-      (d: Date) => d.toISOString()
-    );
+      const aqTable = aq
+        .fromArrow(aq.toArrow(measurements))
+        .groupby(['timestamp', 'site'])
+        .rollup({ avgPing: `d => op.mean(d.${mapType})` });
 
-    const _site = [...aqTable._data.site];
-    const _avgPing = [...aqTable._data.avgPing];
-
-    const aggData = _timestamp
-      .map((t, i) => ({
-        timestamp: t,
-        site: _site[i],
-        avgPing: _avgPing[i],
-      }))
-      .reduce(
-        (acc: any, d: any) => (
-          (acc[d.timestamp] = acc[d.timestamp] || {}),
-          (acc[d.timestamp][d.site] = d.avgPing),
-          acc
-        ),
-        {},
+      const _timestamp: string[] = [...aqTable._data.timestamp].map((d: Date) =>
+        d.toISOString(),
       );
 
-    const aggData2 = Object.entries(aggData).map(([k, v]) => ({
-      date: k,
-      // @ts-ignore
-      ...v,
-    }));
+      const _site: string[] = [...aqTable._data.site];
+      const _avgPing: number[] = [...aqTable._data.avgPing];
 
-    aggData2.sort((a, b) => (a.date < b.date ? -1 : 1));
-
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
-
-    const xScale = d3
-      .scaleTime()
-      .domain(
-        d3
-          .extent(aggData2, d => d.date)
-          .map((date: any) => {
-            return new Date(date);
-          }),
-      )
-      .range([0, chartWidth]);
-
-    const yScale = d3
-      .scaleLinear()
-      .domain([
-        0,
-        (d3.max(aggData2, (d: any) =>
-          Math.max(
-            d['SURGEtacoma'],
-            d['Filipino Community Center'],
-            d['David-TCN'],
+      const aggData = _timestamp
+        .map((t, i) => ({
+          timestamp: t,
+          site: _site[i],
+          avgPing: _avgPing[i],
+        }))
+        .reduce(
+          (acc, d) => (
+            (acc[d.timestamp] = acc[d.timestamp] || {}),
+            (acc[d.timestamp][d.site] = d.avgPing),
+            acc
           ),
-        ) ?? 1) * MULTIPLIERS[mapType],
-      ])
-      .range([chartHeight, 0]);
+          {} as { [timestamp: string]: { [site: string]: number } },
+        );
 
-    const xAxisGenerator = d3.axisBottom(xScale);
+      const aggData2 = Object.entries(aggData).map(([k, v]) => ({
+        date: k,
+        values: {
+          ...v,
+        },
+      }));
 
-    const yAxisGenerator = d3.axisLeft(yScale);
+      aggData2.sort((a, b) => (a.date < b.date ? -1 : 1));
 
-    const lineGenerator = d3
-      .line()
-      .x((d: any) => xScale(d.date))
-      .y((d: any) => yScale(d.value * MULTIPLIERS[mapType]));
+      const chartWidth = width - margin.left - margin.right;
+      const chartHeight = height - margin.top - margin.bottom;
 
-    const data = parseData(aggData2.sort((a, b) => (a.date < b.date ? -1 : 1)));
-    const lineData = parseLineData(data);
+      const xScale = d3
+        .scaleTime()
+        .domain(
+          d3
+            .extent(aggData2, d => d.date)
+            .map((date: any) => {
+              return new Date(date);
+            }),
+        )
+        .range([0, chartWidth]);
 
-    // ----------------------------------------- CHART --------------------------------------------------
+      const yScale = d3
+        .scaleLinear()
+        .domain([
+          0,
+          (d3.max(aggData2, d => Math.max(...Object.values(d.values))) ?? 1) *
+            MULTIPLIERS[mapType],
+        ])
+        .range([chartHeight, 0]);
 
-    const svg = d3.select('#line-chart');
+      const xAxisGenerator = d3.axisBottom(xScale);
 
-    svg.attr('width', width).attr('height', height);
+      const yAxisGenerator = d3.axisLeft(yScale);
 
-    xAxis
-      .attr('transform', `translate(0, ${chartHeight})`)
-      .transition()
-      .duration(1000)
-      .call(xAxisGenerator);
+      const lineGenerator = d3
+        .line()
+        .x((d: any) => xScale(d.date))
+        .y((d: any) => yScale(d.value * MULTIPLIERS[mapType]));
 
-    yAxis.transition().duration(1000).call(yAxisGenerator);
+      console.log(aggData2);
+      const data = parseData(
+        aggData2.sort((a, b) => (a.date < b.date ? -1 : 1)),
+      );
+      console.log(data);
+      const lineData = parseLineData(data);
+      console.log(lineData);
 
-    yTitle
-      .attr('x', 3)
-      .attr('font-size', 12)
-      .attr('text-anchor', 'start')
-      .attr('font-weight', 'bold')
-      .text(mapTypeConvert[mapType]);
+      // ----------------------------------------- CHART --------------------------------------------------
 
-    lines
-      .selectAll('.line')
-      .data(lineData, (d: any) => d.key)
-      .join(
-        enter =>
-          enter
-            .append('path')
-            .attr('d', d => lineGenerator(d.data))
-            .attr('class', 'line')
-            .style('fill', 'none')
-            .style('stroke', d => d.color)
-            .style('stroke-width', 2)
-            .style('stroke-linejoin', 'round')
-            .style('opacity', 0),
-        update => update,
-        exit => exit.remove(),
-      )
-      .transition()
-      .duration(1000)
-      .style('opacity', 1)
-      .attr('d', d => lineGenerator(d.data));
+      const svg = d3.select('#line-chart');
+
+      svg.attr('width', width).attr('height', height);
+
+      xAxis
+        .attr('transform', `translate(0, ${chartHeight})`)
+        .transition()
+        .duration(1000)
+        .call(xAxisGenerator);
+
+      yAxis.transition().duration(1000).call(yAxisGenerator);
+
+      yTitle
+        .attr('x', 3)
+        .attr('font-size', 12)
+        .attr('text-anchor', 'start')
+        .attr('font-weight', 'bold')
+        .text(mapTypeConvert[mapType]);
+
+      lines
+        .selectAll('.line')
+        .data(lineData, (d: any) => d.key)
+        .join(
+          enter =>
+            enter
+              .append('path')
+              .attr('d', d => lineGenerator(d.data))
+              .attr('class', 'line')
+              .style('fill', 'none')
+              .style('stroke', d => d.color)
+              .style('stroke-width', 2)
+              .style('stroke-linejoin', 'round')
+              .style('opacity', 0),
+          update => update,
+          exit => exit.remove(),
+        )
+        .transition()
+        .duration(1000)
+        .style('opacity', 1)
+        .attr('d', d => lineGenerator(d.data));
     })();
-
   }, [mapType, xAxis, yAxis, lines, yTitle, selectedSites]);
   return (
     <div style={{ height, width, position: 'relative', top: offset }}>
