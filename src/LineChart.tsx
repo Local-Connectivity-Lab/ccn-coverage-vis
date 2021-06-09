@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
-import * as aq from 'arquero';
 
 import { MapType } from './MapSelectionRadio';
 import data1 from './data-small.json';
 
 import sites from './sites.json';
 import { API, MULTIPLIERS } from './MeasurementMap';
-import fetchToJson from './utils/fetch-to-json';
 
 interface LineChartProps {
   mapType: MapType;
@@ -132,39 +130,27 @@ const LineChart = ({
 
       if (measurements.length === 0) return;
 
-      const aqTable = aq
-        .fromArrow(aq.toArrow(measurements))
-        .groupby(['timestamp', 'site'])
-        .rollup({ avgPing: `d => op.mean(d.${mapType})` });
+      const aggData = measurements.reduce((acc, d) => {
+        const time = d.timestamp.toISOString();
+        acc[time] = acc[time] ?? {};
+        acc[time][d.site] = acc[time][d.site] ?? { sum: 0, count: 0 };
+        acc[time][d.site].sum += d[mapType];
+        acc[time][d.site].count++;
+        return acc;
+      }, {} as { [timestamp: string]: { [site: string]: { sum: number; count: number } } });
 
-      const _timestamp: string[] = [...aqTable._data.timestamp].map((d: Date) =>
-        d.toISOString(),
-      );
-
-      const _site: string[] = [...aqTable._data.site];
-      const _avgPing: number[] = [...aqTable._data.avgPing];
-
-      const aggData = _timestamp
-        .map((t, i) => ({
-          timestamp: t,
-          site: _site[i],
-          avgPing: _avgPing[i],
-        }))
-        .reduce(
-          (acc, d) => (
-            (acc[d.timestamp] = acc[d.timestamp] || {}),
-            (acc[d.timestamp][d.site] = d.avgPing),
-            acc
-          ),
-          {} as { [timestamp: string]: { [site: string]: number } },
-        );
-
-      const aggData2 = Object.entries(aggData).map(([k, v]) => ({
-        date: k,
-        values: {
-          ...v,
-        },
-      }));
+      const aggData2 = Object.entries(aggData)
+        .map(([k, v]) => {
+          const avgV: { [site: string]: number } = {};
+          Object.entries(v).forEach(([_k, { sum, count }]) => {
+            avgV[_k] = sum / count;
+          });
+          return [k, avgV] as const;
+        })
+        .map(([date, values]) => ({
+          date,
+          values,
+        }));
 
       aggData2.sort((a, b) => (a.date < b.date ? -1 : 1));
 
@@ -175,10 +161,8 @@ const LineChart = ({
         .scaleTime()
         .domain(
           d3
-            .extent(aggData2, d => d.date)
-            .map((date: any) => {
-              return new Date(date);
-            }),
+            .extent(aggData2, d => new Date(d.date))
+            .map((d?: Date) => d ?? new Date(0)),
         )
         .range([0, chartWidth]);
 
