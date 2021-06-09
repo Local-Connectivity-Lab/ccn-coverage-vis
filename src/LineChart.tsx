@@ -1,42 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
-import * as aq from 'arquero';
-import { op } from 'arquero';
-import { constants } from 'fs';
 
 import { MapType } from './MapSelectionRadio';
-import data1 from './data-small.json';
-import { ExitStatus, updateLanguageServiceSourceFile } from 'typescript';
+
+import sites from './sites.json';
+import { API, MULTIPLIERS } from './MeasurementMap';
+import fetchToJson from './utils/fetch-to-json';
 
 interface LineChartProps {
   mapType: MapType;
   offset: number;
   width: number;
   height: number;
+  selectedSites: SidebarOption[];
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const colors = d3
   .scaleOrdinal()
-  .domain(['SURGEtacoma', 'Filipino Community Center', 'David-TCN'])
+  .domain(sites.map(s => s.name))
   .range(d3.schemeTableau10);
 
-// const colors = {
-//   SURGEtacoma: {
-//     light: '#fb9a99',
-//     dark: '#e31a1c',
-//   },
-//   'Filipino Community Center': {
-//     light: '#a6cee3',
-//     dark: '#1f78b4',
-//   },
-//   'David-TCN': {
-//     light: '#fdbf6f',
-//     dark: '#ff7f00',
-//   },
-// };
-
 const margin = {
-  left: 70,
+  left: 50,
   bottom: 20,
   right: 0,
   top: 20,
@@ -44,72 +30,58 @@ const margin = {
 
 const mapTypeConvert = {
   ping: 'Ping (ms)',
-  upload_speed: 'Upload Speed (Mb/s)',
-  download_speed: 'Download Speed (Mb/s)',
+  upload_speed: 'Upload Speed (Gbps)',
+  download_speed: 'Download Speed (Gbps)',
 };
 
 // data parser
-const parseLineData = (data: any) => {
-  const output: any[] = [];
+const parseLineData = (
+  data: {
+    date: string;
+    values: {
+      [site: string]: number;
+    };
+  }[],
+) => {
+  const output: {
+    key: string;
+    color: string;
+    data: { date: Date; value: number }[];
+  }[] = [];
 
-  let i = 0;
-  const colNames = new Set<any>();
-  data.forEach((d: any) => Object.keys(d).forEach(dd => colNames.add(dd)));
+  const colNames = new Set<string>();
+  data.forEach(d => Object.keys(d.values).forEach(dd => colNames.add(dd)));
   colNames.forEach(col => {
-    if (col !== 'date') {
-      let o = {
-        key: col,
+    const o = {
+      key: col,
+      color: colors(col) + '',
+      data: [] as { date: Date; value: number }[],
+    };
 
-        // @ts-ignore
-        light: colors[col].light,
+    for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
+      let d0 = data[i0];
 
-        // @ts-ignore
-        dark: colors[col].dark,
-        data: [] as any[],
-      };
-
-      for (let i0 = 0, l0 = data.length; i0 < l0; i0++) {
-        let d0 = data[i0];
-
-        if (d0[col]) {
-          o.data.push({
-            date: d0.date,
-            value: d0[col],
-          });
-        }
+      if (d0.values[col]) {
+        o.data.push({
+          date: new Date(d0.date),
+          value: d0.values[col],
+        });
       }
-      output.push(o);
     }
-    i++;
+    output.push(o);
   });
 
   return output;
 };
 
-const parseData = (data: any) => {
-  const output = [];
-  for (let i = 0, l = data.length; i < l; i++) {
-    let d = data[i],
-      o: any = {},
-      s = d.Date.split('/'),
-      yyyy = +s[0],
-      mm = s[1] - 1,
-      dd = +s[2];
-
-    o.date = new Date(yyyy, mm, dd);
-
-    for (let col in d) {
-      if (col !== 'Date') {
-        o[col] = +d[col];
-      }
-    }
-
-    output.push(o);
-  }
-  return output;
-};
-
-const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
+const LineChart = ({
+  mapType,
+  offset,
+  width,
+  height,
+  selectedSites,
+  setLoading,
+}: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [yAxis, setYAxis] =
@@ -132,153 +104,148 @@ const LineChart = ({ mapType, offset, width, height }: LineChartProps) => {
       g.append('g').attr('transform', 'translate(0,10)').append('text'),
     );
     g.append('g').attr('transform', 'translate(0,0)').append('text');
-  }, [setXAxis, setYAxis, setLines, setYTitle]);
+    setLoading(false);
+  }, [setXAxis, setYAxis, setLines, setYTitle, setLoading]);
 
   useEffect(() => {
     if (!xAxis || !yAxis || !lines || !yTitle) return;
+    (async function () {
+      setLoading(true);
+      const _selectedSites = selectedSites.map(ss => ss.label);
 
-    const measurements = data1.map(d => {
-      return {
-        ...d,
-        timestamp: new Date(d.timestamp.substring(0, 10)),
-      };
-    });
-
-    const aqTable = aq
-      .fromArrow(aq.toArrow(measurements))
-      .groupby(['timestamp', 'site'])
-      .rollup({ avgPing: `d => op.mean(d.${mapType})` })
-      .orderby('timestamp');
-
-    const _timestamp = [...aqTable._data.timestamp].map(
-      d =>
-        `${d.getFullYear()}/${d.getMonth() > 8 ? '' : '0'}${d.getMonth() + 1}/${
-          d.getDate() > 9 ? '' : '0'
-        }${d.getDate()}`,
-    );
-
-    const _site = [...aqTable._data.site];
-    const _avgPing = [...aqTable._data.avgPing];
-
-    const aggData = _timestamp
-      .map((t, i) => ({
-        timestamp: t,
-        site: _site[i],
-        avgPing: _avgPing[i],
-      }))
-      .reduce(
-        (acc: any, d: any) => (
-          (acc[d.timestamp] = acc[d.timestamp] || {}),
-          (acc[d.timestamp][d.site] = d.avgPing),
-          acc
-        ),
-        {},
+      const aggData2: {
+        date: string;
+        values: {
+          [site: string]: number;
+        };
+      }[] = await fetchToJson(
+        API +
+          'lineSummary?' +
+          new URLSearchParams([
+            ['mapType', mapType],
+            ['selectedSites', _selectedSites.join(',')],
+          ]),
       );
 
-    const aggData2 = Object.entries(aggData).map(([k, v]) => ({
-      Date: k,
-      // @ts-ignore
-      ...v,
-    }));
+      const chartWidth = width - margin.left - margin.right;
+      const chartHeight = height - margin.top - margin.bottom;
 
-    d3.max(aggData2, d =>
-      Math.max(
-        d['SURGEtacoma'],
-        d['Filipino Community Center'],
-        d['David-TCN'],
-      ),
-    );
+      const xScale = d3
+        .scaleTime()
+        .domain(
+          d3
+            .extent(aggData2, d => new Date(d.date))
+            .map((d?: Date) => d ?? new Date(0)),
+        )
+        .range([0, chartWidth]);
 
-    aggData2.sort((a, b) => (a.Date < b.Date ? -1 : 1));
+      const yScale = d3
+        .scaleLinear()
+        .domain([
+          0,
+          (d3.max(aggData2, d => Math.max(...Object.values(d.values))) ?? 1) *
+            MULTIPLIERS[mapType],
+        ])
+        .range([chartHeight, 0]);
 
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+      const xAxisGenerator = d3.axisBottom(xScale);
 
-    const xScale = d3
-      .scaleTime()
-      .domain(
-        d3
-          .extent(aggData2, d => d.Date)
-          .map((date: any) => {
-            const [y, m, d] = date.split('/');
-            return new Date(+y, +m - 1, +d);
-          }),
-      )
-      .range([0, chartWidth]);
+      const yAxisGenerator = d3.axisLeft(yScale);
 
-    const yScale = d3
-      .scaleLinear()
-      .domain([
-        0,
-        d3.max(aggData2, (d: any) =>
-          Math.max(
-            d['SURGEtacoma'],
-            d['Filipino Community Center'],
-            d['David-TCN'],
-          ),
-        ) ?? 1,
-      ])
-      .range([chartHeight, 0]);
+      const lineGenerator = d3
+        .line<{ date: Date; value: number }>()
+        .x(d => xScale(d.date))
+        .y(d => yScale(d.value * MULTIPLIERS[mapType]));
 
-    const xAxisGenerator = d3.axisBottom(xScale);
+      const lineData = parseLineData(aggData2);
 
-    const yAxisGenerator = d3.axisLeft(yScale);
+      // ----------------------------------------- CHART --------------------------------------------------
 
-    const lineGenerator = d3
-      .line()
-      .x((d: any) => xScale(d.date))
-      .y((d: any) => yScale(d.value));
+      const svg = d3.select('#line-chart');
+      const tooltip = d3
+        .select('#line-tooltip')
+        .style('position', 'absolute')
+        .style('background-color', 'white')
+        .style('border', 'solid')
+        .style('border-width', '2px')
+        .style('border-radius', '3px')
+        .style('padding', '3px')
+        .style('font-size', 'small')
+        .style('opacity', 1)
+        .style('display', 'none');
 
-    const data = parseData(aggData2.sort((a, b) => (a.Date < b.Date ? -1 : 1)));
-    const lineData = parseLineData(data);
+      svg.attr('width', width).attr('height', height);
 
-    // ----------------------------------------- CHART --------------------------------------------------
+      xAxis
+        .attr('transform', `translate(0, ${chartHeight})`)
+        .transition()
+        .duration(1000)
+        .call(xAxisGenerator);
 
-    const svg = d3.select('#line-chart');
+      yAxis.transition().duration(1000).call(yAxisGenerator);
 
-    svg.attr('width', width).attr('height', height);
+      yTitle
+        .attr('x', 3)
+        .attr('font-size', 12)
+        .attr('text-anchor', 'start')
+        .attr('font-weight', 'bold')
+        .text(mapTypeConvert[mapType]);
 
-    xAxis
-      .attr('transform', `translate(0, ${chartHeight})`)
-      .transition()
-      .duration(1000)
-      .call(xAxisGenerator);
-
-    yAxis.transition().duration(1000).call(yAxisGenerator);
-
-    yTitle
-      .attr('x', 3)
-      .attr('font-size', 12)
-      .attr('text-anchor', 'start')
-      .attr('font-weight', 'bold')
-      .text(mapTypeConvert[mapType]);
-
-    lines
-      .selectAll('.line')
-      .data(lineData, (d: any) => d.key)
-      .join(
-        enter =>
-          enter
-            .append('path')
-            .attr('d', d => lineGenerator(d.data))
-            .attr('class', 'line')
-            .style('fill', 'none')
-            .style('stroke', d => d.light)
-            .style('stroke-width', 2)
-            .style('stroke-linejoin', 'round')
-            .style('opacity', 0),
-        update => update,
-        exit => exit.remove(),
-      )
-      .transition()
-      .duration(1000)
-      .style('opacity', 1)
-      .attr('d', d => lineGenerator(d.data));
-  }, [mapType, xAxis, yAxis, lines, yTitle]);
+      lines
+        .selectAll('.line')
+        .data(lineData, (d: any) => d.key)
+        .join(
+          enter =>
+            enter
+              .append('path')
+              .attr('d', d => lineGenerator(d.data))
+              .attr('class', 'line')
+              .style('fill', 'none')
+              .style('stroke', d => d.color)
+              .style('stroke-width', 2)
+              .style('stroke-linejoin', 'round')
+              .style('opacity', 0)
+              .on('mouseover', function (event, d) {
+                tooltip.style('display', 'inline').html(d.key);
+                console.log('over');
+              })
+              .on('mousemove', function (event, d) {
+                tooltip
+                  .html(d.key)
+                  .style('left', event.pageX + 10 + 'px')
+                  .style('top', event.pageY + 20 + 'px');
+                console.log('move');
+              })
+              .on('mouseout', function (event, d) {
+                tooltip.style('display', 'none');
+              }),
+          update => update,
+          exit => exit.remove(),
+        )
+        .transition()
+        .duration(1000)
+        .style('opacity', 1)
+        .attr('d', d => lineGenerator(d.data));
+      setLoading(false);
+    })();
+  }, [
+    mapType,
+    xAxis,
+    yAxis,
+    lines,
+    yTitle,
+    selectedSites,
+    height,
+    setLoading,
+    width,
+  ]);
   return (
-    <div style={{ height, width, position: 'relative', top: offset }}>
-      <svg id='line-chart'></svg>
-    </div>
+    <>
+      <div style={{ height, width, position: 'relative', top: offset }}>
+        <svg id='line-chart'></svg>
+      </div>
+      <div id='line-tooltip' style={{ position: 'absolute', opacity: 0 }}></div>
+    </>
   );
 };
 
