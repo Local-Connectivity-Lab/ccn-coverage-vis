@@ -6,6 +6,7 @@ import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
 import getBounds from './utils/get-bounds';
 import MapLegend from './MapLegend';
 import fetchToJson from './utils/fetch-to-json';
+import Loading from './Loading';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -47,6 +48,7 @@ interface MapProps {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   width: number;
   height: number;
+  loading: boolean;
 }
 
 const MeasurementMap = ({
@@ -55,6 +57,7 @@ const MeasurementMap = ({
   setLoading,
   width,
   height,
+  loading,
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
@@ -167,6 +170,7 @@ const MeasurementMap = ({
           width={LEGEND_WIDTH}
         ></MapLegend>
       </div>
+      <Loading left={width / 2} top={height / 2} size={70} loading={loading} />
     </div>
   );
 };
