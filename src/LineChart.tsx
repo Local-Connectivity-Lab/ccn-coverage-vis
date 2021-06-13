@@ -32,8 +32,8 @@ const margin = {
 
 const mapTypeConvert = {
   ping: 'Ping (ms)',
-  upload_speed: 'Upload Speed (Gbps)',
-  download_speed: 'Download Speed (Gbps)',
+  upload_speed: 'Upload Speed (Mbps)',
+  download_speed: 'Download Speed (Mbps)',
 };
 
 const LineChart = ({

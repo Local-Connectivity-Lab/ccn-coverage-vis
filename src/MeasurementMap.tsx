@@ -26,8 +26,8 @@ const LEGEND_WIDTH = 25;
 
 export const UNITS = {
   ping: 'ms',
-  download_speed: 'Gbps',
-  upload_speed: 'Gbps',
+  download_speed: 'Mbps',
+  upload_speed: 'Mbps',
 } as const;
 
 export const MULTIPLIERS = {

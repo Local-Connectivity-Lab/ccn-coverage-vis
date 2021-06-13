@@ -17,11 +17,11 @@ jobs:
           persist-credentials: false
 
       - name: Install Node dependencies
-        run: yarn --frozen-lockfile
+        run: npm ci
 
       - name: Format
         if: github.ref != 'refs/heads/main'
-        run: yarn format
+        run: npm run format
 
       - name: Setup Git remote
         run: ./scripts/setup-git-ci.sh
