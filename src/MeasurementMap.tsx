@@ -79,7 +79,10 @@ const MeasurementMap = ({
         throw new Error('data has incorrect type');
       }
       _sites.forEach(site =>
-        _markers.set(site.name, siteMarker(site, _siteSummary[site.name])),
+        _markers.set(
+          site.name,
+          siteMarker(site, _siteSummary[site.name]).addTo(_map),
+        ),
       );
 
       L.tileLayer(URL, {
@@ -102,9 +105,9 @@ const MeasurementMap = ({
 
     markers.forEach((marker, site) => {
       if (selectedSites.some(s => s.label === site)) {
-        marker.addTo(map);
+        marker.setOpacity(1);
       } else {
-        marker.removeFrom(map);
+        marker.setOpacity(0.5);
       }
     });
   }, [selectedSites, map, markers]);
