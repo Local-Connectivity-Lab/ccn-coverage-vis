@@ -26,7 +26,7 @@ export default function siteMarker(
   site: Site,
   summary: { ping: number; upload_speed: number; download_speed: number },
 ) {
-  return L.marker([site.latitude, site.longitude]).bindPopup(
+  return L.marker([site.latitude, site.longitude]).bindTooltip(
     `${site.name} <span style="background-color: ${statusColor.get(
       site.status,
     )}">[${site.status}]</span><br />${site.address}<br/>ping: ${round2(
