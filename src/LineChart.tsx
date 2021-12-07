@@ -31,6 +31,7 @@ const margin = {
 };
 
 const mapTypeConvert = {
+  dbm: 'Signal Strength (dB)',
   ping: 'Ping (ms)',
   upload_speed: 'Upload Speed (Mbps)',
   download_speed: 'Download Speed (Mbps)',
@@ -82,11 +83,11 @@ const LineChart = ({
       }[] = (
         await fetchToJson(
           API +
-            'lineSummary?' +
-            new URLSearchParams([
-              ['mapType', mapType],
-              ['selectedSites', _selectedSites.join(',')],
-            ]),
+          'lineSummary?' +
+          new URLSearchParams([
+            ['mapType', mapType],
+            ['selectedSites', _selectedSites.join(',')],
+          ]),
         )
       ).map((d: any) => ({
         site: d.site,

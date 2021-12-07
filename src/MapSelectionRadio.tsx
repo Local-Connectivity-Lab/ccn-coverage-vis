@@ -1,5 +1,4 @@
 import React from 'react';
-import Container from '@material-ui/core/Container';
 import Radio from '@material-ui/core/Radio';
 import Typography from '@material-ui/core/Typography';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -9,6 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import 'fontsource-roboto';
 
 const MAP_TYPE_INDEX = {
+  dbm: 1,
   ping: 1,
   upload_speed: 1,
   download_speed: 1,
@@ -46,7 +46,7 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
           onChange={handleChange}
         >
           {/* remove signal for now because we don't have "signal" in our mock data */}
-          {/* <FormControlLabel value="signal" control={<Radio />} label="Signal" /> */}
+          <FormControlLabel value="dbm" control={<Radio />} label="Signal Strength" />
           <FormControlLabel
             value='upload_speed'
             control={<Radio />}
