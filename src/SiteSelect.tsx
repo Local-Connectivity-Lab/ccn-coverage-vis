@@ -1,6 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import {MultiSelect} from 'react-multi-select-component';
+import Box from '@material-ui/core/Box';
+import { MultiSelect } from 'react-multi-select-component';
 import 'fontsource-roboto';
 import sites from './sites.json';
 
@@ -12,9 +13,9 @@ interface SidebarProps {
   loading: boolean;
 }
 
-const Sidebar = (props: SidebarProps) => {
+const SiteSelect = (props: SidebarProps) => {
   return (
-    <div>
+    <Box mb={2}>
       <Typography variant='overline'>Select Sites</Typography>
       <MultiSelect
         options={options}
@@ -23,8 +24,8 @@ const Sidebar = (props: SidebarProps) => {
         labelledBy='Select'
         disabled={props.loading}
       />
-    </div>
+    </Box>
   );
 };
 
-export default Sidebar;
+export default SiteSelect;

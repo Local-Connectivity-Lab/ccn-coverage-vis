@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box'
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import Navbar from './Navbar';
-import Sidebar from './Sidebar';
+import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import 'fontsource-roboto';
 import './index.css';
@@ -22,18 +23,18 @@ function App() {
       <Container>
         <Grid container spacing={3}>
           <Grid item xs={3}>
-            <Sidebar
+            <SiteSelect
               selectedSites={selectedSites}
               setSelectedSites={setSelectedSites}
               loading={loadingLine || loadingMap}
             />
-          </Grid>
-          <Grid item xs={9}>
             <MapSelectionRadio
               mapType={mapType}
               setMapType={setMapType}
               loading={loadingLine || loadingMap}
             />
+          </Grid>
+          <Grid item xs={9}>
             <MeasurementMap
               mapType={mapType}
               selectedSites={selectedSites}
