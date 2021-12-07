@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import MultiSelect from 'react-multi-select-component';
+import {MultiSelect} from 'react-multi-select-component';
 import 'fontsource-roboto';
 import sites from './sites.json';
 
