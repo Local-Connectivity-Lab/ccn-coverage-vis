@@ -19,7 +19,7 @@ const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${d
 
 export const API = 'https://api-dev.seattlecommunitynetwork.org/api/';
 
-const BIN_SIZE_SHIFT = 1;
+const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
 const LEGEND_WIDTH = 25;
 
