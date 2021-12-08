@@ -24,7 +24,7 @@ const DEFAULT_ZOOM = 10;
 const LEGEND_WIDTH = 25;
 
 export const UNITS = {
-  dbm: 'dB',
+  dbm: 'dBm',
   ping: 'ms',
   download_speed: 'Mbps',
   upload_speed: 'Mbps',
@@ -33,8 +33,8 @@ export const UNITS = {
 export const MULTIPLIERS = {
   dbm: 1,
   ping: 1,
-  download_speed: 1 / 1000000,
-  upload_speed: 1 / 1000000
+  download_speed: 1,
+  upload_speed: 1
 } as const;
 
 const MAP_TYPE_CONVERT = {
