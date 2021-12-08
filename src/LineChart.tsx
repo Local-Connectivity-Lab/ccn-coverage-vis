@@ -109,11 +109,18 @@ const LineChart = ({
             .map((d?: Date) => d ?? new Date(0)),
         )
         .range([0, chartWidth]);
-
-      const yScale = d3
-        .scaleLinear()
-        .domain([0, (d3.max(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType]])
-        .range([chartHeight, 0]);
+      let yScale: any;
+      if (mapType === 'dbm') {
+        yScale = d3
+          .scaleLinear()
+          .domain([(d3.max(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType], (d3.min(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType]])
+          .range([0, chartHeight]);
+      } else {
+        yScale = d3
+          .scaleLinear()
+          .domain([0, (d3.max(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType]])
+          .range([chartHeight, 0]);
+      }
 
       const xAxisGenerator = d3.axisBottom(xScale);
 
