@@ -25,8 +25,8 @@ const colors = d3
 
 const margin = {
   left: 50,
-  bottom: 20,
-  right: 0,
+  bottom: 30,
+  right: 20,
   top: 20,
 };
 
@@ -83,11 +83,11 @@ const LineChart = ({
       }[] = (
         await fetchToJson(
           API +
-          'lineSummary?' +
-          new URLSearchParams([
-            ['mapType', mapType],
-            ['selectedSites', _selectedSites.join(',')],
-          ]),
+            'lineSummary?' +
+            new URLSearchParams([
+              ['mapType', mapType],
+              ['selectedSites', _selectedSites.join(',')],
+            ]),
         )
       ).map((d: any) => ({
         site: d.site,
@@ -113,7 +113,10 @@ const LineChart = ({
       if (mapType === 'dbm') {
         yScale = d3
           .scaleLinear()
-          .domain([(d3.max(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType], (d3.min(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType]])
+          .domain([
+            (d3.max(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType],
+            (d3.min(flat, d => d.value) ?? 1) * MULTIPLIERS[mapType],
+          ])
           .range([0, chartHeight]);
       } else {
         yScale = d3

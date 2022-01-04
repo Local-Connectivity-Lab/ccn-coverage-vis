@@ -14,8 +14,9 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 export const API = 'https://api-dev.seattlecommunitynetwork.org/api/';
 
@@ -34,7 +35,7 @@ export const MULTIPLIERS = {
   dbm: 1,
   ping: 1,
   download_speed: 1,
-  upload_speed: 1
+  upload_speed: 1,
 } as const;
 
 const MAP_TYPE_CONVERT = {
@@ -91,7 +92,8 @@ const MeasurementMap = ({
         attribution: ATTRIBUTION,
         maxZoom: 15,
         minZoom: 10,
-        opacity: 0.5,
+        opacity: 0.7,
+        zIndex: 1,
       }).addTo(_map);
 
       setMarkers(_markers);
@@ -121,17 +123,17 @@ const MeasurementMap = ({
     (async () => {
       const bins: number[] = await fetchToJson(
         API +
-        'data?' +
-        new URLSearchParams([
-          ['width', bounds.width + ''],
-          ['height', bounds.height + ''],
-          ['left', bounds.left + ''],
-          ['top', bounds.top + ''],
-          ['binSizeShift', BIN_SIZE_SHIFT + ''],
-          ['zoom', DEFAULT_ZOOM + ''],
-          ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-          ['mapType', mapType],
-        ]),
+          'data?' +
+          new URLSearchParams([
+            ['width', bounds.width + ''],
+            ['height', bounds.height + ''],
+            ['left', bounds.left + ''],
+            ['top', bounds.top + ''],
+            ['binSizeShift', BIN_SIZE_SHIFT + ''],
+            ['zoom', DEFAULT_ZOOM + ''],
+            ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+            ['mapType', mapType],
+          ]),
       );
 
       const colorDomain = [
@@ -166,8 +168,11 @@ const MeasurementMap = ({
   }, [selectedSites, mapType, setLoading, map, layer, bounds]);
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div id='map-id' style={{ height, width, position: 'absolute' }}></div>
+    <div style={{ position: 'relative', top: 64 }}>
+      <div
+        id='map-id'
+        style={{ height, width, position: 'absolute', zIndex: '1' }}
+      ></div>
       <div style={{ position: 'absolute', left: width - LEGEND_WIDTH }}>
         <MapLegend
           colorDomain={cDomain}
