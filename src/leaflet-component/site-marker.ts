@@ -24,21 +24,22 @@ export function isSite(prop: any): prop is Site {
 
 export default function siteMarker(
   site: Site,
-  summary: { dbm: number, ping: number; upload_speed: number; download_speed: number },
+  summary: {
+    dbm: number;
+    ping: number;
+    upload_speed: number;
+    download_speed: number;
+  },
 ) {
   return L.marker([site.latitude, site.longitude]).bindTooltip(
     `${site.name} <span style="background-color: ${statusColor.get(
       site.status,
     )}">[${site.status}]</span><br />${site.address}<br/>
-    signal strength: ${round2(
-      summary?.dbm * MULTIPLIERS.dbm,
-    )} ${UNITS.dbm}<br/>
-    ping: ${round2(
-      summary?.ping * MULTIPLIERS.ping,
-    )} ${UNITS.ping}<br/>
-    upload speed: ${round2(
-      summary?.upload_speed * MULTIPLIERS.upload_speed,
-    )} ${UNITS.upload_speed}<br/>
+    signal strength: ${round2(summary?.dbm * MULTIPLIERS.dbm)} ${UNITS.dbm}<br/>
+    ping: ${round2(summary?.ping * MULTIPLIERS.ping)} ${UNITS.ping}<br/>
+    upload speed: ${round2(summary?.upload_speed * MULTIPLIERS.upload_speed)} ${
+      UNITS.upload_speed
+    }<br/>
     download speed: ${round2(
       summary?.download_speed * MULTIPLIERS.download_speed,
     )} ${UNITS.download_speed}`,

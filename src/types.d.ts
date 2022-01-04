@@ -24,4 +24,3 @@ type Measurement = {
   site: string;
   device_id: number;
 };
-

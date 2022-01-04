@@ -14,8 +14,9 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 export const API = 'https://api-dev.seattlecommunitynetwork.org/api/';
 
@@ -34,7 +35,7 @@ export const MULTIPLIERS = {
   dbm: 1,
   ping: 1,
   download_speed: 1,
-  upload_speed: 1
+  upload_speed: 1,
 } as const;
 
 const MAP_TYPE_CONVERT = {
@@ -122,17 +123,17 @@ const MeasurementMap = ({
     (async () => {
       const bins: number[] = await fetchToJson(
         API +
-        'data?' +
-        new URLSearchParams([
-          ['width', bounds.width + ''],
-          ['height', bounds.height + ''],
-          ['left', bounds.left + ''],
-          ['top', bounds.top + ''],
-          ['binSizeShift', BIN_SIZE_SHIFT + ''],
-          ['zoom', DEFAULT_ZOOM + ''],
-          ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-          ['mapType', mapType],
-        ]),
+          'data?' +
+          new URLSearchParams([
+            ['width', bounds.width + ''],
+            ['height', bounds.height + ''],
+            ['left', bounds.left + ''],
+            ['top', bounds.top + ''],
+            ['binSizeShift', BIN_SIZE_SHIFT + ''],
+            ['zoom', DEFAULT_ZOOM + ''],
+            ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+            ['mapType', mapType],
+          ]),
       );
 
       const colorDomain = [
