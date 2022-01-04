@@ -1,24 +1,21 @@
 {
   "files": {
-    "main.css": "./static/css/main.6dea0f05.chunk.css",
-    "main.js": "./static/js/main.7ee2cbeb.chunk.js",
-    "main.js.map": "./static/js/main.7ee2cbeb.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.d2bb4955.js",
-    "runtime-main.js.map": "./static/js/runtime-main.d2bb4955.js.map",
-    "static/css/2.405c93a1.chunk.css": "./static/css/2.405c93a1.chunk.css",
-    "static/js/2.bc1a19a3.chunk.js": "./static/js/2.bc1a19a3.chunk.js",
-    "static/js/2.bc1a19a3.chunk.js.map": "./static/js/2.bc1a19a3.chunk.js.map",
+    "main.css": "./static/css/main.d6567a73.css",
+    "main.js": "./static/js/main.4c8c0db1.js",
+    "static/media/roboto-all-400-normal.woff": "./static/media/roboto-all-400-normal.b5a0a0df312d3423493b.woff",
+    "static/media/roboto-latin-400-normal.woff2": "./static/media/roboto-latin-400-normal.176f8f5bd5f02b3abfcf.woff2",
+    "static/media/roboto-cyrillic-ext-400-normal.woff2": "./static/media/roboto-cyrillic-ext-400-normal.dd55ea0a2e90d5d86e15.woff2",
+    "static/media/roboto-latin-ext-400-normal.woff2": "./static/media/roboto-latin-ext-400-normal.dcc07bcfcd475f34f20b.woff2",
+    "static/media/roboto-cyrillic-400-normal.woff2": "./static/media/roboto-cyrillic-400-normal.3605d18d8a4ce5bd39c3.woff2",
+    "static/media/roboto-greek-400-normal.woff2": "./static/media/roboto-greek-400-normal.352cc77aaed5208ce13c.woff2",
+    "static/media/roboto-vietnamese-400-normal.woff2": "./static/media/roboto-vietnamese-400-normal.52cebac009baf5592e7d.woff2",
+    "static/media/roboto-greek-ext-400-normal.woff2": "./static/media/roboto-greek-ext-400-normal.bc7ace6e50c7d9d4d959.woff2",
     "index.html": "./index.html",
-    "static/css/2.405c93a1.chunk.css.map": "./static/css/2.405c93a1.chunk.css.map",
-    "static/css/main.6dea0f05.chunk.css.map": "./static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.bc1a19a3.chunk.js.LICENSE.txt": "./static/js/2.bc1a19a3.chunk.js.LICENSE.txt",
-    "static/media/index.css": "./static/media/roboto-vietnamese-400-normal.52cebac0.woff2"
+    "main.d6567a73.css.map": "./static/css/main.d6567a73.css.map",
+    "main.4c8c0db1.js.map": "./static/js/main.4c8c0db1.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.d2bb4955.js",
-    "static/css/2.405c93a1.chunk.css",
-    "static/js/2.bc1a19a3.chunk.js",
-    "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.7ee2cbeb.chunk.js"
+    "static/css/main.d6567a73.css",
+    "static/js/main.4c8c0db1.js"
   ]
 }
