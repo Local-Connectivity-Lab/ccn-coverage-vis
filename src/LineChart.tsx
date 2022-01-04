@@ -25,8 +25,8 @@ const colors = d3
 
 const margin = {
   left: 50,
-  bottom: 20,
-  right: 0,
+  bottom: 30,
+  right: 20,
   top: 20,
 };
 

@@ -46,18 +46,18 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
           onChange={handleChange}
         >
           {/* remove signal for now because we don't have "signal" in our mock data */}
-          <FormControlLabel value="dbm" control={<Radio />} label="Signal Strength" />
+          <FormControlLabel value="dbm" control={<Radio color="primary" />} label="Signal Strength" />
           <FormControlLabel
             value='upload_speed'
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label='Upload Speed'
           />
           <FormControlLabel
             value='download_speed'
-            control={<Radio />}
+            control={<Radio color="primary" />}
             label='Download Speed'
           />
-          <FormControlLabel value='ping' control={<Radio />} label='Ping' />
+          <FormControlLabel value='ping' control={<Radio color="primary" />} label='Ping' />
         </RadioGroup>
       </FormControl>
     </Box>
