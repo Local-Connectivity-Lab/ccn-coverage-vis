@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  HashRouter as Router,
-  Route,
-  BrowserRouter,
-  Routes,
-} from 'react-router-dom';
+import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import App from './App';
 import Login from './Login';
