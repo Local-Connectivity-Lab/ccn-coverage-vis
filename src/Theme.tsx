@@ -5,8 +5,8 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: red[500],
-    }
-  }
+    },
+  },
 });
 
 /*

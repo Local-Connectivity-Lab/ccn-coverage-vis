@@ -17,13 +17,13 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <ListItemText primary="Generate QR Code" />
+      <ListItemText primary='Generate QR Code' />
     </ListItem>
     <ListItem button>
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="Edit Site Information" />
+      <ListItemText primary='Edit Site Information' />
     </ListItem>
   </div>
 );
@@ -35,7 +35,7 @@ export const secondaryListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <ListItemText primary="Visualization" />
+      <ListItemText primary='Visualization' />
     </ListItem>
   </div>
 );
@@ -46,7 +46,7 @@ export const homeListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <ListItemText primary="Admin Panel" />
+      <ListItemText primary='Admin Panel' />
     </ListItem>
   </div>
 );

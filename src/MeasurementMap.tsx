@@ -93,7 +93,7 @@ const MeasurementMap = ({
         maxZoom: 15,
         minZoom: 10,
         opacity: 0.7,
-        zIndex: 1
+        zIndex: 1,
       }).addTo(_map);
 
       setMarkers(_markers);
@@ -169,7 +169,10 @@ const MeasurementMap = ({
 
   return (
     <div style={{ position: 'relative', top: 64 }}>
-      <div id='map-id' style={{ height, width, position: 'absolute', zIndex: '1' }}></div>
+      <div
+        id='map-id'
+        style={{ height, width, position: 'absolute', zIndex: '1' }}
+      ></div>
       <div style={{ position: 'absolute', left: width - LEGEND_WIDTH }}>
         <MapLegend
           colorDomain={cDomain}

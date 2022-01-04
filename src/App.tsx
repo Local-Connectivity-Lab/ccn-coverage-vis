@@ -20,7 +20,7 @@ import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
-import Footer from './Footer'
+import Footer from './Footer';
 
 const drawerWidth: number = 320;
 const barHeight: number = 64;
@@ -30,7 +30,7 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: prop => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
@@ -47,43 +47,45 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      height: window.innerHeight,
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: prop => prop !== 'open',
+})(({ theme, open }) => ({
+  '& .MuiDrawer-paper': {
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    width: drawerWidth,
+    height: window.innerHeight,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    boxSizing: 'border-box',
+    ...(!open && {
+      overflowX: 'hidden',
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
+        duration: theme.transitions.duration.leavingScreen,
       }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
+      width: 0,
+      [theme.breakpoints.up('sm')]: {
         width: 0,
-        [theme.breakpoints.up('sm')]: {
-          width: 0,
-        },
-      }),
-    },
-  }),
-);
+      },
+    }),
+  },
+}));
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
-    height
+    height,
   };
 }
 
 function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions(),
+  );
 
   useEffect(() => {
     function handleResize() {
@@ -96,7 +98,6 @@ function useWindowDimensions() {
 
   return windowDimensions;
 }
-
 
 const mdTheme = createTheme();
 
@@ -117,16 +118,16 @@ export default function App() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex', overflowY: 'hidden', overflowX: 'hidden' }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open}>
+        <AppBar position='absolute' open={open}>
           <Toolbar
             sx={{
               pr: '0px', // keep right padding when drawer closed
             }}
           >
             <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
+              edge='start'
+              color='inherit'
+              aria-label='open drawer'
               onClick={toggleDrawer}
               sx={{
                 marginRight: '0px',
@@ -136,9 +137,9 @@ export default function App() {
               <MenuIcon />
             </IconButton>
             <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
+              component='h1'
+              variant='h6'
+              color='inherit'
               noWrap
               sx={{ flexGrow: 1 }}
             >
@@ -146,7 +147,7 @@ export default function App() {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant='permanent' open={open}>
           <Toolbar
             sx={{
               display: 'flex',
@@ -187,7 +188,7 @@ export default function App() {
         />
       </Box>
       <Box
-        component="main"
+        component='main'
         sx={{
           backgroundColor: 'transparent',
           overflow: 'none',
@@ -209,6 +210,6 @@ export default function App() {
           />
         </Card>
       </Box>
-    </ThemeProvider >
+    </ThemeProvider>
   );
 }
