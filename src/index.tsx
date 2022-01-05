@@ -7,7 +7,7 @@ import AdminPortal from './AdminPortal';
 import './index.css';
 
 ReactDOM.render(
-  <BrowserRouter>
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
     <Routes>
       <Route path='/' element={<App />} />
       <Route path='/login' element={<Login />} />
