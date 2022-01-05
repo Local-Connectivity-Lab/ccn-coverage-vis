@@ -110,12 +110,13 @@ const INITIAL_DISPLAY_OPTIONS = [
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
   const [selectedSites, setSelectedSites] = useState<SidebarOption[]>([]);
-  const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(INITIAL_DISPLAY_OPTIONS);
+  const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
+    INITIAL_DISPLAY_OPTIONS,
+  );
   const [loadingMap, setLoadingMap] = useState(true);
   const [loadingLine, setLoadingLine] = useState(true);
   const [open, setOpen] = React.useState(true);
   const { height, width } = useWindowDimensions();
-
 
   document.title = 'Performance Evaluation';
   const toggleDrawer = () => {
