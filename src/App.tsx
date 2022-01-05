@@ -15,6 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { homeListItems } from './ListItems';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
+import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
@@ -101,6 +102,7 @@ const mdTheme = createTheme();
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
   const [selectedSites, setSelectedSites] = useState<SidebarOption[]>([]);
+  const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>([]);
   const [loadingMap, setLoadingMap] = useState(true);
   const [loadingLine, setLoadingLine] = useState(true);
   const [open, setOpen] = React.useState(true);
@@ -167,6 +169,11 @@ export default function App() {
             <SiteSelect
               selectedSites={selectedSites}
               setSelectedSites={setSelectedSites}
+              loading={loadingLine || loadingMap}
+            />
+            <DisplaySelection
+              displayOptions={displayOptions}
+              setDisplayOptions={setDisplayOptions}
               loading={loadingLine || loadingMap}
             />
           </Container>
