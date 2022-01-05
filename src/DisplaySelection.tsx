@@ -7,7 +7,6 @@ import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import 'fontsource-roboto';
 
-
 interface DisplayOptionsProps {
   displayOptions: DisplayOption[];
   setDisplayOptions: React.Dispatch<React.SetStateAction<DisplayOption[]>>;
@@ -28,23 +27,24 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
     props.setDisplayOptions(_displayOptions);
   };
 
-
   return (
     <Box className='DisplaySelection'>
       <FormControl component='fieldset' disabled={props.loading}>
         <Typography variant='overline'>Display Options</Typography>
         <FormGroup aria-label='Display Options'>
-          {
-            props.displayOptions.map((option: DisplayOption) => (
-              <FormControlLabel
-                key={option.name}
-                control={
-                  <Checkbox checked={option.checked} name={option.name} onChange={handleChange} />
-                }
-                label='Graph'
-              />
-            ))
-          }
+          {props.displayOptions.map((option: DisplayOption) => (
+            <FormControlLabel
+              key={option.name}
+              control={
+                <Checkbox
+                  checked={option.checked}
+                  name={option.name}
+                  onChange={handleChange}
+                />
+              }
+              label='Graph'
+            />
+          ))}
         </FormGroup>
       </FormControl>
     </Box>
