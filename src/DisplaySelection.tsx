@@ -7,13 +7,6 @@ import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import 'fontsource-roboto';
 
-const INITIAL_DISPLAY_OPTIONS = [
-  {
-    label: 'Graph',
-    name: 'displayGraph',
-    checked: true,
-  },
-];
 
 interface DisplayOptionsProps {
   displayOptions: DisplayOption[];
@@ -26,8 +19,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
   const handleChange = (event: InputEvent) => {
     const checked = event.target.checked;
     const name = event.target.name;
-    const _displayOptions = props.displayOptions;
-    console.log(_displayOptions);
+    const _displayOptions = [...props.displayOptions];
     for (let i = 0; i < _displayOptions.length; i++) {
       if (_displayOptions[i].name === name) {
         _displayOptions[i].checked = checked;
@@ -36,19 +28,23 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
     props.setDisplayOptions(_displayOptions);
   };
 
-  props.setDisplayOptions(INITIAL_DISPLAY_OPTIONS);
 
   return (
     <Box className='DisplaySelection'>
       <FormControl component='fieldset' disabled={props.loading}>
         <Typography variant='overline'>Display Options</Typography>
         <FormGroup aria-label='Display Options'>
-          <FormControlLabel
-            control={
-              <Checkbox checked name='displayGraph' onChange={handleChange} />
-            }
-            label='Graph'
-          />
+          {
+            props.displayOptions.map((option: DisplayOption) => (
+              <FormControlLabel
+                key={option.name}
+                control={
+                  <Checkbox checked={option.checked} name={option.name} onChange={handleChange} />
+                }
+                label='Graph'
+              />
+            ))
+          }
         </FormGroup>
       </FormControl>
     </Box>
