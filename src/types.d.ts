@@ -5,7 +5,7 @@ type SidebarOption = {
 
 type DisplayOption = {
   label: string;
-  name: string
+  name: string;
   checked: boolean;
 };
 
