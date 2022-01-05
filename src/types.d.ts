@@ -3,6 +3,12 @@ type SidebarOption = {
   value: string;
 };
 
+type DisplayOption = {
+  label: string;
+  name: string;
+  checked: boolean;
+};
+
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
 
 type Site = {

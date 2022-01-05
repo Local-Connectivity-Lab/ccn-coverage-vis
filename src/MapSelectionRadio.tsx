@@ -53,19 +53,15 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
           />
           <FormControlLabel
             value='upload_speed'
-            control={<Radio color='primary' />}
+            control={<Radio />}
             label='Upload Speed'
           />
           <FormControlLabel
             value='download_speed'
-            control={<Radio color='primary' />}
+            control={<Radio />}
             label='Download Speed'
           />
-          <FormControlLabel
-            value='ping'
-            control={<Radio color='primary' />}
-            label='Ping'
-          />
+          <FormControlLabel value='ping' control={<Radio />} label='Ping' />
         </RadioGroup>
       </FormControl>
     </Box>
