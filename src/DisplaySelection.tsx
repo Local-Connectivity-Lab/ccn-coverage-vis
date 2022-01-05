@@ -12,7 +12,7 @@ const INITIAL_DISPLAY_OPTIONS = [
     label: 'Graph',
     name: 'displayGraph',
     checked: true,
-  }
+  },
 ];
 
 interface DisplayOptionsProps {
@@ -27,7 +27,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
     const checked = event.target.checked;
     const name = event.target.name;
     const _displayOptions = props.displayOptions;
-    console.log(_displayOptions)
+    console.log(_displayOptions);
     for (let i = 0; i < _displayOptions.length; i++) {
       if (_displayOptions[i].name === name) {
         _displayOptions[i].checked = checked;
@@ -36,18 +36,19 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
     props.setDisplayOptions(_displayOptions);
   };
 
-  props.setDisplayOptions(INITIAL_DISPLAY_OPTIONS)
+  props.setDisplayOptions(INITIAL_DISPLAY_OPTIONS);
 
   return (
     <Box className='DisplaySelection'>
       <FormControl component='fieldset' disabled={props.loading}>
         <Typography variant='overline'>Display Options</Typography>
         <FormGroup aria-label='Display Options'>
-          <FormControlLabel control={<Checkbox
-            checked
-            name='displayGraph'
-            onChange={handleChange}
-          />} label='Graph' />
+          <FormControlLabel
+            control={
+              <Checkbox checked name='displayGraph' onChange={handleChange} />
+            }
+            label='Graph'
+          />
         </FormGroup>
       </FormControl>
     </Box>
