@@ -7,11 +7,11 @@ import AdminPortal from './AdminPortal';
 import './index.css';
 
 ReactDOM.render(
-  <BrowserRouter basename={process.env.PUBLIC_URL}>
+  <BrowserRouter>
     <Routes>
-      <Route path='/' element={<App />} />
-      <Route path='/login' element={<Login />} />
-      <Route path='/admin' element={<AdminPortal />} />
+      <Route path='/ccn-coverage-vis/' element={<App />} />
+      <Route path='/ccn-coverage-vis/login' element={<Login />} />
+      <Route path='/ccn-coverage-vis/admin' element={<AdminPortal />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById('root'),
