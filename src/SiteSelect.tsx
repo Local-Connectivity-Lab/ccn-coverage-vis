@@ -5,7 +5,7 @@ import { MultiSelect } from 'react-multi-select-component';
 import 'fontsource-roboto';
 import sites from './sites.json';
 
-const options = sites.map(({ name }) => ({ label: name, value: name }));
+export const siteOptions = sites.map(({ name }) => ({ label: name, value: name }));
 
 interface SidebarProps {
   selectedSites: SidebarOption[];
@@ -18,7 +18,7 @@ const SiteSelect = (props: SidebarProps) => {
     <Box mb={2}>
       <Typography variant='overline'>Select Sites</Typography>
       <MultiSelect
-        options={options}
+        options={siteOptions}
         value={props.selectedSites}
         onChange={props.setSelectedSites}
         labelledBy='Select'

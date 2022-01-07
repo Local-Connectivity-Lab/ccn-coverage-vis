@@ -17,9 +17,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { homeListItems } from './ListItems';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import DisplaySelection from './DisplaySelection';
-import SiteSelect from './SiteSelect';
+import SiteSelect, { siteOptions } from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
+
 // import { setOptions } from 'leaflet';
 
 const drawerWidth: number = 320;
@@ -120,7 +121,7 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
 
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
-  const [selectedSites, setSelectedSites] = useState<SidebarOption[]>([]);
+  const [selectedSites, setSelectedSites] = useState<SidebarOption[]>(siteOptions);
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
