@@ -28,7 +28,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
   };
 
   return (
-    <Box className='DisplaySelection'>
+    <Box sx={{ mb: 2 }} className='DisplaySelection'>
       <FormControl component='fieldset' disabled={props.loading}>
         <Typography variant='overline'>Display Options</Typography>
         <FormGroup aria-label='Display Options'>

@@ -9,18 +9,21 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './ListItems';
 import Footer from './Footer';
+import AdminBody from './AdminBody';
 
 const drawerWidth: number = 240;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
+}
+
+interface AdminPortalProps {
+  page?: AdminPage;
 }
 
 const AppBar = styled(MuiAppBar, {
@@ -69,11 +72,15 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+export default function AdminPortal(props: AdminPortalProps) {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  if (props.page === undefined) {
+    window.open('/admin/qrcode', '_self');
+    return (<div></div>);
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -106,11 +113,6 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
-            <IconButton color='inherit'>
-              <Badge badgeContent={4} color='secondary'>
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer variant='permanent' open={open}>
@@ -145,14 +147,11 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
+            <AdminBody page={props.page} />
             <Footer />
           </Container>
         </Box>
       </Box>
     </ThemeProvider>
   );
-}
-
-export default function Dashboard() {
-  return <DashboardContent />;
 }

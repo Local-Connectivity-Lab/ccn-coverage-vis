@@ -11,6 +11,8 @@ type DisplayOption = {
 
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
 
+type AdminPage = 'qrcode' | 'edit-site';
+
 type Site = {
   name: string;
   latitude: number;

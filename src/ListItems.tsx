@@ -2,22 +2,23 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
+import QrCodeIcon from '@mui/icons-material/QrCode';
+import HomeIcon from '@mui/icons-material/Home';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export const mainListItems = (
   <div>
     <ListSubheader inset>Admin Panel</ListSubheader>
-    <ListItem button>
+    <ListItem button onClick={() => window.open('/admin/qrcode', '_self')}>
       <ListItemIcon>
-        <DashboardIcon />
+        <QrCodeIcon />
       </ListItemIcon>
       <ListItemText primary='Generate QR Code' />
     </ListItem>
-    <ListItem button>
+    <ListItem button onClick={() => window.open('edit-site', '_self')}>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <EditLocationAltIcon />
       </ListItemIcon>
       <ListItemText primary='Edit Site Information' />
     </ListItem>
@@ -27,9 +28,9 @@ export const mainListItems = (
 export const secondaryListItems = (
   <div>
     <ListSubheader inset>User Panel</ListSubheader>
-    <ListItem button>
+    <ListItem button onClick={() => window.open('/')}>
       <ListItemIcon>
-        <AssignmentIcon />
+        <HomeIcon />
       </ListItemIcon>
       <ListItemText primary='Visualization' />
     </ListItem>
@@ -40,7 +41,7 @@ export const homeListItems = (
   <div>
     <ListItem button onClick={() => window.open('login')}>
       <ListItemIcon>
-        <AssignmentIcon />
+        <AdminPanelSettingsIcon />
       </ListItemIcon>
       <ListItemText primary='Admin Panel' />
     </ListItem>

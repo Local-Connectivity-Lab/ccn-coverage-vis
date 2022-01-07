@@ -20,7 +20,7 @@ import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
-import { setOptions } from 'leaflet';
+// import { setOptions } from 'leaflet';
 
 const drawerWidth: number = 320;
 const barHeight: number = 64;
@@ -111,7 +111,7 @@ const INITIAL_DISPLAY_OPTIONS = [
 
 function displayValue(displayOptions: DisplayOption[], name: string) {
   for (let option of displayOptions) {
-    if (option.name == name && option.checked == true) {
+    if (option.name === name && option.checked === true) {
       return true
     }
     return false
