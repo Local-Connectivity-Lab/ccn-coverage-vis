@@ -4,7 +4,7 @@ import Box from '@material-ui/core/Box';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@mui/material/FormGroup';
-import Checkbox from '@mui/material/Checkbox';
+import Switch from '@mui/material/Switch';
 import 'fontsource-roboto';
 
 interface DisplayOptionsProps {
@@ -36,7 +36,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
             <FormControlLabel
               key={option.name}
               control={
-                <Checkbox
+                <Switch
                   checked={option.checked}
                   name={option.name}
                   onChange={handleChange}

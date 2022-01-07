@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Fade from '@mui/material/Fade';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -19,6 +20,7 @@ import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
+import { setOptions } from 'leaflet';
 
 const drawerWidth: number = 320;
 const barHeight: number = 64;
@@ -106,6 +108,15 @@ const INITIAL_DISPLAY_OPTIONS = [
     checked: true,
   },
 ];
+
+function displayValue(displayOptions: DisplayOption[], name: string) {
+  for (let option of displayOptions) {
+    if (option.name == name && option.checked == true) {
+      return true
+    }
+    return false
+  }
+}
 
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
@@ -212,18 +223,21 @@ export default function App() {
           zIndex: '3',
         }}
       >
-        <Card>
-          <LineChart
-            mapType={mapType}
-            offset={0}
-            width={600}
-            height={200}
-            selectedSites={selectedSites}
-            setLoading={setLoadingLine}
-            loading={loadingLine}
-          />
-        </Card>
+        <Fade in={displayValue(displayOptions, 'displayGraph')}>
+          <Card>
+            <LineChart
+              mapType={mapType}
+              offset={0}
+              width={600}
+              height={200}
+              selectedSites={selectedSites}
+              setLoading={setLoadingLine}
+              loading={loadingLine}
+            />
+          </Card>
+
+        </Fade>
       </Box>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 }

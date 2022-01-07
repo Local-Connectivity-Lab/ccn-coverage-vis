@@ -9,9 +9,10 @@ import './index.css';
 ReactDOM.render(
   <BrowserRouter>
     <Routes>
-      <Route path='/ccn-coverage-vis/' element={<App />} />
-      <Route path='/ccn-coverage-vis/login' element={<Login />} />
-      <Route path='/ccn-coverage-vis/admin' element={<AdminPortal />} />
+      <Route path='/' element={<App />} />
+      <Route path='/ccn-coverage-vis' element={<App />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/admin' element={<AdminPortal />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById('root'),
