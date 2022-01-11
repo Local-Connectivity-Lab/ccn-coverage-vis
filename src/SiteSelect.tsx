@@ -5,7 +5,10 @@ import { MultiSelect } from 'react-multi-select-component';
 import 'fontsource-roboto';
 import sites from './sites.json';
 
-export const siteOptions = sites.map(({ name }) => ({ label: name, value: name }));
+export const siteOptions = sites.map(({ name }) => ({
+  label: name,
+  value: name,
+}));
 
 interface SidebarProps {
   selectedSites: SidebarOption[];

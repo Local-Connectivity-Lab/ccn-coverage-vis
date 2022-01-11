@@ -113,15 +113,16 @@ const INITIAL_DISPLAY_OPTIONS = [
 function displayValue(displayOptions: DisplayOption[], name: string) {
   for (let option of displayOptions) {
     if (option.name === name && option.checked === true) {
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 }
 
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('ping');
-  const [selectedSites, setSelectedSites] = useState<SidebarOption[]>(siteOptions);
+  const [selectedSites, setSelectedSites] =
+    useState<SidebarOption[]>(siteOptions);
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
@@ -236,9 +237,8 @@ export default function App() {
               loading={loadingLine}
             />
           </Card>
-
         </Fade>
       </Box>
-    </ThemeProvider >
+    </ThemeProvider>
   );
 }

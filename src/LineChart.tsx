@@ -83,11 +83,11 @@ const LineChart = ({
       }[] = (
         await fetchToJson(
           API +
-          'lineSummary?' +
-          new URLSearchParams([
-            ['mapType', mapType],
-            ['selectedSites', _selectedSites.join(',')],
-          ]),
+            'lineSummary?' +
+            new URLSearchParams([
+              ['mapType', mapType],
+              ['selectedSites', _selectedSites.join(',')],
+            ]),
         )
       ).map((d: any) => ({
         site: d.site,

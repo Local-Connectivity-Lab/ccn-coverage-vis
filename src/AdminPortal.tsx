@@ -79,7 +79,7 @@ export default function AdminPortal(props: AdminPortalProps) {
   };
   if (props.page === undefined) {
     window.open('/admin/qrcode', '_self');
-    return (<div></div>);
+    return <div></div>;
   }
 
   return (
