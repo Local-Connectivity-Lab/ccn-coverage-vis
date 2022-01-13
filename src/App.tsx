@@ -25,6 +25,7 @@ import LineChart from './LineChart';
 
 const drawerWidth: number = 320;
 const barHeight: number = 64;
+const maxChartWidth: number = 600;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -131,6 +132,9 @@ export default function App() {
   const [open, setOpen] = React.useState(true);
   const { height, width } = useWindowDimensions();
 
+  const chartWidth: number = Math.min(width * 0.9 - 50, maxChartWidth);
+  const chartHeight: number = 0.4 * chartWidth;
+
   document.title = 'Performance Evaluation';
   const toggleDrawer = () => {
     setOpen(!open);
@@ -230,8 +234,8 @@ export default function App() {
             <LineChart
               mapType={mapType}
               offset={0}
-              width={600}
-              height={200}
+              width={chartWidth}
+              height={chartHeight}
               selectedSites={selectedSites}
               setLoading={setLoadingLine}
               loading={loadingLine}
