@@ -24,7 +24,6 @@ import LineChart from './LineChart';
 // import { setOptions } from 'leaflet';
 
 const drawerWidth: number = 320;
-const barHeight: number = 64;
 const maxChartWidth: number = 600;
 
 interface AppBarProps extends MuiAppBarProps {
@@ -121,7 +120,7 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
 }
 
 export default function App() {
-  const [mapType, setMapType] = useState<MapType>('ping');
+  const [mapType, setMapType] = useState<MapType>('dbm');
   const [selectedSites, setSelectedSites] =
     useState<SidebarOption[]>(siteOptions);
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
@@ -129,11 +128,16 @@ export default function App() {
   );
   const [loadingMap, setLoadingMap] = useState(true);
   const [loadingLine, setLoadingLine] = useState(true);
-  const [open, setOpen] = React.useState(true);
   const { height, width } = useWindowDimensions();
-
   const chartWidth: number = Math.min(width * 0.9 - 50, maxChartWidth);
   const chartHeight: number = 0.4 * chartWidth;
+  var drawerOpen: boolean = true;
+  var barHeight: number = 64;
+  if (width < 600) {
+    drawerOpen = false;
+    barHeight = 52;
+  }
+  const [open, setOpen] = React.useState(drawerOpen);
 
   document.title = 'Performance Evaluation';
   const toggleDrawer = () => {
@@ -216,6 +220,7 @@ export default function App() {
           width={width}
           height={height - barHeight}
           loading={loadingMap}
+          top={barHeight}
         />
       </Box>
       <Box

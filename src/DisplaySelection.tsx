@@ -42,7 +42,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
                   onChange={handleChange}
                 />
               }
-              label='Graph'
+              label='Chart'
             />
           ))}
         </FormGroup>

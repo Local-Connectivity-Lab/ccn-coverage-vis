@@ -14,9 +14,8 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? '@2x' : ''
-}.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
+  }.png`;
 
 export const API = 'https://api-dev.seattlecommunitynetwork.org/api/';
 
@@ -52,6 +51,7 @@ interface MapProps {
   width: number;
   height: number;
   loading: boolean;
+  top: number;
 }
 
 const MeasurementMap = ({
@@ -61,6 +61,7 @@ const MeasurementMap = ({
   width,
   height,
   loading,
+  top,
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
@@ -123,17 +124,17 @@ const MeasurementMap = ({
     (async () => {
       const bins: number[] = await fetchToJson(
         API +
-          'data?' +
-          new URLSearchParams([
-            ['width', bounds.width + ''],
-            ['height', bounds.height + ''],
-            ['left', bounds.left + ''],
-            ['top', bounds.top + ''],
-            ['binSizeShift', BIN_SIZE_SHIFT + ''],
-            ['zoom', DEFAULT_ZOOM + ''],
-            ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-            ['mapType', mapType],
-          ]),
+        'data?' +
+        new URLSearchParams([
+          ['width', bounds.width + ''],
+          ['height', bounds.height + ''],
+          ['left', bounds.left + ''],
+          ['top', bounds.top + ''],
+          ['binSizeShift', BIN_SIZE_SHIFT + ''],
+          ['zoom', DEFAULT_ZOOM + ''],
+          ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+          ['mapType', mapType],
+        ]),
       );
 
       const colorDomain = [
@@ -168,7 +169,7 @@ const MeasurementMap = ({
   }, [selectedSites, mapType, setLoading, map, layer, bounds]);
 
   return (
-    <div style={{ position: 'relative', top: 64 }}>
+    <div style={{ position: 'relative', top: top }}>
       <div
         id='map-id'
         style={{ height, width, position: 'absolute', zIndex: '1' }}
