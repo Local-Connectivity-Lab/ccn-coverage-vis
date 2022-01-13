@@ -81,17 +81,16 @@ export default function AdminPortal(props: AdminPortalProps) {
   const exp = localStorage.getItem('exp');
   if (token === null || exp === null) {
     window.open('/login', '_self');
-    return (<div></div>);
+    return <div></div>;
   }
   if (new Date(exp) < new Date()) {
     window.open('/login', '_self');
-    return (<div></div>)
+    return <div></div>;
   }
   if (props.page === undefined) {
     window.open('/admin/qrcode', '_self');
-    return (<div></div>);
+    return <div></div>;
   }
-
 
   return (
     <ThemeProvider theme={mdTheme}>

@@ -13,25 +13,28 @@ import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
-const API_URL = "https://api-dev.seattlecommunitynetwork.org"
+const API_URL = 'https://api-dev.seattlecommunitynetwork.org';
 
 export default function Login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    axios.post(API_URL + '/secure/login', {
-      username: data.get('username'),
-      password: data.get('password')
-    }).then(res => {
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('exp', res.data.exp);
-      if (res.data.success === true) {
-        window.open('/admin/qrcode', '_self')
-      }
-    }).catch(err => {
-      console.log(err);
-    });
+    axios
+      .post(API_URL + '/secure/login', {
+        username: data.get('username'),
+        password: data.get('password'),
+      })
+      .then(res => {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('exp', res.data.exp);
+        if (res.data.success === true) {
+          window.open('/admin/qrcode', '_self');
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
