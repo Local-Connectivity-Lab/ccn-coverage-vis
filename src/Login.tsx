@@ -6,6 +6,8 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Footer from './Footer';
@@ -16,6 +18,14 @@ const theme = createTheme();
 const API_URL = 'https://api-dev.seattlecommunitynetwork.org';
 
 export default function Login() {
+  const [open, setOpen] = React.useState(false);
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -30,10 +40,13 @@ export default function Login() {
         localStorage.setItem('exp', res.data.exp);
         if (res.data.success === true) {
           window.open('/admin/qrcode', '_self');
+        } else {
+          setOpen(true);
         }
       })
       .catch(err => {
         console.log(err);
+        setOpen(true);
       });
   };
 
@@ -49,9 +62,6 @@ export default function Login() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            {/* <LockOutlinedIcon /> */}
-          </Avatar>
           <Typography component='h1' variant='h5'>
             Sign in
           </Typography>
@@ -93,10 +103,15 @@ export default function Login() {
             >
               Sign In
             </Button>
+            <Snackbar open={open} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                Incorrect username or password
+              </Alert>
+            </Snackbar>
           </Box>
         </Box>
         <Footer />
       </Container>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 }
