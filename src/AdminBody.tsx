@@ -8,10 +8,10 @@ interface AdminBodyProps {
 export default function AdminBody(props: AdminBodyProps) {
   switch (props.page) {
     case 'qrcode':
-      return (<QRCode />);
+      return <QRCode />;
     case 'edit-site':
-      return (<EditSite />)
+      return <EditSite />;
     default:
-      return (<h1>Error</h1>)
+      return <h1>Error</h1>;
   }
 }
