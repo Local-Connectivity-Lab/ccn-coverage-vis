@@ -5,10 +5,10 @@ Visualizations of coverage and performance analysis for Community Cellular Netwo
 # Issues
 - Graphical bug for Switch component
 - Save tokens in session storage if not click on Remember Me
-- Graph scales poorly on mobile devices. Adjust max width. 
+- ~~Graph scales poorly on mobile devices. Adjust max width. 
 - Change marker colors for different site status. e.g. planned/active. Also adjust default selected sites. 
 - Add AT&T/T mobile/Verizon coverage for testing and comparison. 
-- Do not automatically expand side bar on mobile device. 
+- ~~Do not automatically expand side bar on mobile device. 
 
 # TODOs
 - Implement Generate QR Code UI and backend security
