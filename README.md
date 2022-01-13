@@ -2,6 +2,8 @@
 
 Visualizations of coverage and performance analysis for Community Cellular Networks.
 
+Now hosted on https://api-dev.seattlecommunitynetwork.org/
+
 # Issues
 - Graphical bug for Switch component
 - Save tokens in session storage if not click on Remember Me
