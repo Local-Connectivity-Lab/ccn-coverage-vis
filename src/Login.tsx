@@ -9,18 +9,28 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Footer from './Footer';
+import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
+const API_URL = "https://api-dev.seattlecommunitynetwork.org"
 
 export default function Login() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    axios.post(API_URL + '/secure/login', {
+      username: data.get('username'),
+      password: data.get('password')
+    }).then(res => {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('exp', res.data.exp);
+      if (res.data.success === true) {
+        window.open('/admin/qrcode', '_self')
+      }
+    }).catch(err => {
+      console.log(err);
     });
   };
 
