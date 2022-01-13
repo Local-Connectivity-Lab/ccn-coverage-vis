@@ -14,7 +14,10 @@ ReactDOM.render(
       <Route path='/login' element={<Login />} />
       <Route path='/admin' element={<AdminPortal />} />
       <Route path='/admin/qrcode' element={<AdminPortal page={'qrcode'} />} />
-      <Route path='/admin/edit-site' element={<AdminPortal page='edit-site' />} />
+      <Route
+        path='/admin/edit-site'
+        element={<AdminPortal page='edit-site' />}
+      />
     </Routes>
   </BrowserRouter>,
   document.getElementById('root'),
