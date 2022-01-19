@@ -114,7 +114,7 @@ export default function UserPage() {
             {activeUsersRows.map((row) => (
               <TableRow key={row.identity}>
                 <TableCell>{new Date(row.issueDate).toString()}</TableCell>
-                <TableCell><a href="#">{"..." + row.identity.substring(56)}</a></TableCell>
+                <TableCell><ViewIdentity identity={row.identity}></ViewIdentity></TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.firstName + " " + row.lastName}</TableCell>
                 <TableCell><Switch
