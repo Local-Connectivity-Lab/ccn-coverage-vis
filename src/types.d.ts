@@ -13,6 +13,16 @@ type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
 
 type AdminPage = 'qrcode' | 'edit-site';
 
+type UserRow = {
+  identity: string,
+  email: string
+  firstName: string,
+  lastName: string,
+  isEnabled: boolean,
+  issueDate: Date,
+  registered: boolean
+}
+
 type Site = {
   name: string;
   latitude: number;

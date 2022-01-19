@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -13,9 +12,8 @@ import Container from '@mui/material/Container';
 import Footer from './Footer';
 import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { API_URL } from './utils/config'
 const theme = createTheme();
-const API_URL = 'https://api-dev.seattlecommunitynetwork.org';
 
 export default function Login() {
   const [open, setOpen] = React.useState(false);
@@ -36,6 +34,7 @@ export default function Login() {
         password: data.get('password'),
       })
       .then(res => {
+        localStorage.setItem('username', res.data.username);
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('exp', res.data.exp);
         if (res.data.success === true) {

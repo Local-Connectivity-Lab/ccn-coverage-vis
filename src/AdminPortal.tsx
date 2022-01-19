@@ -64,7 +64,7 @@ const Drawer = styled(MuiDrawer, {
       }),
       width: theme.spacing(7),
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9),
+        width: theme.spacing(7),
       },
     }),
   },
@@ -121,7 +121,7 @@ export default function AdminPortal(props: AdminPortalProps) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Admin Portal
             </Typography>
           </Toolbar>
         </AppBar>

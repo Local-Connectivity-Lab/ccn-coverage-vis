@@ -10,7 +10,7 @@ interface LoadingProps {
 const Loading = (props: LoadingProps) => {
   return (
     <img
-      src='./loading.gif'
+      src='/loading.gif'
       style={{
         position: 'absolute',
         left: props.left - props.size / 2,
