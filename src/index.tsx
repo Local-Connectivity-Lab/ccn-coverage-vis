@@ -13,7 +13,7 @@ ReactDOM.render(
       <Route path='/ccn-coverage-vis' element={<App />} />
       <Route path='/login' element={<Login />} />
       <Route path='/admin' element={<AdminPortal />} />
-      <Route path='/admin/qrcode' element={<AdminPortal page={'qrcode'} />} />
+      <Route path='/admin/users' element={<AdminPortal page={'users'} />} />
       <Route
         path='/admin/edit-site'
         element={<AdminPortal page='edit-site' />}

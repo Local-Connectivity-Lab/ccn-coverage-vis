@@ -11,7 +11,7 @@ type DisplayOption = {
 
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
 
-type AdminPage = 'qrcode' | 'edit-site';
+type AdminPage = 'users' | 'edit-site';
 
 type UserRow = {
   identity: string,
@@ -20,7 +20,8 @@ type UserRow = {
   lastName: string,
   isEnabled: boolean,
   issueDate: Date,
-  registered: boolean
+  registered: boolean,
+  qrCode: string
 }
 
 type Site = {

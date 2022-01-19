@@ -3,20 +3,20 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
-import QrCodeIcon from '@mui/icons-material/QrCode';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import HomeIcon from '@mui/icons-material/Home';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export const mainListItems = (
   <div>
     <ListSubheader inset>Admin Panel</ListSubheader>
-    <ListItem button onClick={() => window.open('/admin/qrcode', '_self')}>
+    <ListItem button onClick={() => window.open('/admin/users', '_self')}>
       <ListItemIcon>
-        <QrCodeIcon />
+        <ManageAccountsIcon />
       </ListItemIcon>
-      <ListItemText primary='Generate QR Code' />
+      <ListItemText primary='Manage users' />
     </ListItem>
-    <ListItem button onClick={() => window.open('edit-site', '_self')}>
+    <ListItem button onClick={() => window.open('/admin/edit-site', '_self')}>
       <ListItemIcon>
         <EditLocationAltIcon />
       </ListItemIcon>

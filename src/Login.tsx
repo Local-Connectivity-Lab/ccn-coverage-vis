@@ -28,25 +28,22 @@ export default function Login() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    axios
-      .post(API_URL + '/secure/login', {
-        username: data.get('username'),
-        password: data.get('password'),
-      })
-      .then(res => {
-        localStorage.setItem('username', res.data.username);
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('exp', res.data.exp);
-        if (res.data.success === true) {
-          window.open('/admin/qrcode', '_self');
-        } else {
-          setOpen(true);
-        }
-      })
-      .catch(err => {
-        console.log(err);
+    axios.post(API_URL + '/secure/login', {
+      username: data.get('username'),
+      password: data.get('password'),
+    }).then(res => {
+      localStorage.setItem('username', res.data.username);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('exp', res.data.exp);
+      if (res.data.success === true) {
+        window.open('/admin/users', '_self');
+      } else {
         setOpen(true);
-      });
+      }
+    }).catch(err => {
+      console.log(err);
+      setOpen(true);
+    });
   };
 
   return (
