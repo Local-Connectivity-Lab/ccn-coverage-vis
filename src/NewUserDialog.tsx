@@ -10,7 +10,6 @@ import Stack from '@mui/material/Stack';
 import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
 import { API_URL } from './utils/config';
-import { SelectAllRounded } from '@material-ui/icons';
 
 interface NewUserDialogProp {
   setCalled: React.Dispatch<React.SetStateAction<boolean>>

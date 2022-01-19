@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import NewUserDialog from './NewUserDialog';
 import EditIcon from '@mui/icons-material/Edit';
 import ViewQRCode from './ViewQRCode';
+import ViewIdentity from './ViewIdentity';
 import Loading from './Loading';
 import axios from 'axios'
 import { API_URL } from './utils/config'
@@ -83,7 +84,7 @@ export default function UserPage() {
             {pendingUsersRows.map((row) => (
               <TableRow key={row.identity}>
                 <TableCell>{new Date(row.issueDate).toString()}</TableCell>
-                <TableCell><a href="#">{"..." + row.identity.substring(56)}</a></TableCell>
+                <TableCell><ViewIdentity identity={row.identity}></ViewIdentity></TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.firstName + " " + row.lastName}</TableCell>
                 <TableCell align="right"><ViewQRCode identity={row.identity} qrCode={row.qrCode} /></TableCell>
