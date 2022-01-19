@@ -116,11 +116,11 @@ export default function UserPage() {
                 <TableCell><a href="#">{"..." + row.identity.substring(56)}</a></TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.firstName + " " + row.lastName}</TableCell>
-                <Switch
+                <TableCell><Switch
                   checked={row.isEnabled}
                   name={row.identity}
                   onChange={handleEnabledChange}
-                />
+                /></TableCell>
                 <TableCell align="right"><Button size="small" color="error" variant="contained" endIcon={<EditIcon />}>Edit</Button></TableCell>
               </TableRow>
             ))}
