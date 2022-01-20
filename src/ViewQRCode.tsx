@@ -6,8 +6,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import Slider from '@mui/material/Slider';
 import QrCodeIcon from '@mui/icons-material/QrCode';
-import QRCode from "react-qr-code";
+import QRCode from "qrcode.react";
 
 interface ViewQRCodeProp {
   identity: string,
@@ -16,6 +17,7 @@ interface ViewQRCodeProp {
 
 export default function ViewQRCode(props: ViewQRCodeProp) {
   const [open, setOpen] = React.useState(false);
+  const [size, setSize] = React.useState(512);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -23,6 +25,10 @@ export default function ViewQRCode(props: ViewQRCodeProp) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleChange = (event: Event, newSize: number | number[]) => {
+    setSize(newSize as number);
   };
 
   return (
@@ -34,7 +40,8 @@ export default function ViewQRCode(props: ViewQRCodeProp) {
           <DialogContentText>
             The code will be valid for 30 minuites
           </DialogContentText>
-          <QRCode value="placeholder"></QRCode>
+          <QRCode size={size} value={props.qrCode.length > 1500 ? "" : props.qrCode}></QRCode>
+          <Slider defaultValue={512} min={64} max={512} aria-label="Volume" value={size} onChange={handleChange} />
           <TextField
             id="outlined-read-only-input"
             defaultValue={props.qrCode}

@@ -73,7 +73,7 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme();
 
 export default function AdminPortal(props: AdminPortalProps) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
