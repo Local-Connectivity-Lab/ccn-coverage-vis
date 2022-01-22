@@ -1,6 +1,7 @@
 type SidebarOption = {
   label: string;
   value: string;
+  status: SiteStatus;
 };
 
 type DisplayOption = {

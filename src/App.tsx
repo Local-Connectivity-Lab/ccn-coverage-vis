@@ -20,7 +20,6 @@ import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
-import fetchToJson from './utils/fetch-to-json';
 import axios from 'axios';
 import { API_URL } from './utils/config'
 
@@ -135,11 +134,13 @@ export default function App() {
     (async () => {
       axios.get(API_URL + '/api/sites').then(res => {
         const ss: Site[] = res.data;
-        setSites(ss);
-        setSiteOptions(sites.map(({ name }) => ({
+        const siteOptions = ss.map(({ name, status }) => ({
           label: name,
           value: name,
-        })));
+          status: status
+        }))
+        setSites(ss);
+        setSiteOptions(siteOptions);
         setSelectedSites(siteOptions)
       }).catch(err => {
         console.log(err);
@@ -256,7 +257,7 @@ export default function App() {
           zIndex: '3',
         }}
       >
-        <Fade in={displayValue(displayOptions, 'displayGraph')}>
+        <Fade mountOnEnter unmountOnExit in={displayValue(displayOptions, 'displayGraph')}>
           <Card>
             <LineChart
               mapType={mapType}
