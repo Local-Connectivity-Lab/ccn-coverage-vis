@@ -30,6 +30,7 @@ type Site = {
   longitude: number;
   status: SiteStatus;
   address: string;
+  cell_id: string[];
 };
 
 type Measurement = {

@@ -3,20 +3,21 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { MultiSelect } from 'react-multi-select-component';
 import 'fontsource-roboto';
-import sites from './sites.json';
 
-export const siteOptions = sites.map(({ name }) => ({
-  label: name,
-  value: name,
-}));
+
 
 interface SidebarProps {
   selectedSites: SidebarOption[];
   setSelectedSites: React.Dispatch<React.SetStateAction<SidebarOption[]>>;
   loading: boolean;
+  allSites: Site[];
 }
 
 const SiteSelect = (props: SidebarProps) => {
+  const siteOptions = props.allSites.map(({ name }) => ({
+    label: name,
+    value: name,
+  }));
   return (
     <Box mb={2}>
       <Typography variant='overline'>Select Sites</Typography>

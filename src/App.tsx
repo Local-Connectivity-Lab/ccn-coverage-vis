@@ -17,9 +17,12 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { homeListItems } from './ListItems';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import DisplaySelection from './DisplaySelection';
-import SiteSelect, { siteOptions } from './SiteSelect';
+import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
+import fetchToJson from './utils/fetch-to-json';
+import axios from 'axios';
+import { API_URL } from './utils/config'
 
 // import { setOptions } from 'leaflet';
 
@@ -121,11 +124,28 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
 
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('dbm');
+  const [sites, setSites] = useState<Site[]>([]);
+  const [siteOptions, setSiteOptions] = useState<SidebarOption[]>([]);
   const [selectedSites, setSelectedSites] =
     useState<SidebarOption[]>(siteOptions);
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
+  useEffect(() => {
+    (async () => {
+      axios.get(API_URL + '/api/sites').then(res => {
+        const ss: Site[] = res.data;
+        setSites(ss);
+        setSiteOptions(sites.map(({ name }) => ({
+          label: name,
+          value: name,
+        })));
+        setSelectedSites(siteOptions)
+      }).catch(err => {
+        console.log(err);
+      });
+    })();
+  }, []);
   const [loadingMap, setLoadingMap] = useState(true);
   const [loadingLine, setLoadingLine] = useState(true);
   const { height, width } = useWindowDimensions();
@@ -201,6 +221,7 @@ export default function App() {
               selectedSites={selectedSites}
               setSelectedSites={setSelectedSites}
               loading={loadingLine || loadingMap}
+              allSites={sites}
             />
             <DisplaySelection
               displayOptions={displayOptions}
@@ -221,6 +242,7 @@ export default function App() {
           height={height - barHeight}
           loading={loadingMap}
           top={barHeight}
+          allSites={sites}
         />
       </Box>
       <Box

@@ -52,6 +52,7 @@ interface MapProps {
   height: number;
   loading: boolean;
   top: number;
+  allSites: Site[];
 }
 
 const MeasurementMap = ({
@@ -62,6 +63,7 @@ const MeasurementMap = ({
   height,
   loading,
   top,
+  allSites,
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
@@ -73,21 +75,8 @@ const MeasurementMap = ({
   useEffect(() => {
     (async () => {
       const dataRange = await fetchToJson(API + 'dataRange');
-      const _sites = await fetchToJson(API + 'sites');
-      const _siteSummary = await fetchToJson(API + 'sitesSummary');
       const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
       const _bounds = getBounds({ ...dataRange, map: _map, width, height });
-      const _markers = new Map<string, L.Marker>();
-
-      if (!isSiteArray(_sites)) {
-        throw new Error('data has incorrect type');
-      }
-      _sites.forEach(site =>
-        _markers.set(
-          site.name,
-          siteMarker(site, _siteSummary[site.name]).addTo(_map),
-        ),
-      );
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
@@ -97,13 +86,37 @@ const MeasurementMap = ({
         zIndex: 1,
       }).addTo(_map);
 
-      setMarkers(_markers);
       setBounds(_bounds);
       setMap(_map);
       setLayer(L.layerGroup().addTo(_map));
       setLoading(false);
     })();
   }, [setLoading, width, height]);
+
+  useEffect(() => {
+    (async () => {
+      const _sites = allSites || [];
+      const _siteSummary = await fetchToJson(API + 'sitesSummary');
+      const _markers = new Map<string, L.Marker>();
+      if (!map) {
+        return;
+      }
+      if (!isSiteArray(_sites)) {
+        throw new Error('data has incorrect type');
+      }
+
+      _sites.forEach(site =>
+        _markers.set(
+          site.name,
+          siteMarker(site, _siteSummary[site.name]).addTo(map),
+        ),
+      );
+
+      setMarkers(_markers);
+      setLayer(L.layerGroup().addTo(map));
+      setLoading(false);
+    })();
+  }, [setLoading, allSites, width, height]);
 
   useEffect(() => {
     if (!map || !markers) return;
