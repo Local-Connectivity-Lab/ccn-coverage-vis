@@ -113,7 +113,7 @@ const MeasurementMap = ({
       );
       setMarkers(_markers);
     })();
-  }, [allSites, map]);
+  }, [allSites, map, markers]);
   useEffect(() => {
     if (!map || !markers) return;
     // TODO: MOVE TO UTILS;

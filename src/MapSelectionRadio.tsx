@@ -1,10 +1,10 @@
 import React from 'react';
-import Radio from '@material-ui/core/Radio';
-import Typography from '@material-ui/core/Typography';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Box from '@material-ui/core/Box';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
+import Radio from '@mui/material/Radio';
+import Typography from '@mui/material/Typography';
+import RadioGroup from '@mui/material/RadioGroup';
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 import 'fontsource-roboto';
 
 const MAP_TYPE_INDEX = {
@@ -36,7 +36,7 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
   };
 
   return (
-    <Box className='App'>
+    <Box className='MapSelectionRadio'>
       <FormControl component='fieldset' disabled={props.loading}>
         <Typography variant='overline'>Map Type</Typography>
         <RadioGroup
@@ -45,7 +45,6 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
           value={props.mapType}
           onChange={handleChange}
         >
-          {/* remove signal for now because we don't have "signal" in our mock data */}
           <FormControlLabel
             value='dbm'
             control={<Radio />}
@@ -61,7 +60,11 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
             control={<Radio />}
             label='Download Speed'
           />
-          <FormControlLabel value='ping' control={<Radio />} label='Ping' />
+          <FormControlLabel
+            value='ping'
+            control={<Radio />}
+            label='Ping'
+          />
         </RadioGroup>
       </FormControl>
     </Box>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,27 +17,26 @@ import Loading from './Loading';
 import axios from 'axios'
 import { API_URL } from './utils/config'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-      marginBottom: '20px',
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-    },
-  }),
-);
+// const useStyles = makeStyles((theme: Theme) =>
+//   createStyles({
+//     root: {
+//       flexGrow: 1,
+//       marginBottom: '20px',
+//     },
+//     menuButton: {
+//       marginRight: theme.spacing(2),
+//     },
+//     title: {
+//       flexGrow: 1,
+//     },
+//   }),
+// );
 
 function handleEnabledChange() {
   return;
 }
 
 export default function UserPage() {
-  const classes = useStyles();
   const [loadingUser, setLoadingUser] = useState(true);
   const [called, setCalled] = useState(false);
   const [pendingUsersRows, setPendingUsersRows] = useState<UserRow[]>([]);
@@ -63,7 +61,7 @@ export default function UserPage() {
     }
   })
   return (
-    <Container className={classes.root}>
+    <Container className='UserPage'>
       <NewUserDialog setCalled={setCalled} />
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
