@@ -97,10 +97,10 @@ const MeasurementMap = ({
     (async () => {
       const _sites = allSites || [];
       const _siteSummary = await fetchToJson(API + 'sitesSummary');
-      const _markers = new Map<string, L.Marker>();
-      if (!map) {
+      if (!map || markers.size > 0) {
         return;
       }
+      const _markers = new Map<string, L.Marker>();
       if (!isSiteArray(_sites)) {
         throw new Error('data has incorrect type');
       }
@@ -111,9 +111,7 @@ const MeasurementMap = ({
           siteMarker(site, _siteSummary[site.name]).addTo(map),
         ),
       );
-
       setMarkers(_markers);
-      setLayer(L.layerGroup().addTo(map));
     })();
   }, [allSites, map]);
   useEffect(() => {
@@ -166,6 +164,9 @@ const MeasurementMap = ({
 
     setLoading(true);
     (async () => {
+      if (!map) {
+        return;
+      }
       const bins: number[] = await fetchToJson(
         API +
         'data?' +
@@ -218,7 +219,7 @@ const MeasurementMap = ({
         id='map-id'
         style={{ height, width, position: 'absolute', zIndex: '1' }}
       ></div>
-      <div style={{ position: 'absolute', left: width - LEGEND_WIDTH }}>
+      <div style={{ position: 'fixed', right: 0, zIndex: '1' }}>
         <MapLegend
           colorDomain={cDomain}
           title={`${MAP_TYPE_CONVERT[mapType]} (${UNITS[mapType]})`}
