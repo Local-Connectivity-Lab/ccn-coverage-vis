@@ -7,30 +7,15 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Paper from '@mui/material/Paper';
-import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import NewUserDialog from './NewUserDialog';
 import EditIcon from '@mui/icons-material/Edit';
 import ViewQRCode from './ViewQRCode';
 import ViewIdentity from './ViewIdentity';
 import Loading from './Loading';
-import axios from 'axios'
-import { API_URL } from './utils/config'
-
-// const useStyles = makeStyles((theme: Theme) =>
-//   createStyles({
-//     root: {
-//       flexGrow: 1,
-//       marginBottom: '20px',
-//     },
-//     menuButton: {
-//       marginRight: theme.spacing(2),
-//     },
-//     title: {
-//       flexGrow: 1,
-//     },
-//   }),
-// );
+import axios from 'axios';
+import { API_URL } from './utils/config';
 
 function handleEnabledChange() {
   return;
@@ -61,7 +46,7 @@ export default function UserPage() {
     }
   })
   return (
-    <Container className='UserPage'>
+    <Box className='UserPage'>
       <NewUserDialog setCalled={setCalled} />
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
@@ -128,6 +113,6 @@ export default function UserPage() {
       </Paper>
 
       <Loading left={360} top={360} size={70} loading={loadingUser} />
-    </Container >
+    </Box >
   );
 }
