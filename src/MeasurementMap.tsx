@@ -7,7 +7,6 @@ import getBounds from './utils/get-bounds';
 import MapLegend from './MapLegend';
 import fetchToJson from './utils/fetch-to-json';
 import Loading from './Loading';
-import { xml } from 'd3';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -195,7 +194,7 @@ const MeasurementMap = ({
       ));
       setLoading(false);
     })();
-  }, [cells, selectedSites, mapType, setLoading, map, layer, bounds]);
+  }, [selectedSites, mapType, setLoading, map, layer, bounds]);
 
   useEffect(() => {
     if (!map || !bounds || !layer) return;
@@ -241,7 +240,7 @@ const MeasurementMap = ({
       });
       setLoading(false);
     })();
-  }, [bins, cells, selectedSites, mapType, setLoading, map, layer, bounds]);
+  }, [bins, setCells, cells, selectedSites, mapType, setLoading, map, layer, bounds]);
 
   useEffect(() => {
     if (!map || !bounds || !layer || !mlayer || !bins) return;
@@ -276,7 +275,7 @@ const MeasurementMap = ({
         }
       });
     })();
-  }, [cells, bins, selectedSites, mapType, setLoading, map, mlayer, bounds, layer])
+  }, [cells, setCells, bins, selectedSites, mapType, setLoading, map, mlayer, bounds, layer])
 
   return (
     <div style={{ position: 'relative', top: top }}>
