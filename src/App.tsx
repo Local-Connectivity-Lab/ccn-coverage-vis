@@ -124,6 +124,7 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
 export default function App() {
   const [mapType, setMapType] = useState<MapType>('dbm');
   const [sites, setSites] = useState<Site[]>([]);
+  const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
   const [siteOptions, setSiteOptions] = useState<SidebarOption[]>([]);
   const [selectedSites, setSelectedSites] =
     useState<SidebarOption[]>(siteOptions);
@@ -244,6 +245,8 @@ export default function App() {
           loading={loadingMap}
           top={barHeight}
           allSites={sites}
+          cells={selectedCells}
+          setCells={setSelectedCells}
         />
       </Box>
       <Box

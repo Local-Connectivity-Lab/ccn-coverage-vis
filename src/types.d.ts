@@ -4,6 +4,11 @@ type SidebarOption = {
   status: SiteStatus;
 };
 
+type Cell = {
+  x: int;
+  y: int;
+}
+
 type DisplayOption = {
   label: string;
   name: string;

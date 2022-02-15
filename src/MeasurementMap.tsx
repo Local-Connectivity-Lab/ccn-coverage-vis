@@ -7,6 +7,7 @@ import getBounds from './utils/get-bounds';
 import MapLegend from './MapLegend';
 import fetchToJson from './utils/fetch-to-json';
 import Loading from './Loading';
+import { xml } from 'd3';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -22,6 +23,10 @@ export const API = 'https://api-dev.seattlecommunitynetwork.org/api/';
 const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
 const LEGEND_WIDTH = 25;
+
+function cts(p: Cell): string {
+  return p.x + ',' + p.y;
+}
 
 export const UNITS = {
   dbm: 'dBm',
@@ -53,6 +58,8 @@ interface MapProps {
   loading: boolean;
   top: number;
   allSites: Site[];
+  cells: Set<string>;
+  setCells: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 const MeasurementMap = ({
@@ -64,13 +71,17 @@ const MeasurementMap = ({
   loading,
   top,
   allSites,
+  cells,
+  setCells
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
+  const [bins, setBins] = useState<number[]>([]);
   const [bounds, setBounds] =
     useState<{ left: number; top: number; width: number; height: number }>();
   const [markers, setMarkers] = useState(new Map<string, L.Marker>());
   const [layer, setLayer] = useState<L.LayerGroup>();
+  const [mlayer, setMLayer] = useState<L.LayerGroup>();
 
   useEffect(() => {
     (async () => {
@@ -89,6 +100,7 @@ const MeasurementMap = ({
       setBounds(_bounds);
       setMap(_map);
       setLayer(L.layerGroup().addTo(_map));
+      setMLayer(L.layerGroup().addTo(_map));
       setLoading(false);
     })();
   }, [setLoading, width, height]);
@@ -167,7 +179,7 @@ const MeasurementMap = ({
       if (!map) {
         return;
       }
-      const bins: number[] = await fetchToJson(
+      setBins(await fetchToJson(
         API +
         'data?' +
         new URLSearchParams([
@@ -180,8 +192,16 @@ const MeasurementMap = ({
           ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
           ['mapType', mapType],
         ]),
-      );
+      ));
+      setLoading(false);
+    })();
+  }, [cells, selectedSites, mapType, setLoading, map, layer, bounds]);
 
+  useEffect(() => {
+    if (!map || !bounds || !layer) return;
+
+    setLoading(true);
+    (async () => {
       const colorDomain = [
         d3.max(bins, d => d * MULTIPLIERS[mapType]) ?? 1,
         d3.min(bins, d => d * MULTIPLIERS[mapType]) ?? 0,
@@ -206,12 +226,57 @@ const MeasurementMap = ({
             fillColor: colorScale(bin * MULTIPLIERS[mapType]),
             fillOpacity: 0.75,
             stroke: false,
-          }).addTo(layer);
+          }).addTo(layer).on('click', (e) => {
+            const cs = cells;
+            const c = cts({ x: x, y: y });
+            if (cs.has(c)) {
+              cs.delete(c);
+            } else {
+              cs.add(c);
+            }
+            setCells(new Set(cs));
+            // console.log(cs);
+          });
         }
       });
       setLoading(false);
     })();
-  }, [selectedSites, mapType, setLoading, map, layer, bounds]);
+  }, [bins, cells, selectedSites, mapType, setLoading, map, layer, bounds]);
+
+  useEffect(() => {
+    if (!map || !bounds || !layer || !mlayer || !bins) return;
+    (async () => {
+      mlayer.clearLayers();
+      bins.forEach((bin, idx) => {
+        if (bin) {
+          const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
+          const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
+          const c = cts({ x: x, y: y });
+          if (cells.has(c)) {
+            const ct = map.unproject(
+              [x + (1 << BIN_SIZE_SHIFT) / 2, y + (1 << BIN_SIZE_SHIFT) / 2],
+              DEFAULT_ZOOM,
+            );
+            L.circle(L.latLng(ct), {
+              fillColor: '#FF0000',
+              fillOpacity: 0.75,
+              radius: 24,
+              stroke: false,
+            }).addTo(mlayer).on('click', (e) => {
+              const cs = cells;
+              if (cs.has(c)) {
+                cs.delete(c);
+              } else {
+                cs.add(c);
+              }
+              // console.log(cs);
+              setCells(new Set(cs));
+            });;
+          }
+        }
+      });
+    })();
+  }, [cells, bins, selectedSites, mapType, setLoading, map, mlayer, bounds, layer])
 
   return (
     <div style={{ position: 'relative', top: top }}>
