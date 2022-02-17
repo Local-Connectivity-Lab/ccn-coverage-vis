@@ -273,7 +273,7 @@ const MeasurementMap = ({
               radius: 24,
               stroke: false,
             }).bindTooltip(
-              `${bin}`,
+              `${bin.toFixed(2)}`,
               { direction: 'top' }
             ).addTo(mlayer).on('click', (e) => {
               const cs = cells;
