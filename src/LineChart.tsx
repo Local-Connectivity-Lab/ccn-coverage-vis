@@ -24,10 +24,10 @@ const colors = d3
   .range(d3.schemeTableau10);
 
 const margin = {
-  left: 50,
-  bottom: 30,
-  right: 20,
-  top: 20,
+  left: 40,
+  bottom: 25,
+  right: 12,
+  top: 12,
 };
 
 const mapTypeConvert = {
@@ -83,11 +83,11 @@ const LineChart = ({
       }[] = (
         await fetchToJson(
           API +
-            'lineSummary?' +
-            new URLSearchParams([
-              ['mapType', mapType],
-              ['selectedSites', _selectedSites.join(',')],
-            ]),
+          'lineSummary?' +
+          new URLSearchParams([
+            ['mapType', mapType],
+            ['selectedSites', _selectedSites.join(',')],
+          ]),
         )
       ).map((d: any) => ({
         site: d.site,
@@ -155,13 +155,13 @@ const LineChart = ({
         .attr('transform', `translate(0, ${chartHeight})`)
         .style('user-select', 'none')
         .transition()
-        .duration(1000)
+        .duration(0)
         .call(xAxisGenerator);
 
       yAxis
         .style('user-select', 'none')
         .transition()
-        .duration(1000)
+        .duration(0)
         .call(yAxisGenerator);
 
       yTitle
@@ -202,7 +202,7 @@ const LineChart = ({
           exit => exit.remove(),
         )
         .transition()
-        .duration(1000)
+        .duration(500)
         .style('opacity', 1)
         .attr('d', d => lineGenerator(d.values));
       setLoading(false);

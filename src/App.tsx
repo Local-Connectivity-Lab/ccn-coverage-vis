@@ -22,11 +22,12 @@ import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
 import axios from 'axios';
 import { API_URL } from './utils/config'
+import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap'
 
 // import { setOptions } from 'leaflet';
 
 const drawerWidth: number = 320;
-const maxChartWidth: number = 600;
+const maxChartWidth: number = 400;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -106,8 +107,13 @@ const mdTheme = createTheme();
 
 const INITIAL_DISPLAY_OPTIONS = [
   {
-    label: 'Graph',
+    label: 'Chart',
     name: 'displayGraph',
+    checked: true,
+  },
+  {
+    label: 'Data Overlay',
+    name: 'displayOverlayData',
     checked: true,
   },
 ];
@@ -117,8 +123,8 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
     if (option.name === name && option.checked === true) {
       return true;
     }
-    return false;
   }
+  return false;
 }
 
 export default function App() {
@@ -131,6 +137,7 @@ export default function App() {
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
+  const [overlayData, setOverlayData] = useState<number>(0);
   useEffect(() => {
     (async () => {
       axios.get(API_URL + '/api/sites').then(res => {
@@ -152,7 +159,7 @@ export default function App() {
   const [loadingLine, setLoadingLine] = useState(true);
   const { height, width } = useWindowDimensions();
   const chartWidth: number = Math.min(width * 0.9 - 50, maxChartWidth);
-  const chartHeight: number = 0.4 * chartWidth;
+  const chartHeight: number = 0.42 * chartWidth;
   var drawerOpen: boolean = true;
   var barHeight: number = 64;
   if (width < 600) {
@@ -217,7 +224,7 @@ export default function App() {
             <MapSelectionRadio
               mapType={mapType}
               setMapType={setMapType}
-              loading={loadingLine || loadingMap}
+              loading={loadingMap}
             />
             <SiteSelect
               selectedSites={selectedSites}
@@ -228,7 +235,7 @@ export default function App() {
             <DisplaySelection
               displayOptions={displayOptions}
               setDisplayOptions={setDisplayOptions}
-              loading={loadingLine || loadingMap}
+              loading={false}
             />
           </Container>
           <Divider />
@@ -247,6 +254,8 @@ export default function App() {
           allSites={sites}
           cells={selectedCells}
           setCells={setSelectedCells}
+          overlayData={overlayData}
+          setOverlayData={setOverlayData}
         />
       </Box>
       <Box
@@ -255,8 +264,8 @@ export default function App() {
           backgroundColor: 'transparent',
           overflow: 'none',
           position: 'absolute',
-          right: '50px',
-          bottom: '50px',
+          right: '8px',
+          bottom: '20px',
           zIndex: '3',
         }}
       >
@@ -271,6 +280,24 @@ export default function App() {
               setLoading={setLoadingLine}
               loading={loadingLine}
             />
+          </Card>
+        </Fade>
+      </Box>
+      <Box
+        component='main'
+        sx={{
+          backgroundColor: 'transparent',
+          overflow: 'none',
+          position: 'absolute',
+          right: '8px',
+          bottom: 20 + (displayValue(displayOptions, 'displayGraph') ? chartHeight + 10 : 0),
+          zIndex: '4',
+        }}
+      >
+        <Fade mountOnEnter unmountOnExit in={displayValue(displayOptions, 'displayOverlayData')}>
+          <Card sx={{ px: 2, py: 1 }}>
+            <Typography align='right' variant='body1' component='div'>Average {MAP_TYPE_CONVERT[mapType]}</Typography>
+            <Typography align='right' variant='h6' component="div">{overlayData ? overlayData.toFixed(2) + ' ' + UNITS[mapType] : 'Please select the area'}</Typography>
           </Card>
         </Fade>
       </Box>

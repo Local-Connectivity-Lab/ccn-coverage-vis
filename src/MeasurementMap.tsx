@@ -41,7 +41,7 @@ export const MULTIPLIERS = {
   upload_speed: 1,
 } as const;
 
-const MAP_TYPE_CONVERT = {
+export const MAP_TYPE_CONVERT = {
   dbm: 'Signal Strength',
   ping: 'Ping',
   download_speed: 'Download Speed',
@@ -59,6 +59,8 @@ interface MapProps {
   allSites: Site[];
   cells: Set<string>;
   setCells: React.Dispatch<React.SetStateAction<Set<string>>>;
+  overlayData: number;
+  setOverlayData: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const MeasurementMap = ({
@@ -71,7 +73,9 @@ const MeasurementMap = ({
   top,
   allSites,
   cells,
-  setCells
+  setCells,
+  overlayData,
+  setOverlayData
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
@@ -225,7 +229,10 @@ const MeasurementMap = ({
             fillColor: colorScale(bin * MULTIPLIERS[mapType]),
             fillOpacity: 0.75,
             stroke: false,
-          }).addTo(layer).on('click', (e) => {
+          }).bindTooltip(
+            `${bin.toFixed(2)} ${UNITS[mapType]}`,
+            { direction: 'top' }
+          ).addTo(layer).on('click', (e) => {
             const cs = cells;
             const c = cts({ x: x, y: y });
             if (cs.has(c)) {
@@ -246,6 +253,8 @@ const MeasurementMap = ({
     if (!map || !bounds || !layer || !mlayer || !bins) return;
     (async () => {
       mlayer.clearLayers();
+      var binSum: number = 0;
+      var binNum: number = 0;
       bins.forEach((bin, idx) => {
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
@@ -256,12 +265,17 @@ const MeasurementMap = ({
               [x + (1 << BIN_SIZE_SHIFT) / 2, y + (1 << BIN_SIZE_SHIFT) / 2],
               DEFAULT_ZOOM,
             );
+            binSum += bin;
+            binNum += 1;
             L.circle(L.latLng(ct), {
               fillColor: '#FF0000',
               fillOpacity: 0.75,
               radius: 24,
               stroke: false,
-            }).addTo(mlayer).on('click', (e) => {
+            }).bindTooltip(
+              `${bin}`,
+              { direction: 'top' }
+            ).addTo(mlayer).on('click', (e) => {
               const cs = cells;
               if (cs.has(c)) {
                 cs.delete(c);
@@ -274,8 +288,9 @@ const MeasurementMap = ({
           }
         }
       });
+      setOverlayData(binSum / binNum);
     })();
-  }, [cells, setCells, bins, selectedSites, mapType, setLoading, map, mlayer, bounds, layer])
+  }, [cells, setCells, setOverlayData, bins, selectedSites, mapType, setLoading, map, mlayer, bounds, layer])
 
   return (
     <div style={{ position: 'relative', top: top }}>
