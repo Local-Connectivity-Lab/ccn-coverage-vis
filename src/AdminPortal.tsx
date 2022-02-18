@@ -10,11 +10,14 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { mainListItems, secondaryListItems } from './ListItems';
 import Footer from './Footer';
 import AdminBody from './AdminBody';
+import axios from 'axios';
+import { API_URL } from './utils/config';
 
 const drawerWidth: number = 240;
 
@@ -123,6 +126,14 @@ export default function AdminPortal(props: AdminPortalProps) {
             >
               Admin Portal
             </Typography>
+            <Button color="inherit" onClick={() => {
+              axios.get(API_URL + '/api/logout').then(function (response) {
+                window.open('/', '_self');
+              })
+                .catch(function (error) {
+                  console.log(error);
+                })
+            }}>Logout</Button>
           </Toolbar>
         </AppBar>
         <Drawer variant='permanent' open={open}>

@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container'; 
+import Container from '@mui/material/Container';
 import Footer from './Footer';
 import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -35,7 +35,7 @@ export default function Login() {
       localStorage.setItem('username', res.data.username);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('exp', res.data.exp);
-      if (res.data.success === true) {
+      if (res.data === "success") {
         window.open('/admin/users', '_self');
       } else {
         setOpen(true);
