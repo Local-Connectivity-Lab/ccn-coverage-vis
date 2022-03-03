@@ -30,8 +30,6 @@ export default function NewUserDialog(props: NewUserDialogProp) {
 
   const handleSubmit = () => {
     axios.post(API_URL + '/secure/new-user', {
-      username: localStorage.getItem('username'),
-      token: localStorage.getItem('token'),
       firstName: firstName,
       lastName: lastName,
       email: email

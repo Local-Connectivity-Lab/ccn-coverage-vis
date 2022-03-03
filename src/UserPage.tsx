@@ -28,10 +28,7 @@ export default function UserPage() {
   const [activeUsersRows, setActiveUsersRows] = useState<UserRow[]>([]);
   useEffect(() => {
     if (!called) {
-      axios.post(API_URL + '/secure/get-users', {
-        username: localStorage.getItem('username'),
-        token: localStorage.getItem('token'),
-      }).then(res => {
+      axios.post(API_URL + '/secure/get-users').then(res => {
         const data: UserRow[] = res.data.pending;
         setPendingUsersRows(data);
         const dataReg: UserRow[] = res.data.registered;
@@ -39,6 +36,7 @@ export default function UserPage() {
         setLoadingUser(false);
         setCalled(true);
       }).catch(err => {
+        alert(err);
         window.open('/login', '_self');
         setLoadingUser(false);
         return (<div></div>);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MapType } from './MapSelectionRadio';
+import { API_URL } from './utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
 import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
@@ -16,8 +17,6 @@ const ATTRIBUTION =
 
 const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
   }.png`;
-
-export const API = 'https://api-dev.seattlecommunitynetwork.org/api/';
 
 const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
@@ -88,7 +87,7 @@ const MeasurementMap = ({
 
   useEffect(() => {
     (async () => {
-      const dataRange = await fetchToJson(API + 'dataRange');
+      const dataRange = await fetchToJson(API_URL + '/api/dataRange');
       const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
       const _bounds = getBounds({ ...dataRange, map: _map, width, height });
 
@@ -111,7 +110,7 @@ const MeasurementMap = ({
   useEffect(() => {
     (async () => {
       const _sites = allSites || [];
-      const _siteSummary = await fetchToJson(API + 'sitesSummary');
+      const _siteSummary = await fetchToJson(API_URL + '/api/sitesSummary');
       if (!map || markers.size > 0) {
         return;
       }
@@ -183,7 +182,7 @@ const MeasurementMap = ({
         return;
       }
       setBins(await fetchToJson(
-        API +
+        API_URL +
         'data?' +
         new URLSearchParams([
           ['width', bounds.width + ''],

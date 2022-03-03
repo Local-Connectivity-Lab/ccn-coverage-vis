@@ -32,9 +32,6 @@ export default function Login() {
       username: data.get('username'),
       password: data.get('password'),
     }).then(res => {
-      localStorage.setItem('username', res.data.username);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('exp', res.data.exp);
       if (res.data === "success") {
         window.open('/admin/users', '_self');
       } else {

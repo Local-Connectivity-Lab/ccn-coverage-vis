@@ -4,7 +4,8 @@ import * as d3 from 'd3';
 import { MapType } from './MapSelectionRadio';
 
 import sites from './sites.json';
-import { API, MULTIPLIERS } from './MeasurementMap';
+import { MULTIPLIERS } from './MeasurementMap';
+import { API_URL } from './utils/config';
 import fetchToJson from './utils/fetch-to-json';
 import Loading from './Loading';
 
@@ -82,8 +83,8 @@ const LineChart = ({
         values: { date: Date; value: number }[];
       }[] = (
         await fetchToJson(
-          API +
-          'lineSummary?' +
+          API_URL +
+          '/api/lineSummary?' +
           new URLSearchParams([
             ['mapType', mapType],
             ['selectedSites', _selectedSites.join(',')],
