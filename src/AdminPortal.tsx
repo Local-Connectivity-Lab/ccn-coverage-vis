@@ -80,16 +80,7 @@ export default function AdminPortal(props: AdminPortalProps) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const token = localStorage.getItem('token');
-  const exp = localStorage.getItem('exp');
-  if (token === null || exp === null) {
-    window.open('/login', '_self');
-    return <div></div>;
-  }
-  if (new Date(exp) < new Date()) {
-    window.open('/login', '_self');
-    return <div></div>;
-  }
+
   if (props.page === undefined) {
     window.open('/admin/qrcode', '_self');
     return <div></div>;
