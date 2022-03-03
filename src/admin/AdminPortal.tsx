@@ -13,11 +13,11 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { mainListItems, secondaryListItems } from './ListItems';
-import Footer from './Footer';
+import { mainListItems, secondaryListItems } from '../ListItems';
+import Footer from '../Footer';
 import AdminBody from './AdminBody';
 import axios from 'axios';
-import { API_URL } from './utils/config';
+import { API_URL } from '../utils/config';
 
 const drawerWidth: number = 240;
 

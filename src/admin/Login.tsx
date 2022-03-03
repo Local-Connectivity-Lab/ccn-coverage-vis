@@ -9,10 +9,10 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Footer from './Footer';
+import Footer from '../Footer';
 import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { API_URL } from './utils/config'
+import { API_URL } from '../utils/config'
 const theme = createTheme();
 
 export default function Login() {

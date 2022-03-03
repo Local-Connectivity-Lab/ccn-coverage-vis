@@ -13,9 +13,9 @@ import NewUserDialog from './NewUserDialog';
 import EditIcon from '@mui/icons-material/Edit';
 import ViewQRCode from './ViewQRCode';
 import ViewIdentity from './ViewIdentity';
-import Loading from './Loading';
+import Loading from '../Loading';
 import axios from 'axios';
-import { API_URL } from './utils/config';
+import { API_URL } from '../utils/config';
 
 function handleEnabledChange() {
   return;

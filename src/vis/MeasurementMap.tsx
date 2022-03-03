@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { MapType } from './MapSelectionRadio';
-import { API_URL } from './utils/config';
+import { API_URL } from '../utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import siteMarker, { isSiteArray } from './leaflet-component/site-marker';
-import getBounds from './utils/get-bounds';
+import siteMarker, { isSiteArray } from '../leaflet-component/site-marker';
+import getBounds from '../utils/get-bounds';
 import MapLegend from './MapLegend';
-import fetchToJson from './utils/fetch-to-json';
-import Loading from './Loading';
+import fetchToJson from '../utils/fetch-to-json';
+import Loading from '../Loading';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +

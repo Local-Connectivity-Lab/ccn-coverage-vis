@@ -14,14 +14,14 @@ import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { homeListItems } from './ListItems';
+import { homeListItems } from '../ListItems';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
 import axios from 'axios';
-import { API_URL } from './utils/config'
+import { API_URL } from '../utils/config'
 import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap'
 
 // import { setOptions } from 'leaflet';
@@ -127,7 +127,7 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
   return false;
 }
 
-export default function App() {
+export default function Vis() {
   const [mapType, setMapType] = useState<MapType>('dbm');
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
@@ -279,6 +279,7 @@ export default function App() {
               selectedSites={selectedSites}
               setLoading={setLoadingLine}
               loading={loadingLine}
+              allSites={sites}
             />
           </Card>
         </Fade>

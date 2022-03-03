@@ -3,11 +3,10 @@ import * as d3 from 'd3';
 
 import { MapType } from './MapSelectionRadio';
 
-import sites from './sites.json';
 import { MULTIPLIERS } from './MeasurementMap';
-import { API_URL } from './utils/config';
-import fetchToJson from './utils/fetch-to-json';
-import Loading from './Loading';
+import { API_URL } from '../utils/config';
+import fetchToJson from '../utils/fetch-to-json';
+import Loading from '../Loading';
 
 interface LineChartProps {
   mapType: MapType;
@@ -17,12 +16,8 @@ interface LineChartProps {
   selectedSites: SidebarOption[];
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
+  allSites: Site[];
 }
-
-const colors = d3
-  .scaleOrdinal()
-  .domain(sites.map(s => s.name))
-  .range(d3.schemeTableau10);
 
 const margin = {
   left: 40,
@@ -46,6 +41,7 @@ const LineChart = ({
   selectedSites,
   setLoading,
   loading,
+  allSites
 }: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
@@ -55,7 +51,6 @@ const LineChart = ({
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [yTitle, setYTitle] =
     useState<d3.Selection<SVGTextElement, unknown, HTMLElement, any>>();
-
   useEffect(() => {
     const svg = d3.select('#line-chart');
     const g = svg
@@ -77,7 +72,10 @@ const LineChart = ({
     (async function () {
       setLoading(true);
       const _selectedSites = selectedSites.map(ss => ss.label);
-
+      const colors = d3
+        .scaleOrdinal()
+        .domain(allSites.map(s => s.name))
+        .range(d3.schemeTableau10);
       const data: {
         site: string;
         values: { date: Date; value: number }[];
@@ -218,6 +216,7 @@ const LineChart = ({
     height,
     setLoading,
     width,
+    allSites
   ]);
 
   return (

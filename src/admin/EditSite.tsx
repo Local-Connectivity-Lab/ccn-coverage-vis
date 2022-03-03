@@ -8,11 +8,11 @@ import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Loading from './Loading';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
+import Loading from '../Loading';
 import axios from 'axios';
-import { API_URL } from './utils/config'
-import './utils/fonts.css';
+import { API_URL } from '../utils/config'
+import '../utils/fonts.css';
 var newSites = "";
 export default function EditSite() {
   const [loadingSites, setLoadingSites] = useState(true);
