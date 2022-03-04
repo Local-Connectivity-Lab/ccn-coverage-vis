@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -11,13 +11,13 @@ import axios from 'axios';
 import { API_URL } from '../utils/config'
 import '../utils/fonts.css';
 
-import { readFile } from 'fs/promises';
 // var newSites = "";
 const Input = styled('input')({
   display: 'none',
 });
 
 // TODO: Remove async and add loading element
+// TODO: Return different response, don't rely on alert()
 export default function EditData() {
   const [fileName, setFileName] = useState('');
   const [csv, setCsv] = useState('');
