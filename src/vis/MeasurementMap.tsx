@@ -78,7 +78,7 @@ const MeasurementMap = ({
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
-  const [bins, setBins] = useState<number[]>([]);
+  const [bins, setBins] = useState<number[][]>([]);
   const [bounds, setBounds] =
     useState<{ left: number; top: number; width: number; height: number }>();
   const [markers, setMarkers] = useState(new Map<string, L.Marker>());
@@ -205,15 +205,17 @@ const MeasurementMap = ({
     setLoading(true);
     (async () => {
       const colorDomain = [
-        d3.max(bins, d => d * MULTIPLIERS[mapType]) ?? 1,
-        d3.min(bins, d => d * MULTIPLIERS[mapType]) ?? 0,
+        d3.max(bins, d => d[1] * MULTIPLIERS[mapType]) ?? 1,
+        d3.min(bins, d => d[1] * MULTIPLIERS[mapType]) ?? 0,
       ];
 
       const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
       setCDomain(colorDomain);
 
       layer.clearLayers();
-      bins.forEach((bin, idx) => {
+      bins.forEach((p) => {
+        const idx = p[0];
+        const bin = p[1];
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
           const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
@@ -254,7 +256,9 @@ const MeasurementMap = ({
       mlayer.clearLayers();
       var binSum: number = 0;
       var binNum: number = 0;
-      bins.forEach((bin, idx) => {
+      bins.forEach((p) => {
+        const idx = p[0];
+        const bin = p[1];
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
           const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
