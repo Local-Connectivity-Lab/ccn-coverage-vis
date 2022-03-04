@@ -183,7 +183,7 @@ const MeasurementMap = ({
       }
       setBins(await fetchToJson(
         API_URL +
-        'data?' +
+        '/data?' +
         new URLSearchParams([
           ['width', bounds.width + ''],
           ['height', bounds.height + ''],

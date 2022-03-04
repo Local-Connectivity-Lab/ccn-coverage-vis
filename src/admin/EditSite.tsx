@@ -54,8 +54,6 @@ export default function EditSite() {
       return;
     }
     axios.post(API_URL + '/secure/edit_sites', {
-      username: localStorage.getItem('username') || "",
-      token: localStorage.getItem('token') || "",
       sites: sitesJson
     }).then(res => {
       setOpenApiError(false);

@@ -1,21 +1,70 @@
-// import React, { useEffect, useState } from 'react';
-// import Box from '@mui/material/Box';
-// import Grid from '@mui/material/Grid';
-// import Paper from '@mui/material/Paper';
-// import Stack from '@mui/material/Stack';
-// import Alert from '@mui/material/Alert';
-// import Snackbar from '@mui/material/Snackbar';
-// import Button from '@mui/material/Button';
-// import TextField from '@mui/material/TextField';
-// import Typography from '@mui/material/Typography';
-// import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
-// import axios from 'axios';
-// import Loading from '../Loading';
-// import { API_URL } from '../utils/config'
+import React, { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import SendIcon from '@mui/icons-material/Send';
+import { styled } from '@mui/material/styles';
+import axios from 'axios';
+
+import { API_URL } from '../utils/config'
 import '../utils/fonts.css';
+
+import { readFile } from 'fs/promises';
 // var newSites = "";
+const Input = styled('input')({
+  display: 'none',
+});
+
+// TODO: Remove async and add loading element
 export default function EditData() {
+  const [fileName, setFileName] = useState('');
+  const [csv, setCsv] = useState('');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileName(e.target.value);
+    const reader = new FileReader();
+    reader.onload = async (e: any) => {
+      const text = (e.target.result || '')
+      setCsv(text);
+    };
+    if (e.target && e.target.files && e.target.files[0]) {
+      reader.readAsText(e.target.files[0])
+    }
+  }
+
+  const handleClick = () => {
+    axios.post(API_URL + '/secure/upload_data', {
+      csv
+    }).then(res => {
+      alert('Successful');
+    }).catch(err => {
+      alert('Database error');
+      console.log(err);
+    });
+  }
+
   return (
-    <h1>EDIT DATA</h1>
+    <Box>
+      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
+        <Typography variant="h4" gutterBottom>
+          Update measurement data from file
+        </Typography>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Typography variant="body1">
+            {fileName === '' ? 'Please select a CSV' : fileName}
+          </Typography>
+          <label htmlFor="contained-button-file">
+            <Input accept=".csv" id="contained-button-file" type="file" onChange={handleChange} />
+            <Button variant="contained" component="span">
+              Select a file
+            </Button>
+          </label>
+          <Button onClick={handleClick} color="secondary" endIcon={<SendIcon />} variant="contained" component="span" disabled={csv === '' ? true : false}>
+            Upload
+          </Button>
+        </Stack>
+      </Paper>
+    </Box>
   )
 }
