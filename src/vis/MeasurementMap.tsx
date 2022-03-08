@@ -215,7 +215,7 @@ const MeasurementMap = ({
       layer.clearLayers();
       bins.forEach((p) => {
         const idx = p[0];
-        const bin = p[1];
+        const bin = Number(p[1]);
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
           const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
@@ -258,7 +258,7 @@ const MeasurementMap = ({
       var binNum: number = 0;
       bins.forEach((p) => {
         const idx = p[0];
-        const bin = p[1];
+        const bin = Number(p[1]);
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
           const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
