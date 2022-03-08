@@ -9,7 +9,6 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Stack from '@mui/material/Stack';
 import SendIcon from '@mui/icons-material/Send';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
@@ -26,14 +25,12 @@ const Input = styled('input')({
 // TODO: Remove async and add loading element
 // TODO: Return different response, don't rely on alert()
 export default function EditData() {
-  const [fileName, setFileName] = useState('');
   const [csv, setCsv] = useState('');
   const [group, setGroup] = useState('');
   const [newGroup, setNewGroup] = useState('');
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFileName(e.target.value);
     const reader = new FileReader();
     reader.onload = async (e: any) => {
       const text = (e.target.result || '')
@@ -55,7 +52,7 @@ export default function EditData() {
   const handleClick = () => {
     axios.post(API_URL + '/secure/upload_data', {
       csv: csv,
-      group: group == '' ? newGroup : group
+      group: group === '' ? newGroup : group
     }).then(res => {
       setLoading(true);
       alert('Successfully replaced');
