@@ -11,13 +11,18 @@ import SendIcon from '@mui/icons-material/Send';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 
 import { API_URL } from '../utils/config'
 import '../utils/fonts.css';
 
-// var newSites = "";
 const Input = styled('input')({
   display: 'none',
 });
@@ -30,6 +35,7 @@ export default function EditData() {
   const [newGroup, setNewGroup] = useState('');
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = React.useState(false);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
     reader.onload = async (e: any) => {
@@ -69,6 +75,26 @@ export default function EditData() {
     }).then(res => {
       setLoading(true);
       alert('Successfully deleted');
+    }).catch(err => {
+      setLoading(true);
+      alert(err.response.data.message);
+      console.log(err.response.data.message);
+    });
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDeleteAllClick = () => {
+    axios.post(API_URL + '/secure/delete_manual').then(res => {
+      setLoading(true);
+      alert('Successfully deleted');
+      handleClose();
     }).catch(err => {
       setLoading(true);
       alert(err.response.data.message);
@@ -130,6 +156,32 @@ export default function EditData() {
             Remove
           </Button>
         </Stack>
+        <Stack sx={{ mt: 2 }} direction="row" justifyContent="center">
+          <Button onClick={handleClickOpen} color="error" endIcon={<DeleteForeverIcon />} variant="contained" component="span" >
+            Clear all manual measurements
+          </Button>
+        </Stack>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Confirmation"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to remove all manual measurements?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>Cancel</Button>
+            <Button color="error" onClick={handleDeleteAllClick}>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </Box>
   )
