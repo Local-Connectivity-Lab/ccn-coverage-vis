@@ -18,10 +18,11 @@ import { homeListItems } from '../ListItems';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
+import DeviceSelect from './DeviceSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
 import axios from 'axios';
-import { API_URL } from '../utils/config'
+import { API_URL, DEVICE_OPTIONS } from '../utils/config'
 import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap'
 
 // import { setOptions } from 'leaflet';
@@ -131,9 +132,11 @@ export default function Vis() {
   const [mapType, setMapType] = useState<MapType>('dbm');
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
-  const [siteOptions, setSiteOptions] = useState<SidebarOption[]>([]);
+  const [siteOptions, setSiteOptions] = useState<SiteOption[]>([]);
   const [selectedSites, setSelectedSites] =
-    useState<SidebarOption[]>(siteOptions);
+    useState<SiteOption[]>(siteOptions);
+  const [selectedDevices, setSelectedDevices] =
+    useState<DeviceOption[]>([]);
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
@@ -232,6 +235,11 @@ export default function Vis() {
               loading={loadingLine || loadingMap}
               allSites={sites}
             />
+            <DeviceSelect
+              selectedDevices={selectedDevices}
+              setSelectedDevices={setSelectedDevices}
+              loading={loadingLine || loadingMap}
+            />
             <DisplaySelection
               displayOptions={displayOptions}
               setDisplayOptions={setDisplayOptions}
@@ -246,6 +254,7 @@ export default function Vis() {
         <MeasurementMap
           mapType={mapType}
           selectedSites={selectedSites}
+          selectedDevices={selectedDevices}
           setLoading={setLoadingMap}
           width={width}
           height={height - barHeight}
@@ -278,7 +287,7 @@ export default function Vis() {
               height={chartHeight}
               selectedSites={selectedSites}
               setLoading={setLoadingLine}
-              loading={loadingLine}
+              loading={loadingLine || loadingMap}
               allSites={sites}
             />
           </Card>

@@ -7,8 +7,8 @@ import 'fontsource-roboto';
 
 
 interface SidebarProps {
-  selectedSites: SidebarOption[];
-  setSelectedSites: React.Dispatch<React.SetStateAction<SidebarOption[]>>;
+  selectedSites: SiteOption[];
+  setSelectedSites: React.Dispatch<React.SetStateAction<SiteOption[]>>;
   loading: boolean;
   allSites: Site[];
 }

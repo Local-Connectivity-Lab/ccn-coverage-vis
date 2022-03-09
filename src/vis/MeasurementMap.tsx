@@ -3,11 +3,12 @@ import { MapType } from './MapSelectionRadio';
 import { API_URL } from '../utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import siteMarker, { isSiteArray } from '../leaflet-component/site-marker';
+import { siteMarker, siteSmallMarker, isSiteArray, isMarkerArray } from '../leaflet-component/site-marker';
 import getBounds from '../utils/get-bounds';
 import MapLegend from './MapLegend';
 import fetchToJson from '../utils/fetch-to-json';
 import Loading from '../Loading';
+import axios from 'axios';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -49,7 +50,8 @@ export const MAP_TYPE_CONVERT = {
 
 interface MapProps {
   mapType: MapType;
-  selectedSites: SidebarOption[];
+  selectedSites: SiteOption[];
+  selectedDevices: DeviceOption[];
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   width: number;
   height: number;
@@ -65,6 +67,7 @@ interface MapProps {
 const MeasurementMap = ({
   mapType,
   selectedSites,
+  selectedDevices,
   setLoading,
   width,
   height,
@@ -81,9 +84,17 @@ const MeasurementMap = ({
   const [bins, setBins] = useState<number[][]>([]);
   const [bounds, setBounds] =
     useState<{ left: number; top: number; width: number; height: number }>();
-  const [markers, setMarkers] = useState(new Map<string, L.Marker>());
+  // Data squares
   const [layer, setLayer] = useState<L.LayerGroup>();
+  // Markers for sites
+  const [markers, setMarkers] = useState(new Map<string, L.Marker>());
   const [mlayer, setMLayer] = useState<L.LayerGroup>();
+  const [siteSummary, setSiteSummary] = useState<any>();
+  // Markers for manual data points
+  const [smallMarkers, setSmallMarkers] = useState(new Map<string, L.Marker>());
+  const [slayer, setSLayer] = useState<L.LayerGroup>();
+  const [llayer, setLLayer] = useState<L.LayerGroup>();
+  const [markerData, setMarkerData] = useState<Marker[]>();
 
   useEffect(() => {
     (async () => {
@@ -93,8 +104,8 @@ const MeasurementMap = ({
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
-        maxZoom: 15,
-        minZoom: 10,
+        maxZoom: 25,
+        minZoom: 8,
         opacity: 0.7,
         zIndex: 1,
       }).addTo(_map);
@@ -102,34 +113,24 @@ const MeasurementMap = ({
       setBounds(_bounds);
       setMap(_map);
       setLayer(L.layerGroup().addTo(_map));
+      setSLayer(L.layerGroup().addTo(_map));
       setMLayer(L.layerGroup().addTo(_map));
-      setLoading(false);
+      setLLayer(L.layerGroup().addTo(_map));
     })();
-  }, [setLoading, width, height]);
+  }, [width, height]);
 
   useEffect(() => {
     (async () => {
-      const _sites = allSites || [];
-      const _siteSummary = await fetchToJson(API_URL + '/api/sitesSummary');
-      if (!map || markers.size > 0) {
+      if (allSites.length === 0) {
         return;
       }
-      const _markers = new Map<string, L.Marker>();
-      if (!isSiteArray(_sites)) {
-        throw new Error('data has incorrect type');
-      }
-
-      _sites.forEach(site =>
-        _markers.set(
-          site.name,
-          siteMarker(site, _siteSummary[site.name]).addTo(map),
-        ),
-      );
-      setMarkers(_markers);
+      const _siteSummary = await fetchToJson(API_URL + '/api/sitesSummary');
+      setSiteSummary(_siteSummary)
     })();
-  }, [allSites, map, markers]);
+  }, [allSites]);
+
   useEffect(() => {
-    if (!map || !markers) return;
+    if (!map || !siteSummary || !slayer) return;
     // TODO: MOVE TO UTILS;
     const greenIcon = new L.Icon({
       iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -155,7 +156,20 @@ const MeasurementMap = ({
       popupAnchor: [1, -34],
       shadowSize: [41, 41]
     });
-    markers.forEach((marker, site) => {
+    markers.clear();
+    slayer.clearLayers();
+    const _markers = new Map<string, L.Marker>();
+    const _sites: Site[] = allSites || [];
+    if (!isSiteArray(_sites)) {
+      throw new Error('data has incorrect type');
+    }
+    _sites.forEach(site =>
+      _markers.set(
+        site.name,
+        siteMarker(site, siteSummary[site.name], map).addTo(slayer),
+      ),
+    );
+    _markers.forEach((marker, site) => {
       if (selectedSites.some(s => s.label === site)) {
         marker.setOpacity(1);
       } else {
@@ -171,12 +185,53 @@ const MeasurementMap = ({
         marker.setIcon(redIcon)
       }
     });
-  }, [selectedSites, map, markers, allSites]);
+    setMarkers(_markers);
+  }, [selectedSites, map, allSites, siteSummary, slayer]);
+
+  useEffect(() => {
+    (async () => {
+      if (selectedSites.length === 0 || selectedDevices.length === 0) {
+        setMarkerData([])
+        return;
+      }
+      const markerRes = await axios.get(API_URL + '/api/markers', {
+        params: {
+          sites: selectedSites.map(ss => ss.label).join(','),
+          devices: selectedDevices.map(ss => ss.label).join(',')
+        }
+      });
+      setMarkerData(markerRes.data);
+    })();
+  }, [selectedSites, selectedDevices]);
+
+  useEffect(() => {
+    if (!map || !markerData || !llayer) return;
+    smallMarkers.clear();
+    llayer.clearLayers();
+    const _markers = new Map<string, L.Marker>();
+    markerData.forEach(m =>
+      _markers.set(
+        m.mid,
+        siteSmallMarker(m).addTo(llayer),
+      ),
+    );
+    const smallIcon = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+      // shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [20, 35],
+      iconAnchor: [12, 35],
+      popupAnchor: [1, -34],
+      // shadowSize: [35, 35]
+    });
+    _markers.forEach((marker, site) => {
+      marker.setIcon(smallIcon)
+    });
+    setSmallMarkers(_markers);
+  }, [markerData, map, llayer]);
 
   useEffect(() => {
     if (!map || !bounds || !layer) return;
 
-    setLoading(true);
     (async () => {
       if (!map) {
         return;
@@ -195,7 +250,6 @@ const MeasurementMap = ({
           ['mapType', mapType],
         ]),
       ));
-      setLoading(false);
     })();
   }, [selectedSites, mapType, setLoading, map, layer, bounds]);
 

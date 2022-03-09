@@ -13,7 +13,7 @@ interface LineChartProps {
   offset: number;
   width: number;
   height: number;
-  selectedSites: SidebarOption[];
+  selectedSites: SiteOption[];
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
   allSites: Site[];
@@ -51,6 +51,7 @@ const LineChart = ({
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [yTitle, setYTitle] =
     useState<d3.Selection<SVGTextElement, unknown, HTMLElement, any>>();
+  const [lineSummary, setLineSummary] = useState<any>();
   useEffect(() => {
     const svg = d3.select('#line-chart');
     const g = svg
@@ -66,12 +67,27 @@ const LineChart = ({
     g.append('g').attr('transform', 'translate(0,0)').append('text');
     setLoading(false);
   }, [setXAxis, setYAxis, setLines, setYTitle, setLoading]);
-
   useEffect(() => {
-    if (!xAxis || !yAxis || !lines || !yTitle) return;
+    (async () => {
+      const _selectedSites = selectedSites.map(ss => ss.label);
+      if (selectedSites.length === 0) {
+        return;
+      }
+      const _lineSummary = await fetchToJson(
+        API_URL +
+        '/api/lineSummary?' +
+        new URLSearchParams([
+          ['mapType', mapType],
+          ['selectedSites', _selectedSites.join(',')],
+        ]),
+      )
+      setLineSummary(_lineSummary);
+    })();
+  }, [mapType, selectedSites]);
+  useEffect(() => {
+    if (!xAxis || !yAxis || !lines || !yTitle || !lineSummary) return;
     (async function () {
       setLoading(true);
-      const _selectedSites = selectedSites.map(ss => ss.label);
       const colors = d3
         .scaleOrdinal()
         .domain(allSites.map(s => s.name))
@@ -80,14 +96,7 @@ const LineChart = ({
         site: string;
         values: { date: Date; value: number }[];
       }[] = (
-        await fetchToJson(
-          API_URL +
-          '/api/lineSummary?' +
-          new URLSearchParams([
-            ['mapType', mapType],
-            ['selectedSites', _selectedSites.join(',')],
-          ]),
-        )
+        lineSummary
       ).map((d: any) => ({
         site: d.site,
         values: d.values.map((v: any) => ({
@@ -212,11 +221,11 @@ const LineChart = ({
     yAxis,
     lines,
     yTitle,
-    selectedSites,
     height,
     setLoading,
     width,
-    allSites
+    allSites,
+    lineSummary
   ]);
 
   return (
