@@ -1,5 +1,5 @@
-export const API_URL: string = 'https://api-dev.seattlecommunitynetwork.org';
-// export const API_URL: string = 'http://localhost';
+// export const API_URL: string = 'https://api-dev.seattlecommunitynetwork.org';
+export const API_URL: string = 'http://localhost';
 export const DEVICE_OPTIONS: DeviceOption[] = [
   {
     label: 'Low Gain CPE',

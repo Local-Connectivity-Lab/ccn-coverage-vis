@@ -61,7 +61,7 @@ export function siteMarker(
     download speed: ${round2(
       summary?.download_speed * MULTIPLIERS.download_speed,
     )} ${UNITS.download_speed}`,
-  ).on('click', function <LeafletMouseEvent>(e: any) {
+  ).on('click', function (e: any) {
     map.setView(e.latlng, 13);
   });
 }

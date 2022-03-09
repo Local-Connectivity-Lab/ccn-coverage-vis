@@ -3,7 +3,7 @@ import { MapType } from './MapSelectionRadio';
 import { API_URL } from '../utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import { siteMarker, siteSmallMarker, isSiteArray, isMarkerArray } from '../leaflet-component/site-marker';
+import { siteMarker, siteSmallMarker, isSiteArray } from '../leaflet-component/site-marker';
 import getBounds from '../utils/get-bounds';
 import MapLegend from './MapLegend';
 import fetchToJson from '../utils/fetch-to-json';
@@ -87,11 +87,9 @@ const MeasurementMap = ({
   // Data squares
   const [layer, setLayer] = useState<L.LayerGroup>();
   // Markers for sites
-  const [markers, setMarkers] = useState(new Map<string, L.Marker>());
   const [mlayer, setMLayer] = useState<L.LayerGroup>();
   const [siteSummary, setSiteSummary] = useState<any>();
   // Markers for manual data points
-  const [smallMarkers, setSmallMarkers] = useState(new Map<string, L.Marker>());
   const [slayer, setSLayer] = useState<L.LayerGroup>();
   const [llayer, setLLayer] = useState<L.LayerGroup>();
   const [markerData, setMarkerData] = useState<Marker[]>();
@@ -156,7 +154,6 @@ const MeasurementMap = ({
       popupAnchor: [1, -34],
       shadowSize: [41, 41]
     });
-    markers.clear();
     slayer.clearLayers();
     const _markers = new Map<string, L.Marker>();
     const _sites: Site[] = allSites || [];
@@ -185,7 +182,6 @@ const MeasurementMap = ({
         marker.setIcon(redIcon)
       }
     });
-    setMarkers(_markers);
   }, [selectedSites, map, allSites, siteSummary, slayer]);
 
   useEffect(() => {
@@ -206,7 +202,6 @@ const MeasurementMap = ({
 
   useEffect(() => {
     if (!map || !markerData || !llayer) return;
-    smallMarkers.clear();
     llayer.clearLayers();
     const _markers = new Map<string, L.Marker>();
     markerData.forEach(m =>
@@ -226,7 +221,6 @@ const MeasurementMap = ({
     _markers.forEach((marker, site) => {
       marker.setIcon(smallIcon)
     });
-    setSmallMarkers(_markers);
   }, [markerData, map, llayer]);
 
   useEffect(() => {
