@@ -22,7 +22,7 @@ import DeviceSelect from './DeviceSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
 import axios from 'axios';
-import { API_URL, DEVICE_OPTIONS } from '../utils/config'
+import { API_URL } from '../utils/config'
 import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap'
 
 // import { setOptions } from 'leaflet';
