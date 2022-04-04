@@ -16,5 +16,9 @@ export const DEVICE_OPTIONS: DeviceOption[] = [
   {
     label: 'Pixel 4',
     value: 'Pixel4'
+  },
+  {
+    label: 'Android',
+    value: 'Android'
   }
 ]
