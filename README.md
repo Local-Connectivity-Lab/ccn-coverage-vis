@@ -5,7 +5,7 @@ Visualizations of coverage and performance analysis for Community Cellular Netwo
 Now hosted on https://api-dev.seattlecommunitynetwork.org/
 
 # Issues
-- None! Please report any new issues!
+- Chart doesn't show tooltips. 
 
 # TODOs
 - Make the chart more informative
