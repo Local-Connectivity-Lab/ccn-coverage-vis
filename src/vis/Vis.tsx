@@ -19,6 +19,7 @@ import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import DisplaySelection from './DisplaySelection';
 import SiteSelect from './SiteSelect';
 import DeviceSelect from './DeviceSelect';
+import DateSelect from './DateSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
 import axios from 'axios';
@@ -137,9 +138,14 @@ export default function Vis() {
     useState<SiteOption[]>(siteOptions);
   const [selectedDevices, setSelectedDevices] =
     useState<DeviceOption[]>([]);
+  const [timeFrom, setTimeFrom] =
+    useState<Date>(new Date('2021-09-01T00:00:00'));
+  const [timeTo, setTimeTo] =
+    useState<Date>(new Date());
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
+
   const [overlayData, setOverlayData] = useState<number>(0);
   useEffect(() => {
     (async () => {
@@ -229,6 +235,18 @@ export default function Vis() {
               setMapType={setMapType}
               loading={loadingMap}
             />
+            <DisplaySelection
+              displayOptions={displayOptions}
+              setDisplayOptions={setDisplayOptions}
+              loading={false}
+            />
+            <DateSelect
+              timeFrom={timeFrom}
+              timeTo={timeTo}
+              setTimeFrom={setTimeFrom}
+              setTimeTo={setTimeTo}
+              loading={false}
+            />
             <SiteSelect
               selectedSites={selectedSites}
               setSelectedSites={setSelectedSites}
@@ -239,11 +257,6 @@ export default function Vis() {
               selectedDevices={selectedDevices}
               setSelectedDevices={setSelectedDevices}
               loading={loadingLine || loadingMap}
-            />
-            <DisplaySelection
-              displayOptions={displayOptions}
-              setDisplayOptions={setDisplayOptions}
-              loading={false}
             />
           </Container>
           <Divider />
@@ -265,6 +278,8 @@ export default function Vis() {
           setCells={setSelectedCells}
           overlayData={overlayData}
           setOverlayData={setOverlayData}
+          timeFrom={timeFrom}
+          timeTo={timeTo}
         />
       </Box>
       <Box
@@ -289,6 +304,10 @@ export default function Vis() {
               setLoading={setLoadingLine}
               loading={loadingLine || loadingMap}
               allSites={sites}
+              timeFrom={timeFrom}
+              timeTo={timeTo}
+              setDisplayOptions={setDisplayOptions}
+              displayOptions={displayOptions}
             />
           </Card>
         </Fade>

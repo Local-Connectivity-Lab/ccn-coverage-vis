@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
 
 import { MapType } from './MapSelectionRadio';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import IconButton from '@mui/material/IconButton';
 
 import { MULTIPLIERS } from './MeasurementMap';
+import { solveDisplayOptions } from './DisplaySelection';
 import { API_URL } from '../utils/config';
 import fetchToJson from '../utils/fetch-to-json';
 import Loading from '../Loading';
@@ -17,6 +20,10 @@ interface LineChartProps {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
   allSites: Site[];
+  timeFrom: Date;
+  timeTo: Date;
+  setDisplayOptions: React.Dispatch<React.SetStateAction<DisplayOption[]>>;
+  displayOptions: DisplayOption[];
 }
 
 const margin = {
@@ -41,7 +48,11 @@ const LineChart = ({
   selectedSites,
   setLoading,
   loading,
-  allSites
+  allSites,
+  timeFrom,
+  timeTo,
+  setDisplayOptions,
+  displayOptions
 }: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
@@ -79,11 +90,13 @@ const LineChart = ({
         new URLSearchParams([
           ['mapType', mapType],
           ['selectedSites', _selectedSites.join(',')],
+          ['timeFrom', timeFrom.toISOString()],
+          ['timeTo', timeTo.toISOString()],
         ]),
       )
       setLineSummary(_lineSummary);
     })();
-  }, [mapType, selectedSites]);
+  }, [mapType, selectedSites, timeFrom, timeTo]);
   useEffect(() => {
     if (!xAxis || !yAxis || !lines || !yTitle || !lineSummary) return;
     (async function () {
@@ -225,11 +238,21 @@ const LineChart = ({
     setLoading,
     width,
     allSites,
-    lineSummary
+    lineSummary,
+    timeFrom,
+    timeTo,
   ]);
 
   return (
     <>
+      <div id='line-close'
+        style={{ position: 'absolute', right: 10, top: 10, zIndex: 1600 }}>
+        <IconButton onClick={() => {
+          setDisplayOptions(solveDisplayOptions(displayOptions, 'displayGraph', false))
+        }}>
+          <VisibilityOffIcon></VisibilityOffIcon>
+        </IconButton>
+      </div>
       <div style={{ height, width, position: 'relative', top: offset }}>
         <svg id='line-chart'></svg>
         <Loading

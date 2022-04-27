@@ -13,6 +13,17 @@ interface DisplayOptionsProps {
   loading: boolean;
 }
 
+export const solveDisplayOptions = (displayOptions: DisplayOption[], name: string, value: boolean) => {
+  const newOptions: DisplayOption[] = [];
+  for (let option of displayOptions) {
+    if (option.name === name) {
+      option.checked = value;
+    }
+    newOptions.push(option);
+  }
+  return newOptions;
+}
+
 export default function DisplaySelection(props: DisplayOptionsProps) {
   type InputEvent = React.ChangeEvent<HTMLInputElement>;
   const handleChange = (event: InputEvent) => {

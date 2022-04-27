@@ -19,8 +19,8 @@ const DeviceSelect = (props: SidebarProps) => {
     value: value,
   }));
   return (
-    <Box mb={2}>
-      <Typography variant='overline'>Display manual measurements</Typography>
+    <Box mb={2} style={{ zIndex: 1450 }}>
+      <Typography variant='overline'>Display markers</Typography>
       <MultiSelect
         options={siteOptions}
         value={props.selectedDevices}

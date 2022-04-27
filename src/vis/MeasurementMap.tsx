@@ -62,6 +62,8 @@ interface MapProps {
   setCells: React.Dispatch<React.SetStateAction<Set<string>>>;
   overlayData: number;
   setOverlayData: React.Dispatch<React.SetStateAction<number>>;
+  timeFrom: Date;
+  timeTo: Date;
 }
 
 const MeasurementMap = ({
@@ -77,7 +79,9 @@ const MeasurementMap = ({
   cells,
   setCells,
   overlayData,
-  setOverlayData
+  setOverlayData,
+  timeFrom,
+  timeTo,
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
@@ -122,10 +126,14 @@ const MeasurementMap = ({
       if (allSites.length === 0) {
         return;
       }
-      const _siteSummary = await fetchToJson(API_URL + '/api/sitesSummary');
+      const _siteSummary = await fetchToJson(API_URL + '/api/sitesSummary?' +
+        new URLSearchParams([
+          ['timeFrom', timeFrom.toISOString()],
+          ['timeTo', timeTo.toISOString()],
+        ]));
       setSiteSummary(_siteSummary)
     })();
-  }, [allSites]);
+  }, [allSites, timeFrom, timeTo]);
 
   useEffect(() => {
     if (!map || !siteSummary || !slayer) return;
@@ -193,12 +201,14 @@ const MeasurementMap = ({
       const markerRes = await axios.get(API_URL + '/api/markers', {
         params: {
           sites: selectedSites.map(ss => ss.label).join(','),
-          devices: selectedDevices.map(ss => ss.label).join(',')
+          devices: selectedDevices.map(ss => ss.label).join(','),
+          timeFrom: timeFrom.toISOString(),
+          timeTo: timeTo.toISOString(),
         }
       });
       setMarkerData(markerRes.data);
     })();
-  }, [selectedSites, selectedDevices]);
+  }, [selectedSites, selectedDevices, timeFrom, timeTo]);
 
   useEffect(() => {
     if (!map || !markerData || !llayer) return;
@@ -242,10 +252,12 @@ const MeasurementMap = ({
           ['zoom', DEFAULT_ZOOM + ''],
           ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
           ['mapType', mapType],
+          ['timeFrom', timeFrom.toISOString()],
+          ['timeTo', timeTo.toISOString()],
         ]),
       ));
     })();
-  }, [selectedSites, mapType, setLoading, map, layer, bounds]);
+  }, [selectedSites, mapType, setLoading, map, layer, bounds, timeFrom, timeTo]);
 
   useEffect(() => {
     if (!map || !bounds || !layer) return;
