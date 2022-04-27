@@ -74,7 +74,7 @@ export function siteSmallMarker(
     <br />
     ${m.device_id}
     <br />${m.latitude}, ${m.longitude}<br/>
-    signal strength: ${round2(m.dbm * MULTIPLIERS.dbm)} ${UNITS.dbm}<br/>
+    signal strength: ${m.dbm === undefined ? 'N/A' : round2(m.dbm * MULTIPLIERS.dbm)} ${UNITS.dbm}<br/>
     ping: ${round2(m.ping * MULTIPLIERS.ping)} ${UNITS.ping}<br/>
     upload speed: ${round2(m.upload_speed * MULTIPLIERS.upload_speed)} ${UNITS.upload_speed
     }<br/>

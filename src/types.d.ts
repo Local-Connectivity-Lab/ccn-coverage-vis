@@ -60,7 +60,7 @@ type Marker = {
   longitude: number;
   device_id: string;
   site: string;
-  dbm: number;
+  dbm?: number;
   upload_speed: number;
   download_speed: number;
   ping: number;
