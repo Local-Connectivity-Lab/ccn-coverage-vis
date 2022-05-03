@@ -2,7 +2,7 @@
 
 Visualizations of coverage and performance analysis for Community Cellular Networks.
 
-Now hosted on https://api-dev.seattlecommunitynetwork.org/
+Now hosted on https://coverage.seattlecommunitynetwork.org/
 
 # Issues
 - Markers and shadows bug
