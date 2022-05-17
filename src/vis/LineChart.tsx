@@ -101,10 +101,10 @@ const LineChart = ({
     if (!xAxis || !yAxis || !lines || !yTitle || !lineSummary) return;
     (async function () {
       setLoading(true);
-      const colors = d3
-        .scaleOrdinal()
-        .domain(allSites.map(s => s.name))
-        .range(d3.schemeTableau10);
+      let colors: { [name: string]: string } = {};
+      for (let site of allSites) {
+        colors[site.name] = site.color ?? "#000000";
+      }
       const data: {
         site: string;
         values: { date: Date; value: number }[];
@@ -162,10 +162,9 @@ const LineChart = ({
         .select('#line-tooltip')
         .style('position', 'absolute')
         .style('background-color', 'white')
-        .style('border', 'solid')
-        .style('border-width', '2px')
-        .style('border-radius', '3px')
-        .style('padding', '3px')
+        .style('border-radius', '4px')
+        .style('box-shadow', '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)')
+        .style('padding', '4px')
         .style('font-size', 'small')
         .style('opacity', 1)
         .style('display', 'none');
@@ -205,7 +204,7 @@ const LineChart = ({
               )
               .attr('class', 'line')
               .style('fill', 'none')
-              .style('stroke', d => colors(d.site) + '')
+              .style('stroke', d => colors[d.site] + '')
               .style('stroke-width', 2)
               .style('stroke-linejoin', 'round')
               .style('opacity', 0)
@@ -214,9 +213,11 @@ const LineChart = ({
               )
               .on('mousemove', (event, d) =>
                 tooltip
-                  .html(d.site)
-                  .style('left', event.pageX + 10 + 'px')
-                  .style('top', event.pageY + 20 + 'px'),
+                  .html(d.site + "<br>"
+                    + d.values[Math.floor(d.values.length * ((event.offsetX - margin.left) / (chartWidth)))].value.toFixed(2)
+                  )
+                  .style('left', event.offsetX - 120 + 'px')
+                  .style('top', event.offsetY - 50 + 'px'),
               )
               .on('mouseout', () => tooltip.style('display', 'none')),
           update => update,
@@ -237,6 +238,7 @@ const LineChart = ({
     height,
     setLoading,
     width,
+    selectedSites,
     allSites,
     lineSummary,
     timeFrom,
@@ -253,7 +255,7 @@ const LineChart = ({
           <VisibilityOffIcon></VisibilityOffIcon>
         </IconButton>
       </div>
-      <div style={{ height, width, position: 'relative', top: offset }}>
+      <div style={{ height, width, position: 'relative', top: offset }} >
         <svg id='line-chart'></svg>
         <Loading
           left={width / 2}

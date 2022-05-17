@@ -44,6 +44,7 @@ type Site = {
   status: SiteStatus;
   address: string;
   cell_id: string[];
+  color?: string;
 };
 
 type SiteData = {
