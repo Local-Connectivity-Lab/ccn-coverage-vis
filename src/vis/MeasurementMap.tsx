@@ -90,6 +90,8 @@ const MeasurementMap = ({
     useState<{ left: number; top: number; width: number; height: number }>();
   // Data squares
   const [layer, setLayer] = useState<L.LayerGroup>();
+  // Layer for boundaries
+  const [blayer, setBLayer] = useState<L.LayerGroup>();
   // Markers for sites
   const [mlayer, setMLayer] = useState<L.LayerGroup>();
   const [siteSummary, setSiteSummary] = useState<any>();
@@ -115,6 +117,7 @@ const MeasurementMap = ({
       setBounds(_bounds);
       setMap(_map);
       setLayer(L.layerGroup().addTo(_map));
+      setBLayer(L.layerGroup().addTo(_map));
       setSLayer(L.layerGroup().addTo(_map));
       setMLayer(L.layerGroup().addTo(_map));
       setLLayer(L.layerGroup().addTo(_map));
@@ -136,7 +139,7 @@ const MeasurementMap = ({
   }, [allSites, timeFrom, timeTo]);
 
   useEffect(() => {
-    if (!map || !siteSummary || !slayer) return;
+    if (!map || !siteSummary || !slayer || !blayer) return;
     // TODO: MOVE TO UTILS;
     const greenIcon = new L.Icon({
       iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -162,18 +165,24 @@ const MeasurementMap = ({
       popupAnchor: [1, -34],
       shadowSize: [41, 41]
     });
+
     slayer.clearLayers();
     const _markers = new Map<string, L.Marker>();
     const _sites: Site[] = allSites || [];
     if (!isSiteArray(_sites)) {
       throw new Error('data has incorrect type');
     }
-    _sites.forEach(site =>
+    blayer.clearLayers();
+    for (let site of _sites) {
+      if (site.boundary) {
+        L.polygon(site.boundary, { color: site.color ?? 'black' }).addTo(blayer);
+        console.log(site.boundary)
+      }
       _markers.set(
         site.name,
         siteMarker(site, siteSummary[site.name], map).addTo(slayer),
-      ),
-    );
+      )
+    }
     _markers.forEach((marker, site) => {
       if (selectedSites.some(s => s.label === site)) {
         marker.setOpacity(1);
@@ -190,7 +199,7 @@ const MeasurementMap = ({
         marker.setIcon(redIcon)
       }
     });
-  }, [selectedSites, map, allSites, siteSummary, slayer]);
+  }, [selectedSites, map, allSites, siteSummary, slayer, blayer]);
 
   useEffect(() => {
     (async () => {
