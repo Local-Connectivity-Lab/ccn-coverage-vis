@@ -1,5 +1,7 @@
-export const API_URL: string = 'https://coverage.seattlecommunitynetwork.org';
-// export const API_URL: string = 'http://localhost';
+export const API_URL: string = '';  // Compatible with `docker compose`.
+// export const API_URL: string = 'http://localhost:3000';  // Compatible with ccn-coverage `api` running on the same host as `vis`.
+// export const API_URL: string = 'https://coverage.seattlecommunitynetwork.org';  // For testing only.
+
 export const DEVICE_OPTIONS: DeviceOption[] = [
   {
     label: 'Low Gain CPE',
