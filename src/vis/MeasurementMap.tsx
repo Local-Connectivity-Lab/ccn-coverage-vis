@@ -3,7 +3,11 @@ import { MapType } from './MapSelectionRadio';
 import { API_URL } from '../utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
-import { siteMarker, siteSmallMarker, isSiteArray } from '../leaflet-component/site-marker';
+import {
+  siteMarker,
+  siteSmallMarker,
+  isSiteArray,
+} from '../leaflet-component/site-marker';
 import getBounds from '../utils/get-bounds';
 import MapLegend from './MapLegend';
 import fetchToJson from '../utils/fetch-to-json';
@@ -16,8 +20,9 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
@@ -129,12 +134,15 @@ const MeasurementMap = ({
       if (allSites.length === 0) {
         return;
       }
-      const _siteSummary = await fetchToJson(API_URL + '/api/sitesSummary?' +
-        new URLSearchParams([
-          ['timeFrom', timeFrom.toISOString()],
-          ['timeTo', timeTo.toISOString()],
-        ]));
-      setSiteSummary(_siteSummary)
+      const _siteSummary = await fetchToJson(
+        API_URL +
+          '/api/sitesSummary?' +
+          new URLSearchParams([
+            ['timeFrom', timeFrom.toISOString()],
+            ['timeTo', timeTo.toISOString()],
+          ]),
+      );
+      setSiteSummary(_siteSummary);
     })();
   }, [allSites, timeFrom, timeTo]);
 
@@ -142,28 +150,34 @@ const MeasurementMap = ({
     if (!map || !siteSummary || !slayer || !blayer) return;
     // TODO: MOVE TO UTILS;
     const greenIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconUrl:
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+      shadowUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
     const goldIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconUrl:
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+      shadowUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
     const redIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconUrl:
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      shadowUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
 
     slayer.clearLayers();
@@ -175,13 +189,15 @@ const MeasurementMap = ({
     blayer.clearLayers();
     for (let site of _sites) {
       if (site.boundary) {
-        L.polygon(site.boundary, { color: site.color ?? 'black' }).addTo(blayer);
-        console.log(site.boundary)
+        L.polygon(site.boundary, { color: site.color ?? 'black' }).addTo(
+          blayer,
+        );
+        console.log(site.boundary);
       }
       _markers.set(
         site.name,
         siteMarker(site, siteSummary[site.name], map).addTo(slayer),
-      )
+      );
     }
     _markers.forEach((marker, site) => {
       if (selectedSites.some(s => s.label === site)) {
@@ -190,13 +206,15 @@ const MeasurementMap = ({
         marker.setOpacity(0.5);
       }
       if (allSites.some(s => s.name === site && s.status === 'active')) {
-        marker.setIcon(greenIcon)
-      }
-      else if (allSites.some(s => s.name === site && s.status === 'confirmed')) {
-        marker.setIcon(goldIcon)
-      }
-      else if (allSites.some(s => s.name === site && s.status === 'in-conversation')) {
-        marker.setIcon(redIcon)
+        marker.setIcon(greenIcon);
+      } else if (
+        allSites.some(s => s.name === site && s.status === 'confirmed')
+      ) {
+        marker.setIcon(goldIcon);
+      } else if (
+        allSites.some(s => s.name === site && s.status === 'in-conversation')
+      ) {
+        marker.setIcon(redIcon);
       }
     });
   }, [selectedSites, map, allSites, siteSummary, slayer, blayer]);
@@ -204,7 +222,7 @@ const MeasurementMap = ({
   useEffect(() => {
     (async () => {
       if (selectedSites.length === 0 || selectedDevices.length === 0) {
-        setMarkerData([])
+        setMarkerData([]);
         return;
       }
       const markerRes = await axios.get(API_URL + '/api/markers', {
@@ -213,7 +231,7 @@ const MeasurementMap = ({
           devices: selectedDevices.map(ss => ss.label).join(','),
           timeFrom: timeFrom.toISOString(),
           timeTo: timeTo.toISOString(),
-        }
+        },
       });
       setMarkerData(markerRes.data);
     })();
@@ -224,13 +242,11 @@ const MeasurementMap = ({
     llayer.clearLayers();
     const _markers = new Map<string, L.Marker>();
     markerData.forEach(m =>
-      _markers.set(
-        m.mid,
-        siteSmallMarker(m).addTo(llayer),
-      ),
+      _markers.set(m.mid, siteSmallMarker(m).addTo(llayer)),
     );
     const smallIcon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+      iconUrl:
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
       // shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [20, 35],
       iconAnchor: [12, 35],
@@ -238,7 +254,7 @@ const MeasurementMap = ({
       // shadowSize: [35, 35]
     });
     _markers.forEach((marker, site) => {
-      marker.setIcon(smallIcon)
+      marker.setIcon(smallIcon);
     });
   }, [markerData, map, llayer]);
 
@@ -249,24 +265,35 @@ const MeasurementMap = ({
       if (!map) {
         return;
       }
-      setBins(await fetchToJson(
-        API_URL +
-        '/api/data?' +
-        new URLSearchParams([
-          ['width', bounds.width + ''],
-          ['height', bounds.height + ''],
-          ['left', bounds.left + ''],
-          ['top', bounds.top + ''],
-          ['binSizeShift', BIN_SIZE_SHIFT + ''],
-          ['zoom', DEFAULT_ZOOM + ''],
-          ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-          ['mapType', mapType],
-          ['timeFrom', timeFrom.toISOString()],
-          ['timeTo', timeTo.toISOString()],
-        ]),
-      ));
+      setBins(
+        await fetchToJson(
+          API_URL +
+            '/api/data?' +
+            new URLSearchParams([
+              ['width', bounds.width + ''],
+              ['height', bounds.height + ''],
+              ['left', bounds.left + ''],
+              ['top', bounds.top + ''],
+              ['binSizeShift', BIN_SIZE_SHIFT + ''],
+              ['zoom', DEFAULT_ZOOM + ''],
+              ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+              ['mapType', mapType],
+              ['timeFrom', timeFrom.toISOString()],
+              ['timeTo', timeTo.toISOString()],
+            ]),
+        ),
+      );
     })();
-  }, [selectedSites, mapType, setLoading, map, layer, bounds, timeFrom, timeTo]);
+  }, [
+    selectedSites,
+    mapType,
+    setLoading,
+    map,
+    layer,
+    bounds,
+    timeFrom,
+    timeTo,
+  ]);
 
   useEffect(() => {
     if (!map || !bounds || !layer) return;
@@ -282,7 +309,7 @@ const MeasurementMap = ({
       setCDomain(colorDomain);
 
       layer.clearLayers();
-      bins.forEach((p) => {
+      bins.forEach(p => {
         const idx = p[0];
         const bin = Number(p[1]);
         if (bin) {
@@ -299,25 +326,37 @@ const MeasurementMap = ({
             fillColor: colorScale(bin * MULTIPLIERS[mapType]),
             fillOpacity: 0.75,
             stroke: false,
-          }).bindTooltip(
-            `${bin.toFixed(2)} ${UNITS[mapType]}`,
-            { direction: 'top' }
-          ).addTo(layer).on('click', (e) => {
-            const cs = cells;
-            const c = cts({ x: x, y: y });
-            if (cs.has(c)) {
-              cs.delete(c);
-            } else {
-              cs.add(c);
-            }
-            setCells(new Set(cs));
-            // console.log(cs);
-          });
+          })
+            .bindTooltip(`${bin.toFixed(2)} ${UNITS[mapType]}`, {
+              direction: 'top',
+            })
+            .addTo(layer)
+            .on('click', e => {
+              const cs = cells;
+              const c = cts({ x: x, y: y });
+              if (cs.has(c)) {
+                cs.delete(c);
+              } else {
+                cs.add(c);
+              }
+              setCells(new Set(cs));
+              // console.log(cs);
+            });
         }
       });
       setLoading(false);
     })();
-  }, [bins, setCells, cells, selectedSites, mapType, setLoading, map, layer, bounds]);
+  }, [
+    bins,
+    setCells,
+    cells,
+    selectedSites,
+    mapType,
+    setLoading,
+    map,
+    layer,
+    bounds,
+  ]);
 
   useEffect(() => {
     if (!map || !bounds || !layer || !mlayer || !bins) return;
@@ -325,7 +364,7 @@ const MeasurementMap = ({
       mlayer.clearLayers();
       var binSum: number = 0;
       var binNum: number = 0;
-      bins.forEach((p) => {
+      bins.forEach(p => {
         const idx = p[0];
         const bin = Number(p[1]);
         if (bin) {
@@ -344,25 +383,37 @@ const MeasurementMap = ({
               fillOpacity: 0.75,
               radius: 24,
               stroke: false,
-            }).bindTooltip(
-              `${bin.toFixed(2)}`,
-              { direction: 'top' }
-            ).addTo(mlayer).on('click', (e) => {
-              const cs = cells;
-              if (cs.has(c)) {
-                cs.delete(c);
-              } else {
-                cs.add(c);
-              }
-              // console.log(cs);
-              setCells(new Set(cs));
-            });;
+            })
+              .bindTooltip(`${bin.toFixed(2)}`, { direction: 'top' })
+              .addTo(mlayer)
+              .on('click', e => {
+                const cs = cells;
+                if (cs.has(c)) {
+                  cs.delete(c);
+                } else {
+                  cs.add(c);
+                }
+                // console.log(cs);
+                setCells(new Set(cs));
+              });
           }
         }
       });
       setOverlayData(binSum / binNum);
     })();
-  }, [cells, setCells, setOverlayData, bins, selectedSites, mapType, setLoading, map, mlayer, bounds, layer])
+  }, [
+    cells,
+    setCells,
+    setOverlayData,
+    bins,
+    selectedSites,
+    mapType,
+    setLoading,
+    map,
+    mlayer,
+    bounds,
+    layer,
+  ]);
 
   return (
     <div style={{ position: 'relative', top: top }}>

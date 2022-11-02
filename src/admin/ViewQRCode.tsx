@@ -8,11 +8,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Slider from '@mui/material/Slider';
 import QrCodeIcon from '@mui/icons-material/QrCode';
-import QRCode from "qrcode.react";
+import QRCode from 'qrcode.react';
 
 interface ViewQRCodeProp {
-  identity: string,
-  qrCode: string
+  identity: string;
+  qrCode: string;
 }
 
 export default function ViewQRCode(props: ViewQRCodeProp) {
@@ -33,23 +33,40 @@ export default function ViewQRCode(props: ViewQRCodeProp) {
 
   return (
     <div>
-      <Button size="small" variant="contained" endIcon={<QrCodeIcon />} onClick={handleClickOpen}>Show</Button>
+      <Button
+        size='small'
+        variant='contained'
+        endIcon={<QrCodeIcon />}
+        onClick={handleClickOpen}
+      >
+        Show
+      </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Registration code</DialogTitle>
         <DialogContent sx={{ textAlign: 'center' }}>
           <DialogContentText>
             The code will be valid for 30 minuites
           </DialogContentText>
-          <QRCode size={size} value={props.qrCode.length > 1500 ? "" : props.qrCode}></QRCode>
-          <Slider defaultValue={512} min={64} max={512} aria-label="Volume" value={size} onChange={handleChange} />
+          <QRCode
+            size={size}
+            value={props.qrCode.length > 1500 ? '' : props.qrCode}
+          ></QRCode>
+          <Slider
+            defaultValue={512}
+            min={64}
+            max={512}
+            aria-label='Volume'
+            value={size}
+            onChange={handleChange}
+          />
           <TextField
-            id="outlined-read-only-input"
+            id='outlined-read-only-input'
             defaultValue={props.qrCode}
             InputProps={{
               readOnly: true,
             }}
             sx={{
-              display: 'block'
+              display: 'block',
             }}
           />
         </DialogContent>

@@ -48,38 +48,42 @@ export function siteMarker(
     upload_speed: number;
     download_speed: number;
   },
-  map: L.Map
+  map: L.Map,
 ) {
-  return L.marker([site.latitude, site.longitude]).bindTooltip(
-    `${site.name} <span style="background-color: ${statusColor.get(
-      site.status,
-    )}">[${site.status}]</span><br />${site.address}<br/>
+  return L.marker([site.latitude, site.longitude])
+    .bindTooltip(
+      `${site.name} <span style="background-color: ${statusColor.get(
+        site.status,
+      )}">[${site.status}]</span><br />${site.address}<br/>
     signal strength: ${round2(summary?.dbm * MULTIPLIERS.dbm)} ${UNITS.dbm}<br/>
     ping: ${round2(summary?.ping * MULTIPLIERS.ping)} ${UNITS.ping}<br/>
-    upload speed: ${round2(summary?.upload_speed * MULTIPLIERS.upload_speed)} ${UNITS.upload_speed
-    }<br/>
+    upload speed: ${round2(summary?.upload_speed * MULTIPLIERS.upload_speed)} ${
+        UNITS.upload_speed
+      }<br/>
     download speed: ${round2(
       summary?.download_speed * MULTIPLIERS.download_speed,
     )} ${UNITS.download_speed}`,
-  ).on('click', function (e: any) {
-    map.setView(e.latlng, 13);
-  });
+    )
+    .on('click', function (e: any) {
+      map.setView(e.latlng, 13);
+    });
 }
 
-export function siteSmallMarker(
-  m: Marker
-) {
+export function siteSmallMarker(m: Marker) {
   return L.marker([m.latitude, m.longitude]).bindTooltip(
     `${m.site}
     <br />
     ${m.device_id}
     <br />${m.latitude}, ${m.longitude}<br/>
-    signal strength: ${m.dbm === undefined ? 'N/A' : round2(m.dbm * MULTIPLIERS.dbm)} ${UNITS.dbm}<br/>
+    signal strength: ${
+      m.dbm === undefined ? 'N/A' : round2(m.dbm * MULTIPLIERS.dbm)
+    } ${UNITS.dbm}<br/>
     ping: ${round2(m.ping * MULTIPLIERS.ping)} ${UNITS.ping}<br/>
-    upload speed: ${round2(m.upload_speed * MULTIPLIERS.upload_speed)} ${UNITS.upload_speed
+    upload speed: ${round2(m.upload_speed * MULTIPLIERS.upload_speed)} ${
+      UNITS.upload_speed
     }<br/>
-    download speed: ${round2(
-      m.download_speed * MULTIPLIERS.download_speed,
-    )} ${UNITS.download_speed}`,
+    download speed: ${round2(m.download_speed * MULTIPLIERS.download_speed)} ${
+      UNITS.download_speed
+    }`,
   );
 }
