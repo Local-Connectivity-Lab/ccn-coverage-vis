@@ -52,7 +52,7 @@ const LineChart = ({
   timeFrom,
   timeTo,
   setDisplayOptions,
-  displayOptions
+  displayOptions,
 }: LineChartProps) => {
   const [xAxis, setXAxis] =
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
@@ -86,14 +86,14 @@ const LineChart = ({
       }
       const _lineSummary = await fetchToJson(
         API_URL +
-        '/api/lineSummary?' +
-        new URLSearchParams([
-          ['mapType', mapType],
-          ['selectedSites', _selectedSites.join(',')],
-          ['timeFrom', timeFrom.toISOString()],
-          ['timeTo', timeTo.toISOString()],
-        ]),
-      )
+          '/api/lineSummary?' +
+          new URLSearchParams([
+            ['mapType', mapType],
+            ['selectedSites', _selectedSites.join(',')],
+            ['timeFrom', timeFrom.toISOString()],
+            ['timeTo', timeTo.toISOString()],
+          ]),
+      );
       setLineSummary(_lineSummary);
     })();
   }, [mapType, selectedSites, timeFrom, timeTo]);
@@ -103,14 +103,12 @@ const LineChart = ({
       setLoading(true);
       let colors: { [name: string]: string } = {};
       for (let site of allSites) {
-        colors[site.name] = site.color ?? "#000000";
+        colors[site.name] = site.color ?? '#000000';
       }
       const data: {
         site: string;
         values: { date: Date; value: number }[];
-      }[] = (
-        lineSummary
-      ).map((d: any) => ({
+      }[] = lineSummary.map((d: any) => ({
         site: d.site,
         values: d.values.map((v: any) => ({
           date: new Date(v.date),
@@ -163,7 +161,10 @@ const LineChart = ({
         .style('position', 'absolute')
         .style('background-color', 'white')
         .style('border-radius', '4px')
-        .style('box-shadow', '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)')
+        .style(
+          'box-shadow',
+          '0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12)',
+        )
         .style('padding', '4px')
         .style('font-size', 'small')
         .style('opacity', 1)
@@ -213,8 +214,15 @@ const LineChart = ({
               )
               .on('mousemove', (event, d) =>
                 tooltip
-                  .html(d.site + "<br>"
-                    + d.values[Math.floor(d.values.length * ((event.offsetX - margin.left) / (chartWidth)))].value.toFixed(2)
+                  .html(
+                    d.site +
+                      '<br>' +
+                      d.values[
+                        Math.floor(
+                          d.values.length *
+                            ((event.offsetX - margin.left) / chartWidth),
+                        )
+                      ].value.toFixed(2),
                   )
                   .style('left', event.offsetX - 120 + 'px')
                   .style('top', event.offsetY - 50 + 'px'),
@@ -247,15 +255,21 @@ const LineChart = ({
 
   return (
     <>
-      <div id='line-close'
-        style={{ position: 'absolute', right: 10, top: 10, zIndex: 1600 }}>
-        <IconButton onClick={() => {
-          setDisplayOptions(solveDisplayOptions(displayOptions, 'displayGraph', false))
-        }}>
+      <div
+        id='line-close'
+        style={{ position: 'absolute', right: 10, top: 10, zIndex: 1600 }}
+      >
+        <IconButton
+          onClick={() => {
+            setDisplayOptions(
+              solveDisplayOptions(displayOptions, 'displayGraph', false),
+            );
+          }}
+        >
           <VisibilityOffIcon></VisibilityOffIcon>
         </IconButton>
       </div>
-      <div style={{ height, width, position: 'relative', top: offset }} >
+      <div style={{ height, width, position: 'relative', top: offset }}>
         <svg id='line-chart'></svg>
         <Loading
           left={width / 2}

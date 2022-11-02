@@ -16,7 +16,6 @@ interface SidebarProps {
   loading: boolean;
 }
 
-
 const DateSelect = (props: SidebarProps) => {
   const handleChangeTimeFrom = (newValue: Date | null) => {
     if (newValue) {
@@ -36,16 +35,16 @@ const DateSelect = (props: SidebarProps) => {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Stack mt={1} spacing={3}>
           <DateTimePicker
-            label="Start Date"
+            label='Start Date'
             value={props.timeFrom}
             onChange={handleChangeTimeFrom}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={params => <TextField {...params} />}
           />
           <DateTimePicker
-            label="End Date"
+            label='End Date'
             value={props.timeTo}
             onChange={handleChangeTimeTo}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={params => <TextField {...params} />}
           />
         </Stack>
       </LocalizationProvider>

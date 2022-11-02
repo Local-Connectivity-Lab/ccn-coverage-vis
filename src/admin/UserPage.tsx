@@ -28,29 +28,32 @@ export default function UserPage() {
   const [activeUsersRows, setActiveUsersRows] = useState<UserRow[]>([]);
   useEffect(() => {
     if (!called) {
-      axios.post(API_URL + '/secure/get-users').then(res => {
-        const data: UserRow[] = res.data.pending;
-        setPendingUsersRows(data);
-        const dataReg: UserRow[] = res.data.registered;
-        setActiveUsersRows(dataReg);
-        setLoadingUser(false);
-        setCalled(true);
-      }).catch(err => {
-        alert(err);
-        window.open('/login', '_self');
-        setLoadingUser(false);
-        return (<div></div>);
-      });
+      axios
+        .post(API_URL + '/secure/get-users')
+        .then(res => {
+          const data: UserRow[] = res.data.pending;
+          setPendingUsersRows(data);
+          const dataReg: UserRow[] = res.data.registered;
+          setActiveUsersRows(dataReg);
+          setLoadingUser(false);
+          setCalled(true);
+        })
+        .catch(err => {
+          alert(err);
+          window.open('/login', '_self');
+          setLoadingUser(false);
+          return <div></div>;
+        });
     }
-  })
+  });
   return (
     <Box className='UserPage'>
       <NewUserDialog setCalled={setCalled} />
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
-        <Typography component="h2" variant="h6" color="primary" gutterBottom>
+        <Typography component='h2' variant='h6' color='primary' gutterBottom>
           Pending Registration
         </Typography>
-        <Table size="small">
+        <Table size='small'>
           <TableHead>
             <TableRow>
               <TableCell>Issue Date</TableCell>
@@ -58,29 +61,41 @@ export default function UserPage() {
               <TableCell>Email</TableCell>
               <TableCell>Name</TableCell>
               <TableCell></TableCell>
-              <TableCell align="right"></TableCell>
+              <TableCell align='right'></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {pendingUsersRows.map((row) => (
+            {pendingUsersRows.map(row => (
               <TableRow key={row.identity}>
                 <TableCell>{new Date(row.issueDate).toString()}</TableCell>
-                <TableCell><ViewIdentity identity={row.identity}></ViewIdentity></TableCell>
+                <TableCell>
+                  <ViewIdentity identity={row.identity}></ViewIdentity>
+                </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.firstName + " " + row.lastName}</TableCell>
-                <TableCell align="right"><ViewQRCode identity={row.identity} qrCode={row.qrCode} /></TableCell>
-                <TableCell align="right"><Button size="small" color="error" variant="contained" endIcon={<EditIcon />}>Edit</Button></TableCell>
-
+                <TableCell>{row.firstName + ' ' + row.lastName}</TableCell>
+                <TableCell align='right'>
+                  <ViewQRCode identity={row.identity} qrCode={row.qrCode} />
+                </TableCell>
+                <TableCell align='right'>
+                  <Button
+                    size='small'
+                    color='error'
+                    variant='contained'
+                    endIcon={<EditIcon />}
+                  >
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Paper>
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
-        <Typography component="h2" variant="h6" color="primary" gutterBottom>
+        <Typography component='h2' variant='h6' color='primary' gutterBottom>
           Active Users
         </Typography>
-        <Table size="small">
+        <Table size='small'>
           <TableHead>
             <TableRow>
               <TableCell>Issue Date</TableCell>
@@ -88,22 +103,35 @@ export default function UserPage() {
               <TableCell>Email</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Enabled</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell align='right'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {activeUsersRows.map((row) => (
+            {activeUsersRows.map(row => (
               <TableRow key={row.identity}>
                 <TableCell>{new Date(row.issueDate).toString()}</TableCell>
-                <TableCell><ViewIdentity identity={row.identity}></ViewIdentity></TableCell>
+                <TableCell>
+                  <ViewIdentity identity={row.identity}></ViewIdentity>
+                </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.firstName + " " + row.lastName}</TableCell>
-                <TableCell><Switch
-                  checked={row.isEnabled}
-                  name={row.identity}
-                  onChange={handleEnabledChange}
-                /></TableCell>
-                <TableCell align="right"><Button size="small" color="error" variant="contained" endIcon={<EditIcon />}>Edit</Button></TableCell>
+                <TableCell>{row.firstName + ' ' + row.lastName}</TableCell>
+                <TableCell>
+                  <Switch
+                    checked={row.isEnabled}
+                    name={row.identity}
+                    onChange={handleEnabledChange}
+                  />
+                </TableCell>
+                <TableCell align='right'>
+                  <Button
+                    size='small'
+                    color='error'
+                    variant='contained'
+                    endIcon={<EditIcon />}
+                  >
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -111,6 +139,6 @@ export default function UserPage() {
       </Paper>
 
       <Loading left={360} top={360} size={70} loading={loadingUser} />
-    </Box >
+    </Box>
   );
 }

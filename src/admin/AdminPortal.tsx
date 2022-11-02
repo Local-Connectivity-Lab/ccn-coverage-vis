@@ -117,14 +117,21 @@ export default function AdminPortal(props: AdminPortalProps) {
             >
               Admin Portal
             </Typography>
-            <Button color="inherit" onClick={() => {
-              axios.get(API_URL + '/api/logout').then(function (response) {
-                window.open('/', '_self');
-              })
-                .catch(function (error) {
-                  console.log(error);
-                })
-            }}>Logout</Button>
+            <Button
+              color='inherit'
+              onClick={() => {
+                axios
+                  .get(API_URL + '/api/logout')
+                  .then(function (response) {
+                    window.open('/', '_self');
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  });
+              }}
+            >
+              Logout
+            </Button>
           </Toolbar>
         </AppBar>
         <Drawer variant='permanent' open={open}>
