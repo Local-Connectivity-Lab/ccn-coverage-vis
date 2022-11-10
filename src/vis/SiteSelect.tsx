@@ -4,8 +4,6 @@ import Box from '@mui/material/Box';
 import { MultiSelect } from 'react-multi-select-component';
 import 'fontsource-roboto';
 
-
-
 interface SidebarProps {
   selectedSites: SiteOption[];
   setSelectedSites: React.Dispatch<React.SetStateAction<SiteOption[]>>;

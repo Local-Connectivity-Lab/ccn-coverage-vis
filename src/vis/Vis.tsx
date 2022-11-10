@@ -23,8 +23,8 @@ import DateSelect from './DateSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
 import axios from 'axios';
-import { API_URL } from '../utils/config'
-import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap'
+import { API_URL } from '../utils/config';
+import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap';
 
 // import { setOptions } from 'leaflet';
 
@@ -134,14 +134,12 @@ export default function Vis() {
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
   const [siteOptions, setSiteOptions] = useState<SiteOption[]>([]);
-  const [selectedSites, setSelectedSites] =
-    useState<SiteOption[]>(siteOptions);
-  const [selectedDevices, setSelectedDevices] =
-    useState<DeviceOption[]>([]);
-  const [timeFrom, setTimeFrom] =
-    useState<Date>(new Date('2021-09-01T00:00:00'));
-  const [timeTo, setTimeTo] =
-    useState<Date>(new Date());
+  const [selectedSites, setSelectedSites] = useState<SiteOption[]>(siteOptions);
+  const [selectedDevices, setSelectedDevices] = useState<DeviceOption[]>([]);
+  const [timeFrom, setTimeFrom] = useState<Date>(
+    new Date('2021-09-01T00:00:00'),
+  );
+  const [timeTo, setTimeTo] = useState<Date>(new Date());
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
     INITIAL_DISPLAY_OPTIONS,
   );
@@ -149,19 +147,22 @@ export default function Vis() {
   const [overlayData, setOverlayData] = useState<number>(0);
   useEffect(() => {
     (async () => {
-      axios.get(API_URL + '/api/sites').then(res => {
-        const ss: Site[] = res.data;
-        const siteOptions = ss.map(({ name, status }) => ({
-          label: name,
-          value: name,
-          status: status
-        }))
-        setSites(ss);
-        setSiteOptions(siteOptions);
-        setSelectedSites(siteOptions)
-      }).catch(err => {
-        console.log(err);
-      });
+      axios
+        .get(API_URL + '/api/sites')
+        .then(res => {
+          const ss: Site[] = res.data;
+          const siteOptions = ss.map(({ name, status }) => ({
+            label: name,
+            value: name,
+            status: status,
+          }));
+          setSites(ss);
+          setSiteOptions(siteOptions);
+          setSelectedSites(siteOptions);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     })();
   }, []);
   const [loadingMap, setLoadingMap] = useState(true);
@@ -293,7 +294,11 @@ export default function Vis() {
           zIndex: '3',
         }}
       >
-        <Fade mountOnEnter unmountOnExit in={displayValue(displayOptions, 'displayGraph')}>
+        <Fade
+          mountOnEnter
+          unmountOnExit
+          in={displayValue(displayOptions, 'displayGraph')}
+        >
           <Card>
             <LineChart
               mapType={mapType}
@@ -319,14 +324,28 @@ export default function Vis() {
           overflow: 'none',
           position: 'absolute',
           right: '8px',
-          bottom: 20 + (displayValue(displayOptions, 'displayGraph') ? chartHeight + 10 : 0),
+          bottom:
+            20 +
+            (displayValue(displayOptions, 'displayGraph')
+              ? chartHeight + 10
+              : 0),
           zIndex: '4',
         }}
       >
-        <Fade mountOnEnter unmountOnExit in={displayValue(displayOptions, 'displayOverlayData')}>
+        <Fade
+          mountOnEnter
+          unmountOnExit
+          in={displayValue(displayOptions, 'displayOverlayData')}
+        >
           <Card sx={{ px: 2, py: 1 }}>
-            <Typography align='right' variant='body1' component='div'>Average {MAP_TYPE_CONVERT[mapType]}</Typography>
-            <Typography align='right' variant='h6' component="div">{overlayData ? overlayData.toFixed(2) + ' ' + UNITS[mapType] : 'Please select the area'}</Typography>
+            <Typography align='right' variant='body1' component='div'>
+              Average {MAP_TYPE_CONVERT[mapType]}
+            </Typography>
+            <Typography align='right' variant='h6' component='div'>
+              {overlayData
+                ? overlayData.toFixed(2) + ' ' + UNITS[mapType]
+                : 'Please select the area'}
+            </Typography>
           </Card>
         </Fade>
       </Box>

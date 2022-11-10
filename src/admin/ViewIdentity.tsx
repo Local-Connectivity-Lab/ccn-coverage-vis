@@ -24,19 +24,21 @@ export default function NewUserDialog(props: NewUserDialogProp) {
 
   return (
     <div>
-      <Link component="button" variant="body2" onClick={handleClickOpen}>{"..." + props.identity.substring(56)}</Link>
+      <Link component='button' variant='body2' onClick={handleClickOpen}>
+        {'...' + props.identity.substring(56)}
+      </Link>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>View Identity</DialogTitle>
         <DialogContent>
           <DialogContentText>
             <TextField
-              id="outlined-read-only-input"
+              id='outlined-read-only-input'
               defaultValue={props.identity}
               InputProps={{
                 readOnly: true,
               }}
               sx={{
-                display: 'block'
+                display: 'block',
               }}
             />
           </DialogContentText>

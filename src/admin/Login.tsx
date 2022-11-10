@@ -12,12 +12,15 @@ import Container from '@mui/material/Container';
 import Footer from '../Footer';
 import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { API_URL } from '../utils/config'
+import { API_URL } from '../utils/config';
 const theme = createTheme();
 
 export default function Login() {
   const [open, setOpen] = React.useState(false);
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -28,19 +31,22 @@ export default function Login() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    axios.post(API_URL + '/secure/login', {
-      username: data.get('username'),
-      password: data.get('password'),
-    }).then(res => {
-      if (res.data === "success") {
-        window.open('/admin/users', '_self');
-      } else {
+    axios
+      .post(API_URL + '/secure/login', {
+        username: data.get('username'),
+        password: data.get('password'),
+      })
+      .then(res => {
+        if (res.data === 'success') {
+          window.open('/admin/users', '_self');
+        } else {
+          setOpen(true);
+        }
+      })
+      .catch(err => {
+        console.log(err);
         setOpen(true);
-      }
-    }).catch(err => {
-      console.log(err);
-      setOpen(true);
-    });
+      });
   };
 
   return (
@@ -96,8 +102,17 @@ export default function Login() {
             >
               Sign In
             </Button>
-            <Snackbar open={open} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} autoHideDuration={6000} onClose={handleClose}>
-              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+            <Snackbar
+              open={open}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              autoHideDuration={6000}
+              onClose={handleClose}
+            >
+              <Alert
+                onClose={handleClose}
+                severity='error'
+                sx={{ width: '100%' }}
+              >
                 Incorrect username or password
               </Alert>
             </Snackbar>
@@ -105,6 +120,6 @@ export default function Login() {
         </Box>
         <Footer />
       </Container>
-    </ThemeProvider >
+    </ThemeProvider>
   );
 }
