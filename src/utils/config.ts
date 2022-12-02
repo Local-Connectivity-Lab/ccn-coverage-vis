@@ -1,5 +1,17 @@
-export const API_URL: string = 'https://coverage.seattlecommunitynetwork.org';
-// export const API_URL: string = 'http://localhost';
+const ENV_API_URL: string = 'REACT_APP__API_URL';
+
+/**
+ * The value should be:
+ * - When developing frontend only: 'https://coverage.seattlecommunitynetwork.org'.
+ * - When developing with local backend: 'http://localhost:3000'.
+ * - On production: ''.
+ */
+export const API_URL: string =
+  '' +
+  (process.env[ENV_API_URL] == null
+    ? 'https://coverage.seattlecommunitynetwork.org'
+    : process.env[ENV_API_URL]);
+
 export const DEVICE_OPTIONS: DeviceOption[] = [
   {
     label: 'Low Gain CPE',
