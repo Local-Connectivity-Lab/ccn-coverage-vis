@@ -26,7 +26,6 @@
     "fontsource-roboto": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
     "leaflet": "^1.7.1",
-    "leaflet-geosearch": "^3.7.0",
     "node-canvas": "^2.7.0",
     "prettier": "^2.5.1",
     "qrcode.react": "^1.0.1",
