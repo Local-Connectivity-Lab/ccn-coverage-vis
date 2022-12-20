@@ -231,6 +231,7 @@ export default function Vis() {
           </Toolbar>
           <Divider />
           <Container>
+
             <MapSelectionRadio
               mapType={mapType}
               setMapType={setMapType}
