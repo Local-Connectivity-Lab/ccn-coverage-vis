@@ -13,6 +13,8 @@ import MapLegend from './MapLegend';
 import fetchToJson from '../utils/fetch-to-json';
 import Loading from '../Loading';
 import axios from 'axios';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import 'leaflet-geosearch/dist/geosearch.css';
 
 const ATTRIBUTION =
   'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
@@ -126,6 +128,12 @@ const MeasurementMap = ({
       setSLayer(L.layerGroup().addTo(_map));
       setMLayer(L.layerGroup().addTo(_map));
       setLLayer(L.layerGroup().addTo(_map));
+
+      const search = new (GeoSearchControl as any)({
+        provider: new OpenStreetMapProvider(),
+        style: 'bar', // optional: bar|button  - default button
+      });
+      _map.addControl(search);
     })();
   }, [width, height]);
 
