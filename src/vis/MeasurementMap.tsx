@@ -114,8 +114,8 @@ const MeasurementMap = ({
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
-        maxZoom: 25,
-        minZoom: 8,
+        maxZoom: 16,
+        minZoom: 10,
         opacity: 0.7,
         zIndex: 1,
       }).addTo(_map);
