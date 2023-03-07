@@ -22,9 +22,8 @@ const ATTRIBUTION =
   'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
   'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? '@2x' : ''
-}.png`;
+const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${devicePixelRatio > 1 ? '@2x' : ''
+  }.png`;
 
 const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
@@ -110,6 +109,7 @@ const MeasurementMap = ({
   useEffect(() => {
     (async () => {
       const dataRange = await fetchToJson(API_URL + '/api/dataRange');
+
       const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
       const _bounds = getBounds({ ...dataRange, map: _map, width, height });
 
@@ -129,8 +129,14 @@ const MeasurementMap = ({
       setMLayer(L.layerGroup().addTo(_map));
       setLLayer(L.layerGroup().addTo(_map));
 
+
+
       const search = new (GeoSearchControl as any)({
-        provider: new OpenStreetMapProvider(),
+        provider: new OpenStreetMapProvider({
+          params: {
+            countrycodes: "us"
+          }
+        }),
         style: 'bar', // optional: bar|button  - default button
       });
       _map.addControl(search);
@@ -144,11 +150,11 @@ const MeasurementMap = ({
       }
       const _siteSummary = await fetchToJson(
         API_URL +
-          '/api/sitesSummary?' +
-          new URLSearchParams([
-            ['timeFrom', timeFrom.toISOString()],
-            ['timeTo', timeTo.toISOString()],
-          ]),
+        '/api/sitesSummary?' +
+        new URLSearchParams([
+          ['timeFrom', timeFrom.toISOString()],
+          ['timeTo', timeTo.toISOString()],
+        ]),
       );
       setSiteSummary(_siteSummary);
     })();
@@ -276,19 +282,19 @@ const MeasurementMap = ({
       setBins(
         await fetchToJson(
           API_URL +
-            '/api/data?' +
-            new URLSearchParams([
-              ['width', bounds.width + ''],
-              ['height', bounds.height + ''],
-              ['left', bounds.left + ''],
-              ['top', bounds.top + ''],
-              ['binSizeShift', BIN_SIZE_SHIFT + ''],
-              ['zoom', DEFAULT_ZOOM + ''],
-              ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-              ['mapType', mapType],
-              ['timeFrom', timeFrom.toISOString()],
-              ['timeTo', timeTo.toISOString()],
-            ]),
+          '/api/data?' +
+          new URLSearchParams([
+            ['width', bounds.width + ''],
+            ['height', bounds.height + ''],
+            ['left', bounds.left + ''],
+            ['top', bounds.top + ''],
+            ['binSizeShift', BIN_SIZE_SHIFT + ''],
+            ['zoom', DEFAULT_ZOOM + ''],
+            ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+            ['mapType', mapType],
+            ['timeFrom', timeFrom.toISOString()],
+            ['timeTo', timeTo.toISOString()],
+          ]),
         ),
       );
     })();
