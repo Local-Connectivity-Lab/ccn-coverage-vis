@@ -5,28 +5,22 @@ on:
   push:
     branches:
       - '**'
+      - '!main'
 
 jobs:
   check:
-    name: Format
+    name: Check format
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
         with:
-          persist-credentials: false
+          node-version-file: '.node-version'
 
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Format
-        if: github.ref != 'refs/heads/main'
-        run: npm run format
-
-      - name: Setup Git remote
-        run: ./scripts/setup-git-ci.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-
-      - name: Check and Commit
-        run: ./scripts/check-and-commit.sh
+      - name: Check format
+        run: npm run format-check
