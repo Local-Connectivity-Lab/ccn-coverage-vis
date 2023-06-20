@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+import * as L from "leaflet";
 
 type GetBoundsParams = {
   map: L.Map;
@@ -41,7 +41,7 @@ export default function getBounds({
   const bounds = L.latLngBounds(sw, ne);
   map
     .setMaxBounds(bounds)
-    .on('drag', () => map.panInsideBounds(bounds, { animate: false }));
+    .on("drag", () => map.panInsideBounds(bounds, { animate: false }));
 
   return {
     width: topright[0] - bottomleft[0],

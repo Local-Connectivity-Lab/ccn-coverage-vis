@@ -20,11 +20,11 @@ type DisplayOption = {
   checked: boolean;
 };
 
-type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
+type SiteStatus = "active" | "confirmed" | "in-conversation";
 
-type DeviceType = 'CPEL' | 'CPEH' | 'LGG8' | 'Pixel4';
+type DeviceType = "CPEL" | "CPEH" | "LGG8" | "Pixel4";
 
-type AdminPage = 'users' | 'edit-site' | 'edit-data';
+type AdminPage = "users" | "edit-site" | "edit-data";
 
 type UserRow = {
   identity: string;

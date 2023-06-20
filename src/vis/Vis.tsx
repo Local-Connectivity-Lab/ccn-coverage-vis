@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiDrawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Fade from '@mui/material/Fade';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { homeListItems } from '../ListItems';
-import MapSelectionRadio, { MapType } from './MapSelectionRadio';
-import DisplaySelection from './DisplaySelection';
-import SiteSelect from './SiteSelect';
-import DeviceSelect from './DeviceSelect';
-import DateSelect from './DateSelect';
-import MeasurementMap from './MeasurementMap';
-import LineChart from './LineChart';
-import axios from 'axios';
-import { API_URL } from '../utils/config';
-import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap';
+import React, { useState, useEffect } from "react";
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import MuiDrawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Fade from "@mui/material/Fade";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Container from "@mui/material/Container";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { homeListItems } from "../ListItems";
+import MapSelectionRadio, { MapType } from "./MapSelectionRadio";
+import DisplaySelection from "./DisplaySelection";
+import SiteSelect from "./SiteSelect";
+import DeviceSelect from "./DeviceSelect";
+import DateSelect from "./DateSelect";
+import MeasurementMap from "./MeasurementMap";
+import LineChart from "./LineChart";
+import axios from "axios";
+import { API_URL } from "../utils/config";
+import { UNITS, MAP_TYPE_CONVERT } from "./MeasurementMap";
 
 // import { setOptions } from 'leaflet';
 
@@ -36,17 +36,17 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: prop => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
+  transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -54,26 +54,26 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: prop => prop !== 'open',
+  shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  '& .MuiDrawer-paper': {
-    position: 'relative',
-    whiteSpace: 'nowrap',
+  "& .MuiDrawer-paper": {
+    position: "relative",
+    whiteSpace: "nowrap",
     width: drawerWidth,
     height: window.innerHeight,
-    transition: theme.transitions.create('width', {
+    transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    boxSizing: 'border-box',
+    boxSizing: "border-box",
     ...(!open && {
-      overflowX: 'hidden',
-      transition: theme.transitions.create('width', {
+      overflowX: "hidden",
+      transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
       width: 0,
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up("sm")]: {
         width: 0,
       },
     }),
@@ -90,7 +90,7 @@ function getWindowDimensions() {
 
 function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions(),
+    getWindowDimensions()
   );
 
   useEffect(() => {
@@ -98,8 +98,8 @@ function useWindowDimensions() {
       setWindowDimensions(getWindowDimensions());
     }
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return windowDimensions;
@@ -109,13 +109,13 @@ const mdTheme = createTheme();
 
 const INITIAL_DISPLAY_OPTIONS = [
   {
-    label: 'Chart',
-    name: 'displayGraph',
+    label: "Chart",
+    name: "displayGraph",
     checked: true,
   },
   {
-    label: 'Data Overlay',
-    name: 'displayOverlayData',
+    label: "Data Overlay",
+    name: "displayOverlayData",
     checked: true,
   },
 ];
@@ -130,26 +130,26 @@ function displayValue(displayOptions: DisplayOption[], name: string) {
 }
 
 export default function Vis() {
-  const [mapType, setMapType] = useState<MapType>('dbm');
+  const [mapType, setMapType] = useState<MapType>("dbm");
   const [sites, setSites] = useState<Site[]>([]);
   const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
   const [siteOptions, setSiteOptions] = useState<SiteOption[]>([]);
   const [selectedSites, setSelectedSites] = useState<SiteOption[]>(siteOptions);
   const [selectedDevices, setSelectedDevices] = useState<DeviceOption[]>([]);
   const [timeFrom, setTimeFrom] = useState<Date>(
-    new Date('2021-09-01T00:00:00'),
+    new Date("2021-09-01T00:00:00")
   );
   const [timeTo, setTimeTo] = useState<Date>(new Date());
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>(
-    INITIAL_DISPLAY_OPTIONS,
+    INITIAL_DISPLAY_OPTIONS
   );
 
   const [overlayData, setOverlayData] = useState<number>(0);
   useEffect(() => {
     (async () => {
       axios
-        .get(API_URL + '/api/sites')
-        .then(res => {
+        .get(API_URL + "/api/sites")
+        .then((res) => {
           const ss: Site[] = res.data;
           const siteOptions = ss.map(({ name, status }) => ({
             label: name,
@@ -160,7 +160,7 @@ export default function Vis() {
           setSiteOptions(siteOptions);
           setSelectedSites(siteOptions);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     })();
@@ -178,37 +178,37 @@ export default function Vis() {
   }
   const [open, setOpen] = React.useState(drawerOpen);
 
-  document.title = 'Performance Evaluation';
+  document.title = "Performance Evaluation";
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
   return (
     <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: 'flex', overflowY: 'hidden', overflowX: 'hidden' }}>
+      <Box sx={{ display: "flex", overflowY: "hidden", overflowX: "hidden" }}>
         <CssBaseline />
-        <AppBar position='absolute' open={open}>
+        <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: '0px', // keep right padding when drawer closed
+              pr: "0px", // keep right padding when drawer closed
             }}
           >
             <IconButton
-              edge='start'
-              color='inherit'
-              aria-label='open drawer'
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
               onClick={toggleDrawer}
               sx={{
-                marginRight: '0px',
-                ...(open && { display: 'none' }),
+                marginRight: "0px",
+                ...(open && { display: "none" }),
               }}
             >
               <MenuIcon />
             </IconButton>
             <Typography
-              component='h1'
-              variant='h6'
-              color='inherit'
+              component="h1"
+              variant="h6"
+              color="inherit"
               noWrap
               sx={{ flexGrow: 1 }}
             >
@@ -216,12 +216,12 @@ export default function Vis() {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Drawer variant='permanent' open={open}>
+        <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
               px: [1],
             }}
           >
@@ -284,20 +284,20 @@ export default function Vis() {
         />
       </Box>
       <Box
-        component='main'
+        component="main"
         sx={{
-          backgroundColor: 'transparent',
-          overflow: 'none',
-          position: 'absolute',
-          right: '8px',
-          bottom: '20px',
-          zIndex: '3',
+          backgroundColor: "transparent",
+          overflow: "none",
+          position: "absolute",
+          right: "8px",
+          bottom: "20px",
+          zIndex: "3",
         }}
       >
         <Fade
           mountOnEnter
           unmountOnExit
-          in={displayValue(displayOptions, 'displayGraph')}
+          in={displayValue(displayOptions, "displayGraph")}
         >
           <Card>
             <LineChart
@@ -318,33 +318,33 @@ export default function Vis() {
         </Fade>
       </Box>
       <Box
-        component='main'
+        component="main"
         sx={{
-          backgroundColor: 'transparent',
-          overflow: 'none',
-          position: 'absolute',
-          right: '8px',
+          backgroundColor: "transparent",
+          overflow: "none",
+          position: "absolute",
+          right: "8px",
           bottom:
             20 +
-            (displayValue(displayOptions, 'displayGraph')
+            (displayValue(displayOptions, "displayGraph")
               ? chartHeight + 10
               : 0),
-          zIndex: '4',
+          zIndex: "4",
         }}
       >
         <Fade
           mountOnEnter
           unmountOnExit
-          in={displayValue(displayOptions, 'displayOverlayData')}
+          in={displayValue(displayOptions, "displayOverlayData")}
         >
           <Card sx={{ px: 2, py: 1 }}>
-            <Typography align='right' variant='body1' component='div'>
+            <Typography align="right" variant="body1" component="div">
               Average {MAP_TYPE_CONVERT[mapType]}
             </Typography>
-            <Typography align='right' variant='h6' component='div'>
+            <Typography align="right" variant="h6" component="div">
               {overlayData
-                ? overlayData.toFixed(2) + ' ' + UNITS[mapType]
-                : 'Please select the area'}
+                ? overlayData.toFixed(2) + " " + UNITS[mapType]
+                : "Please select the area"}
             </Typography>
           </Card>
         </Fade>

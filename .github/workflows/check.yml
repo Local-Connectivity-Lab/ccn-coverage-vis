@@ -1,11 +1,10 @@
-
 name: Check
 
 on:
   push:
     branches:
-      - '**'
-      - '!main'
+      - "**"
+      - "!main"
 
 jobs:
   check:
@@ -17,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.node-version'
+          node-version-file: ".node-version"
 
       - name: Install Node dependencies
         run: npm ci

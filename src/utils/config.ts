@@ -1,4 +1,4 @@
-const ENV_API_URL: string = 'REACT_APP__API_URL';
+const ENV_API_URL: string = "REACT_APP__API_URL";
 
 /**
  * The value should be:
@@ -7,30 +7,30 @@ const ENV_API_URL: string = 'REACT_APP__API_URL';
  * - On production: ''.
  */
 export const API_URL: string =
-  '' +
+  "" +
   (process.env[ENV_API_URL] == null
-    ? 'https://coverage.seattlecommunitynetwork.org'
+    ? "https://coverage.seattlecommunitynetwork.org"
     : process.env[ENV_API_URL]);
 
 export const DEVICE_OPTIONS: DeviceOption[] = [
   {
-    label: 'Low Gain CPE',
-    value: 'CPEL',
+    label: "Low Gain CPE",
+    value: "CPEL",
   },
   {
-    label: 'High Gain CPE',
-    value: 'CPEH',
+    label: "High Gain CPE",
+    value: "CPEH",
   },
   {
-    label: 'LG-G8',
-    value: 'LGG8',
+    label: "LG-G8",
+    value: "LGG8",
   },
   {
-    label: 'Pixel 4',
-    value: 'Pixel4',
+    label: "Pixel 4",
+    value: "Pixel4",
   },
   {
-    label: 'Android',
-    value: 'Android',
+    label: "Android",
+    value: "Android",
   },
 ];

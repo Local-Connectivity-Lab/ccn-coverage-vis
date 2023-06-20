@@ -1,19 +1,19 @@
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 function Copyright(props: any) {
   return (
     <Typography
-      variant='body2'
-      color='text.secondary'
-      align='center'
+      variant="body2"
+      color="text.secondary"
+      align="center"
       {...props}
     >
-      {'Copyright © '}
-      <Link color='inherit' href='https://ictd.cs.washington.edu/'>
+      {"Copyright © "}
+      <Link color="inherit" href="https://ictd.cs.washington.edu/">
         ICTD
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }

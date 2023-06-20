@@ -1,11 +1,11 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import Checkbox from '@mui/material/Checkbox';
-import 'fontsource-roboto';
+import React from "react";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import Checkbox from "@mui/material/Checkbox";
+import "fontsource-roboto";
 
 interface DisplayOptionsProps {
   displayOptions: DisplayOption[];
@@ -16,7 +16,7 @@ interface DisplayOptionsProps {
 export const solveDisplayOptions = (
   displayOptions: DisplayOption[],
   name: string,
-  value: boolean,
+  value: boolean
 ) => {
   const newOptions: DisplayOption[] = [];
   for (let option of displayOptions) {
@@ -43,10 +43,10 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
   };
 
   return (
-    <Box sx={{ mb: 2 }} className='DisplaySelection'>
-      <FormControl component='fieldset' disabled={props.loading}>
-        <Typography variant='overline'>Display Options</Typography>
-        <FormGroup aria-label='Display Options'>
+    <Box sx={{ mb: 2 }} className="DisplaySelection">
+      <FormControl component="fieldset" disabled={props.loading}>
+        <Typography variant="overline">Display Options</Typography>
+        <FormGroup aria-label="Display Options">
           {props.displayOptions.map((option: DisplayOption) => (
             <FormControlLabel
               key={option.name}
