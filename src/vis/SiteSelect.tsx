@@ -1,8 +1,8 @@
-import React from "react";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import { MultiSelect } from "react-multi-select-component";
-import "fontsource-roboto";
+import React from 'react';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import { MultiSelect } from 'react-multi-select-component';
+import 'fontsource-roboto';
 
 interface SidebarProps {
   selectedSites: SiteOption[];
@@ -18,12 +18,12 @@ const SiteSelect = (props: SidebarProps) => {
   }));
   return (
     <Box mb={2}>
-      <Typography variant="overline">Select Sites</Typography>
+      <Typography variant='overline'>Select Sites</Typography>
       <MultiSelect
         options={siteOptions}
         value={props.selectedSites}
         onChange={props.setSelectedSites}
-        labelledBy="Select"
+        labelledBy='Select'
         disabled={props.loading}
       />
     </Box>

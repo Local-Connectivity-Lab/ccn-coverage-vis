@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import NewUserDialog from "./NewUserDialog";
-import EditIcon from "@mui/icons-material/Edit";
-import ViewQRCode from "./ViewQRCode";
-import ViewIdentity from "./ViewIdentity";
-import Loading from "../Loading";
-import axios from "axios";
-import { API_URL } from "../utils/config";
+import React, { useEffect, useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import NewUserDialog from './NewUserDialog';
+import EditIcon from '@mui/icons-material/Edit';
+import ViewQRCode from './ViewQRCode';
+import ViewIdentity from './ViewIdentity';
+import Loading from '../Loading';
+import axios from 'axios';
+import { API_URL } from '../utils/config';
 
 function handleEnabledChange() {
   return;
@@ -29,8 +29,8 @@ export default function UserPage() {
   useEffect(() => {
     if (!called) {
       axios
-        .post(API_URL + "/secure/get-users")
-        .then((res) => {
+        .post(API_URL + '/secure/get-users')
+        .then(res => {
           const data: UserRow[] = res.data.pending;
           setPendingUsersRows(data);
           const dataReg: UserRow[] = res.data.registered;
@@ -38,22 +38,22 @@ export default function UserPage() {
           setLoadingUser(false);
           setCalled(true);
         })
-        .catch((err) => {
+        .catch(err => {
           alert(err);
-          window.open("/login", "_self");
+          window.open('/login', '_self');
           setLoadingUser(false);
           return <div></div>;
         });
     }
   });
   return (
-    <Box className="UserPage">
+    <Box className='UserPage'>
       <NewUserDialog setCalled={setCalled} />
-      <Paper sx={{ p: 2, display: "flex", flexDirection: "column", my: 2 }}>
-        <Typography component="h2" variant="h6" color="primary" gutterBottom>
+      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
+        <Typography component='h2' variant='h6' color='primary' gutterBottom>
           Pending Registration
         </Typography>
-        <Table size="small">
+        <Table size='small'>
           <TableHead>
             <TableRow>
               <TableCell>Issue Date</TableCell>
@@ -61,26 +61,26 @@ export default function UserPage() {
               <TableCell>Email</TableCell>
               <TableCell>Name</TableCell>
               <TableCell></TableCell>
-              <TableCell align="right"></TableCell>
+              <TableCell align='right'></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {pendingUsersRows.map((row) => (
+            {pendingUsersRows.map(row => (
               <TableRow key={row.identity}>
                 <TableCell>{new Date(row.issueDate).toString()}</TableCell>
                 <TableCell>
                   <ViewIdentity identity={row.identity}></ViewIdentity>
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.firstName + " " + row.lastName}</TableCell>
-                <TableCell align="right">
+                <TableCell>{row.firstName + ' ' + row.lastName}</TableCell>
+                <TableCell align='right'>
                   <ViewQRCode identity={row.identity} qrCode={row.qrCode} />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align='right'>
                   <Button
-                    size="small"
-                    color="error"
-                    variant="contained"
+                    size='small'
+                    color='error'
+                    variant='contained'
                     endIcon={<EditIcon />}
                   >
                     Edit
@@ -91,11 +91,11 @@ export default function UserPage() {
           </TableBody>
         </Table>
       </Paper>
-      <Paper sx={{ p: 2, display: "flex", flexDirection: "column", my: 2 }}>
-        <Typography component="h2" variant="h6" color="primary" gutterBottom>
+      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', my: 2 }}>
+        <Typography component='h2' variant='h6' color='primary' gutterBottom>
           Active Users
         </Typography>
-        <Table size="small">
+        <Table size='small'>
           <TableHead>
             <TableRow>
               <TableCell>Issue Date</TableCell>
@@ -103,18 +103,18 @@ export default function UserPage() {
               <TableCell>Email</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Enabled</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell align='right'>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {activeUsersRows.map((row) => (
+            {activeUsersRows.map(row => (
               <TableRow key={row.identity}>
                 <TableCell>{new Date(row.issueDate).toString()}</TableCell>
                 <TableCell>
                   <ViewIdentity identity={row.identity}></ViewIdentity>
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.firstName + " " + row.lastName}</TableCell>
+                <TableCell>{row.firstName + ' ' + row.lastName}</TableCell>
                 <TableCell>
                   <Switch
                     checked={row.isEnabled}
@@ -122,11 +122,11 @@ export default function UserPage() {
                     onChange={handleEnabledChange}
                   />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align='right'>
                   <Button
-                    size="small"
-                    color="error"
-                    variant="contained"
+                    size='small'
+                    color='error'
+                    variant='contained'
                     endIcon={<EditIcon />}
                   >
                     Edit

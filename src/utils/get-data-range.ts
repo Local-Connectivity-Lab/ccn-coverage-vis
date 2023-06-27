@@ -1,4 +1,4 @@
-import * as d3 from "d3";
+import * as d3 from 'd3';
 
 type Datum = {
   latitude: number;
@@ -7,10 +7,10 @@ type Datum = {
 
 export default function dataRange(data: Datum[]) {
   const [minLat, maxLat] = d3
-    .extent(data, (d) => d.latitude)
+    .extent(data, d => d.latitude)
     .map((d: number | undefined) => d ?? NaN);
   const [minLon, maxLon] = d3
-    .extent(data, (d) => d.longitude)
+    .extent(data, d => d.longitude)
     .map((d: number | undefined) => d ?? NaN);
 
   const center: [number, number] = [
