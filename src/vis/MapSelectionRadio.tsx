@@ -1,11 +1,11 @@
-import React from "react";
-import Radio from "@mui/material/Radio";
-import Typography from "@mui/material/Typography";
-import RadioGroup from "@mui/material/RadioGroup";
-import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import "fontsource-roboto";
+import React from 'react';
+import Radio from '@mui/material/Radio';
+import Typography from '@mui/material/Typography';
+import RadioGroup from '@mui/material/RadioGroup';
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import 'fontsource-roboto';
 
 const MAP_TYPE_INDEX = {
   dbm: 1,
@@ -30,37 +30,37 @@ export default function MapSelectionRadio(props: MapSelectionRadioProps) {
   const handleChange = (event: InputEvent) => {
     const _mapType = event.target.value;
     if (!isMapType(_mapType)) {
-      throw new Error("Invalid map type selection: " + _mapType);
+      throw new Error('Invalid map type selection: ' + _mapType);
     }
     props.setMapType(_mapType);
   };
 
   return (
-    <Box className="MapSelectionRadio">
-      <FormControl component="fieldset" disabled={props.loading}>
-        <Typography variant="overline">Map Type</Typography>
+    <Box className='MapSelectionRadio'>
+      <FormControl component='fieldset' disabled={props.loading}>
+        <Typography variant='overline'>Map Type</Typography>
         <RadioGroup
-          aria-label="Map Type"
-          name="maptype"
+          aria-label='Map Type'
+          name='maptype'
           value={props.mapType}
           onChange={handleChange}
         >
           <FormControlLabel
-            value="dbm"
+            value='dbm'
             control={<Radio />}
-            label="Signal Strength"
+            label='Signal Strength'
           />
           <FormControlLabel
-            value="upload_speed"
+            value='upload_speed'
             control={<Radio />}
-            label="Upload Speed"
+            label='Upload Speed'
           />
           <FormControlLabel
-            value="download_speed"
+            value='download_speed'
             control={<Radio />}
-            label="Download Speed"
+            label='Download Speed'
           />
-          <FormControlLabel value="ping" control={<Radio />} label="Ping" />
+          <FormControlLabel value='ping' control={<Radio />} label='Ping' />
         </RadioGroup>
       </FormControl>
     </Box>
