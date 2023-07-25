@@ -25,6 +25,8 @@ import LineChart from './LineChart';
 import axios from 'axios';
 import { API_URL } from '../utils/config';
 import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap';
+import { solveDisplayOptions } from './DisplaySelection';
+import VisibilityIcon from '@mui/icons-material/ExpandLess';
 
 // import { setOptions } from 'leaflet';
 
@@ -320,6 +322,37 @@ export default function Vis() {
       <Box
         component='main'
         sx={{
+          backgroundColor: 'white',
+          overflow: 'none',
+          position: 'absolute',
+          right: '8px',
+          bottom: '20px',
+          height: '50px',
+          zIndex: '2',
+        }}
+      >
+        <Card sx={{ px: 2, py: 1, height: '50px' }}>
+          <div>
+            <Typography sx={{ float: 'left' }} variant='h6' component='div'>
+              Show Graph
+            </Typography>
+
+            <IconButton
+              sx={{ float: 'right', right: '2 px' }}
+              onClick={() => {
+                setDisplayOptions(
+                  solveDisplayOptions(displayOptions, 'displayGraph', true),
+                );
+              }}
+            >
+              <VisibilityIcon></VisibilityIcon>
+            </IconButton>
+          </div>
+        </Card>
+      </Box>
+      <Box
+        component='main'
+        sx={{
           backgroundColor: 'transparent',
           overflow: 'none',
           position: 'absolute',
@@ -328,7 +361,7 @@ export default function Vis() {
             20 +
             (displayValue(displayOptions, 'displayGraph')
               ? chartHeight + 10
-              : 0),
+              : 60),
           zIndex: '4',
         }}
       >
