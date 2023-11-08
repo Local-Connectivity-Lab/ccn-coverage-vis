@@ -16,15 +16,15 @@ import axios from 'axios';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 
-const ATTRIBUTION =
-  'Map tiles by <a href="http://stamen.com">Stamen Design</a>, ' +
-  'under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. ' +
-  'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, ' +
-  'under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.';
+// Updated with details from: https://stadiamaps.com/stamen/onboarding/migrate/
+const ATTRIBUTION = '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
+  '&copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> ' +
+  '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> ' +
+  '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>';
 
-const URL = `https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? '@2x' : ''
-}.png`;
+  const URL = `https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}${
+    devicePixelRatio > 1 ? '@2x' : ''
+  }.png`;
 
 const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
