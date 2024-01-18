@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import * as d3 from 'd3';
-import { createCanvas } from 'node-canvas';
+import { createCanvas } from 'canvas';
 
 const tickSize = 6;
 const height = 150;

@@ -21,9 +21,11 @@ npm install
 
 
 # Issues
-- Chart doesn't show tooltips. 
+
+- Chart doesn't show tooltips.
 
 # TODOs
+
 - Make the chart more informative
   - Hover on a line should show the exact data and which sites are they from
 - Admin Panel
@@ -32,4 +34,5 @@ npm install
 - Better compatibility with local development
 
 # Maybe
+
 - More map information

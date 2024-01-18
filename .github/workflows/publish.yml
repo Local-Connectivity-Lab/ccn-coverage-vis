@@ -5,7 +5,7 @@ name: Publish Site
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -13,20 +13,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: actions/setup-node@v3
-      with:
-        node-version-file: '.node-version'
-        
-    - name: Install Node dependencies
-      run: npm ci
-      
-    - name: Build
-      run: npm run build
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
 
-    - name: Publish website
-      uses: alex-page/blazing-fast-gh-pages-deploy@v1.1.0
-      with:
-        repo-token: ${{ secrets.GH_PAT }}
-        site-directory: 'build'
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish website
+        uses: alex-page/blazing-fast-gh-pages-deploy@v1.1.0
+        with:
+          repo-token: ${{ secrets.GH_PAT }}
+          site-directory: "build"
