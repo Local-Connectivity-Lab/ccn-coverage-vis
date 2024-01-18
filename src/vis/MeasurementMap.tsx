@@ -17,14 +17,15 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 
 // Updated with details from: https://stadiamaps.com/stamen/onboarding/migrate/
-const ATTRIBUTION = '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
+const ATTRIBUTION =
+  '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> ' +
   '&copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> ' +
   '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> ' +
   '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>';
 
-  const URL = `https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}${
-    devicePixelRatio > 1 ? '@2x' : ''
-  }.png`;
+const URL = `https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}${
+  devicePixelRatio > 1 ? '@2x' : ''
+}.png`;
 
 const BIN_SIZE_SHIFT = 0;
 const DEFAULT_ZOOM = 10;
