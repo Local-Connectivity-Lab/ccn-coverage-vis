@@ -4,6 +4,22 @@ Visualizations of coverage and performance analysis for Community Cellular Netwo
 
 Now hosted on https://coverage.seattlecommunitynetwork.org/
 
+# Testing & Deployment
+
+Changes to the main branch are automically built and deployed to: https://seattlecommunitynetwork.org/ccn-coverage-vis/
+
+Once changes have been validated, they can be deployed with:
+
+```
+ssh coverage-api.westus2.cloudapp.azure.com
+cd ccn-coverage-vis/
+git switch main
+git stash
+git pull
+npm install
+```
+
+
 # Issues
 
 - Chart doesn't show tooltips.
