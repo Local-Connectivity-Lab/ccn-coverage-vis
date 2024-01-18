@@ -26,6 +26,7 @@ npm install
 
 # TODOs
 
+- Toggle graph view off results in no toggle-on button
 - Make the chart more informative
   - Hover on a line should show the exact data and which sites are they from
 - Admin Panel
