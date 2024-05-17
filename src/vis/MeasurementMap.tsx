@@ -35,6 +35,61 @@ function cts(p: Cell): string {
   return p.x + ',' + p.y;
 }
 
+// print results of user search event to console
+function searchEventHandler(result: any): void {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', "http://127.0.0.1:8000/?state=va&cityname=arlington&primary=3109&street_number=9th&st=St&post_direction=N&zip_5=22201&zip_9=2024");
+  xhr.onload = function() {
+      console.log("200 check");
+      console.log(xhr.status);
+      if (xhr.status === 200) {
+        //result.marker.setPopupContent(xhr.responseText);
+        result.marker.setPopupContent(organizePopup(xhr.responseText));
+      }
+  };
+  xhr.send();
+}
+
+
+
+// organize popup content. called from searchEvenHandler
+function organizePopup(apiText: any): string{
+  let dict = JSON.parse(apiText);
+  let returnString = "<table style='border:1px solid black;'>"
+                        + "<b>" + "<tr>"
+                          + "<th style='border:1px solid black;'>" + "Provider" + "</th>"
+                          + "<th style='border:1px solid black;'>" + "Available Speeds up to" + "</th>"
+                          + "<th style='border:1px solid black;'>" + "Starting Rate" + "</th>"
+                        + "</tr>" + "</b>";
+
+  if ("message" in dict) {
+    return dict["message"];
+  }
+  let dict2 = dict["here you go"];
+  console.log(dict2);
+
+  // for loop that goes over each key in dictionary
+  for (let key in dict2) {
+    /*returnString = returnString + "<b>" + key + "</b>" + ": Available speeds up to " + dict2[key]["Available speeds"] 
+                                      + ", Starting at " + dict2[key]["Starting at"] + "<br />" + "<br />";*/
+
+    returnString += "<tr>"
+                      + "<td style='border:1px solid black;'>" + key + "</td>"
+                      + "<td style='border:1px solid black;'>" + dict2[key]["Available speeds"] + "</td>"
+                      + "<td style='border:1px solid black;'>" + dict2[key]["Starting at"] + "</td>"
+                    + "</tr>";
+        
+  }
+  
+  return returnString + "</table>";
+}
+
+// make request/call to api, then get back the json data,
+// then return the string
+function resultFormat(result: any): string {
+  return "Loading...";
+}
+
 export const UNITS = {
   dbm: 'dBm',
   ping: 'ms',
@@ -137,8 +192,23 @@ const MeasurementMap = ({
       const search = new (GeoSearchControl as any)({
         provider: new OpenStreetMapProvider(),
         style: 'bar', // optional: bar|button  - default button
+        showPopup: true,
+        marker: {
+          icon: new L.Icon.Default(),
+          draggable:false, 
+        },
+        popupFormat: resultFormat,
+
+        //showMarker: false, 
       });
       _map.addControl(search);
+      _map.on('geosearch/showlocation', searchEventHandler);
+
+      /*var marker = L.marker(search.location)
+      .bindPopup("hello")
+      .addTo(_map);*/
+      
+
     })();
   }, [width, height]);
 
