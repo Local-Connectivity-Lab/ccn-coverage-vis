@@ -55,11 +55,12 @@ function searchEventHandler(result: any): void {
 // organize popup content. called from searchEvenHandler
 function organizePopup(apiText: any): string{
   let dict = JSON.parse(apiText);
+  //console.log(dict);
   let returnString = "<table style='border:1px solid black;'>"
                         + "<b>" + "<tr>"
                           + "<th style='border:1px solid black;'>" + "Provider" + "</th>"
-                          + "<th style='border:1px solid black;'>" + "Available Speeds up to" + "</th>"
-                          + "<th style='border:1px solid black;'>" + "Starting Rate" + "</th>"
+                          + "<th style='border:1px solid black;'>" + "Speeds" + "</th>"
+                          + "<th style='border:1px solid black;'>" + "Rate" + "</th>"
                         + "</tr>" + "</b>";
 
   if ("message" in dict) {
@@ -72,9 +73,13 @@ function organizePopup(apiText: any): string{
   for (let key in dict2) {
     /*returnString = returnString + "<b>" + key + "</b>" + ": Available speeds up to " + dict2[key]["Available speeds"] 
                                       + ", Starting at " + dict2[key]["Starting at"] + "<br />" + "<br />";*/
-
+    let keyName = key;
+    if (keyName.endsWith(" Internet")) {
+      keyName = keyName.substring(0, keyName.length - 9);
+      console.log(keyName);
+    }
     returnString += "<tr>"
-                      + "<td style='border:1px solid black;'>" + key + "</td>"
+                      + "<td style='border:1px solid black;'>" + keyName + "</td>"
                       + "<td style='border:1px solid black;'>" + dict2[key]["Available speeds"] + "</td>"
                       + "<td style='border:1px solid black;'>" + dict2[key]["Starting at"] + "</td>"
                     + "</tr>";
