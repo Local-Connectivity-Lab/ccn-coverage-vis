@@ -18,13 +18,13 @@ To install this service, the fist time, you will need to:
 
 ## Deploying
 Once the service has been setup (as above), it can be deployed using the following process:
-1. Login to the <coverage-host>
+1. Login to the coverage-host
 2. Pull the lastest version from github
 3. Restart the server
 
 The shell commands are:
 ```
-ssh <coverage-host>
+ssh coverage-host
 cd ccn-coverage-vis
 git pull
 pm2 restart
@@ -33,7 +33,7 @@ pm2 restart
 ## Troubleshooting & Recovery
 When a problem occurs, there are several checks to determine where the failure is:
 1. Check HTTP errors in the browser
-1. Login to the <coverage-host>
+1. Login to the coverage-host
 2. Confirm ccn-coverage-vis is operating as expected
 3. Confirm nginx is operating as expected
 
@@ -59,7 +59,7 @@ Next, confirm ccn-coverage-vis is operating as expected. To do this, you will ne
 
 Use `pm2 list` to confirm the "Vis Server" is **online**
 ```
-ssh <coverage-host>
+ssh coverage-host
 pm2 list
 ```
 ![Online services under PM2](pm2-running-services.png "Online services under PM2")
