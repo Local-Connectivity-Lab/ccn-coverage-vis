@@ -11,23 +11,32 @@ To install this service, the fist time, you will need to:
 1. Required tools and versions:
     1. Install `node` and `npm` according to the directions at https://nodejs.org/en/download/package-manager 
     2. Install `pm2` using: `npm install pm2 -g` (as per https://www.npmjs.com/package/pm2#installing-pm2)
+2. Clone the service: `https://github.com/Local-Connectivity-Lab/ccn-coverage-vis` 
 2. Configure:
+    1. `cd cd ccn-coverage-vis`     
     1. Edit `src/utils/config.ts` and set the correct URL for your API host (if you're testing or you're deploying to a new URL).
-3. Deploy as below.
+4. Deploy as below.
+5. When starting the ccn-coverage-vis service the first time, use:
+    ```
+    pm2 start --name "Vis Server" npm -- run start
+    ```
+    This will register ccn-coverage-vis with [PM2](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
 
 ## Deploying
 Once the service has been setup (as above), it can be deployed using the following process:
 1. Login to the coverage-host
 2. Pull the lastest version from github
-3. Restart the server
+3. Restart the service
 
 The shell commands are:
 ```
 ssh coverage-host
 cd ccn-coverage-vis
 git pull
-pm2 restart
+npm install
+npm run build
+pm2 restart Vis Server 
 ```
 
 ## Troubleshooting & Recovery
@@ -47,10 +56,10 @@ If not, open up the browser **Web Developer Tools**, usually under the menu Tool
 With this panel open at the bottom of the screen select the **Network** tab and refresh the browser page.
 
 Look in the first column, Status:
-* 200: Ok
-* 502: Error with the backend services (behind nginx)
-* 500 errors: problem with nxginx. Look in `/var/log/nginx/error.log` for details.
-* 400 errors: problem with the service. Check the service logs and nginx logs.
+* `200`: OK, everything is good.
+* `502`: Error with the backend services (behind nginx)
+* `500` errors: problem with nxginx. Look in `/var/log/nginx/error.log` for details.
+* `400` errors: problem with the service. Check the service logs and nginx logs.
 * Timeout or unreachable error: Something is broken in the network between your web browser and the coverage-vis host.
 
 
@@ -89,6 +98,12 @@ If you need to restart nginx, use:
 ```
 sudo systemctl restart nginx
 ```
+
+### Clean Recovery
+If nothing else works, the last option is a clean reinstall of the service. The process is:
+* Remove the `ccn-coverage-vis` directory.
+* Re-install as per **Initial Setup**.
+
 
 ## Testing
 
