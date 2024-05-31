@@ -27,6 +27,7 @@
     "jsonwebtoken": "^8.5.1",
     "leaflet": "^1.7.1",
     "leaflet-geosearch": "^3.7.0",
+    "parse-address": "^1.1.2",
     "prettier": "^2.5.1",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",

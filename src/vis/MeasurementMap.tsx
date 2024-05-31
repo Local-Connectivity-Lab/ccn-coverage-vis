@@ -3,6 +3,7 @@ import { MapType } from './MapSelectionRadio';
 import { API_URL } from '../utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
+import * as parser from 'parse-address';
 import {
   siteMarker,
   siteSmallMarker,
@@ -37,8 +38,43 @@ function cts(p: Cell): string {
 
 // print results of user search event to console
 function searchEventHandler(result: any): void {
+  //var url = "1410 NE Campus Pkwy, Seattle, WA 98195";
+  console.log(result);
+  var addressLabel = result.location.label;
+  console.log(addressLabel);
+ // var parser = require("parse-address");
+  var parsedAddr = parser.parseLocation(addressLabel);
+  console.log("hello 1");
+  console.log(parsedAddr);
+
+  var city = result.location.raw.address.city;
+  if (city == null) {
+    city = result.location.raw.address.town;
+  }
+  var post_direction = parsedAddr.suffix;
+
+  if (post_direction == null) {
+    post_direction = parsedAddr.prefix;
+  }
+
+  var postcode = result.location.raw.address.postcode;
+  var state = result.location.raw.address.state;
+  var endPoint = "http://127.0.0.1:8000/"; // server
+  var url  = endPoint 
+            + "?state=" + state 
+            + "&cityname=" + city 
+            + "&primary=" + parsedAddr.number 
+            + "&street_number=" + parsedAddr.street 
+            + "&st=" + parsedAddr.type 
+            + "&post_direction=" + post_direction
+            + "&zip_5=" + postcode;
+           // + "&zip_9=" + "3207";
+  console.log(url);
+
+  
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', "http://127.0.0.1:8000/?state=va&cityname=arlington&primary=3109&street_number=9th&st=St&post_direction=N&zip_5=22201&zip_9=2024");
+  //xhr.open('GET', "http://127.0.0.1:8000/?state=va&cityname=arlington&primary=3109&street_number=9th&st=St&post_direction=N&zip_5=22201&zip_9=2024");
+  xhr.open('GET', url);
   xhr.onload = function() {
       console.log("200 check");
       console.log(xhr.status);
@@ -195,7 +231,12 @@ const MeasurementMap = ({
       setLLayer(L.layerGroup().addTo(_map));
 
       const search = new (GeoSearchControl as any)({
-        provider: new OpenStreetMapProvider(),
+        provider: new OpenStreetMapProvider({
+          params: {
+            addressdetails: 1,
+          }
+          
+        }),
         style: 'bar', // optional: bar|button  - default button
         showPopup: true,
         marker: {
