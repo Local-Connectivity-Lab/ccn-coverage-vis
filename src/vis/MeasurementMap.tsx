@@ -67,8 +67,8 @@ function searchEventHandler(result: any): void {
             + "&street_number=" + parsedAddr.street 
             + "&st=" + parsedAddr.type 
             + "&post_direction=" + post_direction
-            + "&zip_5=" + postcode;
-           // + "&zip_9=" + "3207";
+            + "&zip_5=" + postcode
+            + "&zip_9=" + "3207";
   console.log(url);
 
   
@@ -80,7 +80,7 @@ function searchEventHandler(result: any): void {
       console.log(xhr.status);
       if (xhr.status === 200) {
         //result.marker.setPopupContent(xhr.responseText);
-        result.marker.setPopupContent(organizePopup(xhr.responseText));
+        result.marker.setPopupContent(organizePopup(xhr.responseText, postcode));
       }
   };
   xhr.send();
@@ -89,9 +89,9 @@ function searchEventHandler(result: any): void {
 
 
 // organize popup content. called from searchEvenHandler
-function organizePopup(apiText: any): string{
+function organizePopup(apiText: any, postcode: any): string{
   let dict = JSON.parse(apiText);
-  //console.log(dict);
+  console.log(dict);
   let returnString = "<table style='border:1px solid black;'>"
                         + "<b>" + "<tr>"
                           + "<th style='border:1px solid black;'>" + "Provider" + "</th>"
@@ -102,11 +102,11 @@ function organizePopup(apiText: any): string{
   if ("message" in dict) {
     return dict["message"];
   }
-  let dict2 = dict["here you go"];
-  console.log(dict2);
+  //let dict2 = dict["here you go"];
+  //console.log(dict2);
 
   // for loop that goes over each key in dictionary
-  for (let key in dict2) {
+  for (let key in dict) {
     /*returnString = returnString + "<b>" + key + "</b>" + ": Available speeds up to " + dict2[key]["Available speeds"] 
                                       + ", Starting at " + dict2[key]["Starting at"] + "<br />" + "<br />";*/
     let keyName = key;
@@ -116,13 +116,18 @@ function organizePopup(apiText: any): string{
     }
     returnString += "<tr>"
                       + "<td style='border:1px solid black;'>" + keyName + "</td>"
-                      + "<td style='border:1px solid black;'>" + dict2[key]["Available speeds"] + "</td>"
-                      + "<td style='border:1px solid black;'>" + dict2[key]["Starting at"] + "</td>"
+                      + "<td style='border:1px solid black;'>" + dict[key]["Available speeds"] + "</td>"
+                      + "<td style='border:1px solid black;'>" + dict[key]["Starting at"] + "</td>"
                     + "</tr>";
         
   }
   
-  return returnString + "</table>";
+  returnString = returnString + "</table>";
+  returnString = returnString + "<p>"+ "Disclaimer: The table above shows a general estimate of the rates and providers in your area, using information from these sources: "
+                              + "<br />" + "<a href='https://www.allconnect.com/results/providers?zip=" + postcode + "'>allconnect.com</a>" 
+                              + "<br />" + "<a href='https://broadbandmap.fcc.gov/home'>FCC National Broadband Map.</a>"
+                              + "</p>";
+  return returnString;
 }
 
 // make request/call to api, then get back the json data,
