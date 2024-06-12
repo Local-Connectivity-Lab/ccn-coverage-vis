@@ -67,8 +67,8 @@ function searchEventHandler(result: any): void {
             + "&street_number=" + parsedAddr.street 
             + "&st=" + parsedAddr.type 
             + "&post_direction=" + post_direction
-            + "&zip_5=" + postcode
-            + "&zip_9=" + "3207";
+            + "&zip_5=" + postcode;
+            //+ "&zip_9=" + "3207";
   console.log(url);
 
   
