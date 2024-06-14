@@ -57,6 +57,11 @@ function searchEventHandler(result: any): void {
     post_direction = parsedAddr.prefix;
   }
 
+  var lon = result.location.raw.lon;
+  var lat = result.location.raw.lat;
+  console.log(lon);
+  console.log(lat);
+
   var postcode = result.location.raw.address.postcode;
   var state = result.location.raw.address.state;
   var endPoint = "http://127.0.0.1:8000/"; // server
@@ -80,7 +85,7 @@ function searchEventHandler(result: any): void {
       console.log(xhr.status);
       if (xhr.status === 200) {
         //result.marker.setPopupContent(xhr.responseText);
-        result.marker.setPopupContent(organizePopup(xhr.responseText, postcode));
+        result.marker.setPopupContent(organizePopup(xhr.responseText, postcode, lon, lat));
       }
   };
   xhr.send();
@@ -89,7 +94,7 @@ function searchEventHandler(result: any): void {
 
 
 // organize popup content. called from searchEvenHandler
-function organizePopup(apiText: any, postcode: any): string{
+function organizePopup(apiText: any, postcode: any, lon: any, lat: any): string{
   let dict = JSON.parse(apiText);
   console.log(dict);
   let returnString = "<table style='border:1px solid black;'>"
@@ -125,7 +130,7 @@ function organizePopup(apiText: any, postcode: any): string{
   returnString = returnString + "</table>";
   returnString = returnString + "<p>"+ "Disclaimer: The table above shows a general estimate of the rates and providers in your area, using information from these sources: "
                               + "<br />" + "<a href='https://www.allconnect.com/results/providers?zip=" + postcode + "'>allconnect.com</a>" 
-                              + "<br />" + "<a href='https://broadbandmap.fcc.gov/home'>FCC National Broadband Map.</a>"
+                              + "<br />" + "<a href='https://broadbandmap.fcc.gov/location-summary/fixed?lon=" + lon + "&lat=" + lat + "'>FCC National Broadband Map.</a>"
                               + "</p>";
   return returnString;
 }
