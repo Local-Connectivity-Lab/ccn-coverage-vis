@@ -97,6 +97,9 @@ function searchEventHandler(result: any): void {
 function organizePopup(apiText: any, postcode: any, lon: any, lat: any): string{
   let dict = JSON.parse(apiText);
   console.log(dict);
+  if(Object.keys(dict).length == 0) {
+      return "No prices could be found." + "Visit <a href='https://www.allconnect.com/results/providers?zip=" + postcode + "'>allconnect.com</a>" +  " to see provider rates in your area.";
+  }
   let returnString = "<table style='border:1px solid black;'>"
                         + "<b>" + "<tr>"
                           + "<th style='border:1px solid black;'>" + "Provider" + "</th>"
