@@ -98,7 +98,8 @@ function organizePopup(apiText: any, postcode: any, lon: any, lat: any): string{
   let dict = JSON.parse(apiText);
   console.log(dict);
   if(Object.keys(dict).length == 0) {
-      return "No prices could be found." + "Visit <a href='https://www.allconnect.com/results/providers?zip=" + postcode + "'>allconnect.com</a>" +  " to see provider rates in your area.";
+      return "No prices could be found." + "Visit " + "<a href='https://broadbandmap.fcc.gov/location-summary/fixed?lon=" + lon + "&lat=" + lat + "'>FCC National Broadband Map.</a>" + " to see providers in your area, and "
+      + "<a href='https://www.allconnect.com/results/providers?zip=" + postcode + "'>allconnect.com</a>" +  " to see provider rates in your area.";
   }
   let returnString = "<table style='border:1px solid black;'>"
                         + "<b>" + "<tr>"
