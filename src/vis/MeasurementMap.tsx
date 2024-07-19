@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapType } from './MapSelectionRadio';
 import { API_URL } from '../utils/config';
+import { SCRAPER_URL } from '../utils/config';
 import * as L from 'leaflet';
 import * as d3 from 'd3';
 import * as parser from 'parse-address';
@@ -64,8 +65,7 @@ function searchEventHandler(result: any): void {
 
   var postcode = result.location.raw.address.postcode;
   var state = result.location.raw.address.state;
-  var endPoint = "http://127.0.0.1:8000/"; // server
-  var url  = endPoint 
+  var url = SCRAPER_URL // server "http://127.0.0.1:8000/"
             + "?state=" + state 
             + "&cityname=" + city 
             + "&primary=" + parsedAddr.number 
