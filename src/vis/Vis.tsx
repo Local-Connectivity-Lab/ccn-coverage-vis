@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Visibility from '@mui/icons-material/Visibility';
 import { homeListItems } from '../ListItems';
 import MapSelectionRadio, { MapType } from './MapSelectionRadio';
 import DisplaySelection from './DisplaySelection';
@@ -25,6 +26,7 @@ import LineChart from './LineChart';
 import axios from 'axios';
 import { API_URL } from '../utils/config';
 import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap';
+import { solveDisplayOptions } from './DisplaySelection';
 
 // import { setOptions } from 'leaflet';
 
@@ -317,6 +319,33 @@ export default function Vis() {
           </Card>
         </Fade>
       </Box>
+      
+      <Box
+      // new box
+      component='main'
+      sx={{
+        backgroundColor: 'transparent',
+        overflow: 'none',
+        position: 'absolute',
+        right: '8px',
+        bottom: 
+        20 +
+        (displayValue(displayOptions, 'displayGraph')
+          ? chartHeight + 10
+          : 0),
+        zIndex: '4',
+      }}>
+        <IconButton
+          onClick={() => {
+            setDisplayOptions(
+              solveDisplayOptions(displayOptions, 'displayGraph', true),
+            );
+          }}
+        >
+            <Visibility>
+            </Visibility>
+        </IconButton>
+      </Box>
       <Box
         component='main'
         sx={{
@@ -328,8 +357,8 @@ export default function Vis() {
             20 +
             (displayValue(displayOptions, 'displayGraph')
               ? chartHeight + 10
-              : 0),
-          zIndex: '4',
+              : + 50),
+          zIndex: '5',
         }}
       >
         <Fade
@@ -348,6 +377,7 @@ export default function Vis() {
             </Typography>
           </Card>
         </Fade>
+
       </Box>
     </ThemeProvider>
   );
