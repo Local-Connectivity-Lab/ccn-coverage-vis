@@ -319,22 +319,23 @@ export default function Vis() {
           </Card>
         </Fade>
       </Box>
-      
+
       <Box
-      // new box
-      component='main'
-      sx={{
-        backgroundColor: 'transparent',
-        overflow: 'none',
-        position: 'absolute',
-        right: '8px',
-        bottom: 
-        20 +
-        (displayValue(displayOptions, 'displayGraph')
-          ? chartHeight + 10
-          : 0),
-        zIndex: '4',
-      }}>
+        // new box
+        component='main'
+        sx={{
+          backgroundColor: 'transparent',
+          overflow: 'none',
+          position: 'absolute',
+          right: '8px',
+          bottom:
+            20 +
+            (displayValue(displayOptions, 'displayGraph')
+              ? chartHeight + 10
+              : 0),
+          zIndex: '4',
+        }}
+      >
         <IconButton
           onClick={() => {
             setDisplayOptions(
@@ -342,8 +343,7 @@ export default function Vis() {
             );
           }}
         >
-            <Visibility>
-            </Visibility>
+          <Visibility></Visibility>
         </IconButton>
       </Box>
       <Box
@@ -357,7 +357,7 @@ export default function Vis() {
             20 +
             (displayValue(displayOptions, 'displayGraph')
               ? chartHeight + 10
-              : + 50),
+              : +50),
           zIndex: '5',
         }}
       >
@@ -377,7 +377,6 @@ export default function Vis() {
             </Typography>
           </Card>
         </Fade>
-
       </Box>
     </ThemeProvider>
   );
