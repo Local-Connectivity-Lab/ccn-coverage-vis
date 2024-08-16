@@ -135,7 +135,11 @@ const MeasurementMap = ({
       setLLayer(L.layerGroup().addTo(_map));
 
       const search = new (GeoSearchControl as any)({
-        provider: new OpenStreetMapProvider(),
+        provider: new OpenStreetMapProvider({
+          params: {
+            countrycodes: 'us', // limit to USA
+          },
+        }),
         style: 'bar', // optional: bar|button  - default button
       });
       _map.addControl(search);
