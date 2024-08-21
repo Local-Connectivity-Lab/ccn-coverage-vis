@@ -1,0 +1,6 @@
+services:
+  ccn-coverage-vis:
+    build:
+      context: .
+    ports:
+      - "8080:80"
