@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { MapType } from "./MapSelectionRadio";
-import { API_URL } from "../utils/config";
-import { SCRAPER_URL } from "../utils/config";
-import * as L from "leaflet";
-import * as d3 from "d3";
-import * as parser from "parse-address";
+import React, { useEffect, useState } from 'react';
+import { MapType } from './MapSelectionRadio';
+import { API_URL } from '../utils/config';
+import { SCRAPER_URL } from '../utils/config';
+import * as L from 'leaflet';
+import * as d3 from 'd3';
+import * as parser from 'parse-address';
 import {
   siteMarker,
   siteSmallMarker,
   isSiteArray,
-} from "../leaflet-component/site-marker";
-import getBounds from "../utils/get-bounds";
-import MapLegend from "./MapLegend";
-import fetchToJson from "../utils/fetch-to-json";
-import Loading from "../Loading";
-import axios from "axios";
-import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import "leaflet-geosearch/dist/geosearch.css";
+} from '../leaflet-component/site-marker';
+import getBounds from '../utils/get-bounds';
+import MapLegend from './MapLegend';
+import fetchToJson from '../utils/fetch-to-json';
+import Loading from '../Loading';
+import axios from 'axios';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import 'leaflet-geosearch/dist/geosearch.css';
 
 // Updated with details from: https://stadiamaps.com/stamen/onboarding/migrate/
 const ATTRIBUTION =
@@ -26,7 +26,7 @@ const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>';
 
 const URL = `https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}${
-  devicePixelRatio > 1 ? "@2x" : ""
+  devicePixelRatio > 1 ? '@2x' : ''
 }.png`;
 
 const BIN_SIZE_SHIFT = 0;
@@ -34,7 +34,7 @@ const DEFAULT_ZOOM = 10;
 const LEGEND_WIDTH = 25;
 
 function cts(p: Cell): string {
-  return p.x + "," + p.y;
+  return p.x + ',' + p.y;
 }
 
 // print results of user search event to console
@@ -45,7 +45,7 @@ function searchEventHandler(result: any): void {
   console.log(addressLabel);
   // var parser = require("parse-address");
   var parsedAddr = parser.parseLocation(addressLabel);
-  console.log("hello 1");
+  console.log('hello 1');
   console.log(parsedAddr);
 
   var city = result.location.raw.address.city;
@@ -65,35 +65,42 @@ function searchEventHandler(result: any): void {
 
   var postcode = result.location.raw.address.postcode;
   var state = result.location.raw.address.state;
+  // need to load SCRAPER_URL at runtime, not in build-time config
+  const scraper = process.env['SCRAPER_URL']
+    ? process.env['SCRAPER_URL']
+    : 'http://' +
+      window.location.hostname +
+      ':' +
+      window.location.port +
+      '/plans';
   var url =
-    SCRAPER_URL + // server "http://127.0.0.1:8000/"
-    "?state=" +
+    scraper +
+    '?state=' +
     state +
-    "&cityname=" +
+    '&cityname=' +
     city +
-    "&primary=" +
+    '&primary=' +
     parsedAddr.number +
-    "&street_number=" +
+    '&street_number=' +
     parsedAddr.street +
-    "&st=" +
+    '&st=' +
     parsedAddr.type +
-    "&post_direction=" +
+    '&post_direction=' +
     post_direction +
-    "&zip_5=" +
+    '&zip_5=' +
     postcode;
-  //+ "&zip_9=" + "3207";
-  console.log(url);
+  console.log('request url:', url);
 
   const xhr = new XMLHttpRequest();
   //xhr.open('GET', "http://127.0.0.1:8000/?state=va&cityname=arlington&primary=3109&street_number=9th&st=St&post_direction=N&zip_5=22201&zip_9=2024");
-  xhr.open("GET", url);
+  xhr.open('GET', url);
   xhr.onload = function () {
-    console.log("200 check");
+    console.log('200 check');
     console.log(xhr.status);
     if (xhr.status === 200) {
       //result.marker.setPopupContent(xhr.responseText);
       result.marker.setPopupContent(
-        organizePopup(xhr.responseText, postcode, lon, lat)
+        organizePopup(xhr.responseText, postcode, lon, lat),
       );
     }
   };
@@ -105,44 +112,44 @@ function organizePopup(
   apiText: any,
   postcode: any,
   lon: any,
-  lat: any
+  lat: any,
 ): string {
   let dict = JSON.parse(apiText);
   console.log(dict);
   if (Object.keys(dict).length === 0) {
     return (
-      "No prices could be found." +
-      "Visit " +
+      'No prices could be found.' +
+      'Visit ' +
       "<a href='https://broadbandmap.fcc.gov/location-summary/fixed?lon=" +
       lon +
-      "&lat=" +
+      '&lat=' +
       lat +
       "'>FCC National Broadband Map.</a>" +
-      " to see providers in your area, and " +
+      ' to see providers in your area, and ' +
       "<a href='https://www.allconnect.com/results/providers?zip=" +
       postcode +
       "'>allconnect.com</a>" +
-      " to see provider rates in your area."
+      ' to see provider rates in your area.'
     );
   }
   let returnString =
     "<table style='border:1px solid black;'>" +
-    "<b>" +
-    "<tr>" +
+    '<b>' +
+    '<tr>' +
     "<th style='border:1px solid black;'>" +
-    "Provider" +
-    "</th>" +
+    'Provider' +
+    '</th>' +
     "<th style='border:1px solid black;'>" +
-    "Speeds" +
-    "</th>" +
+    'Speeds' +
+    '</th>' +
     "<th style='border:1px solid black;'>" +
-    "Rate" +
-    "</th>" +
-    "</tr>" +
-    "</b>";
+    'Rate' +
+    '</th>' +
+    '</tr>' +
+    '</b>';
 
-  if ("message" in dict) {
-    return dict["message"];
+  if ('message' in dict) {
+    return dict['message'];
   }
   //let dict2 = dict["here you go"];
   //console.log(dict2);
@@ -152,54 +159,54 @@ function organizePopup(
     /*returnString = returnString + "<b>" + key + "</b>" + ": Available speeds up to " + dict2[key]["Available speeds"]
                                       + ", Starting at " + dict2[key]["Starting at"] + "<br />" + "<br />";*/
     let keyName = key;
-    if (keyName.endsWith(" Internet")) {
+    if (keyName.endsWith(' Internet')) {
       keyName = keyName.substring(0, keyName.length - 9);
       console.log(keyName);
     }
     returnString +=
-      "<tr>" +
+      '<tr>' +
       "<td style='border:1px solid black;'>" +
       keyName +
-      "</td>" +
+      '</td>' +
       "<td style='border:1px solid black;'>" +
-      dict[key]["Available speeds"] +
-      "</td>" +
+      dict[key]['Available speeds'] +
+      '</td>' +
       "<td style='border:1px solid black;'>" +
-      dict[key]["Starting at"] +
-      "</td>" +
-      "</tr>";
+      dict[key]['Starting at'] +
+      '</td>' +
+      '</tr>';
   }
 
-  returnString = returnString + "</table>";
+  returnString = returnString + '</table>';
   returnString =
     returnString +
-    "<p>" +
-    "Disclaimer: The table above shows a general estimate of the rates and providers in your area, using information from these sources: " +
-    "<br />" +
+    '<p>' +
+    'Disclaimer: The table above shows a general estimate of the rates and providers in your area, using information from these sources: ' +
+    '<br />' +
     "<a href='https://www.allconnect.com/results/providers?zip=" +
     postcode +
     "'>allconnect.com</a>" +
-    "<br />" +
+    '<br />' +
     "<a href='https://broadbandmap.fcc.gov/location-summary/fixed?lon=" +
     lon +
-    "&lat=" +
+    '&lat=' +
     lat +
     "'>FCC National Broadband Map.</a>" +
-    "</p>";
+    '</p>';
   return returnString;
 }
 
 // make request/call to api, then get back the json data,
 // then return the string
 function resultFormat(result: any): string {
-  return "Loading...";
+  return 'Loading...';
 }
 
 export const UNITS = {
-  dbm: "dBm",
-  ping: "ms",
-  download_speed: "Mbps",
-  upload_speed: "Mbps",
+  dbm: 'dBm',
+  ping: 'ms',
+  download_speed: 'Mbps',
+  upload_speed: 'Mbps',
 } as const;
 
 export const MULTIPLIERS = {
@@ -210,10 +217,10 @@ export const MULTIPLIERS = {
 } as const;
 
 export const MAP_TYPE_CONVERT = {
-  dbm: "Signal Strength",
-  ping: "Ping",
-  download_speed: "Download Speed",
-  upload_speed: "Upload Speed",
+  dbm: 'Signal Strength',
+  ping: 'Ping',
+  download_speed: 'Download Speed',
+  upload_speed: 'Upload Speed',
 } as const;
 
 interface MapProps {
@@ -274,8 +281,8 @@ const MeasurementMap = ({
 
   useEffect(() => {
     (async () => {
-      const dataRange = await fetchToJson(API_URL + "/api/dataRange");
-      const _map = L.map("map-id").setView(dataRange.center, DEFAULT_ZOOM);
+      const dataRange = await fetchToJson(API_URL + '/api/dataRange');
+      const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
       const _bounds = getBounds({ ...dataRange, map: _map, width, height });
 
       L.tileLayer(URL, {
@@ -298,10 +305,10 @@ const MeasurementMap = ({
         provider: new OpenStreetMapProvider({
           params: {
             addressdetails: 1,
-            countrycodes: "us", // limit to USA
+            countrycodes: 'us', // limit to USA
           },
         }),
-        style: "bar", // optional: bar|button  - default button
+        style: 'bar', // optional: bar|button  - default button
         showPopup: true,
         marker: {
           icon: new L.Icon.Default(),
@@ -312,7 +319,7 @@ const MeasurementMap = ({
         //showMarker: false,
       });
       _map.addControl(search);
-      _map.on("geosearch/showlocation", searchEventHandler);
+      _map.on('geosearch/showlocation', searchEventHandler);
 
       /*var marker = L.marker(search.location)
       .bindPopup("hello")
@@ -327,11 +334,11 @@ const MeasurementMap = ({
       }
       const _siteSummary = await fetchToJson(
         API_URL +
-          "/api/sitesSummary?" +
+          '/api/sitesSummary?' +
           new URLSearchParams([
-            ["timeFrom", timeFrom.toISOString()],
-            ["timeTo", timeTo.toISOString()],
-          ])
+            ['timeFrom', timeFrom.toISOString()],
+            ['timeTo', timeTo.toISOString()],
+          ]),
       );
       setSiteSummary(_siteSummary);
     })();
@@ -342,9 +349,9 @@ const MeasurementMap = ({
     // TODO: MOVE TO UTILS;
     const greenIcon = new L.Icon({
       iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
       shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -352,9 +359,9 @@ const MeasurementMap = ({
     });
     const goldIcon = new L.Icon({
       iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png",
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
       shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -362,9 +369,9 @@ const MeasurementMap = ({
     });
     const redIcon = new L.Icon({
       iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
       shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
@@ -375,35 +382,35 @@ const MeasurementMap = ({
     const _markers = new Map<string, L.Marker>();
     const _sites: Site[] = allSites || [];
     if (!isSiteArray(_sites)) {
-      throw new Error("data has incorrect type");
+      throw new Error('data has incorrect type');
     }
     blayer.clearLayers();
     for (let site of _sites) {
       if (site.boundary) {
-        L.polygon(site.boundary, { color: site.color ?? "black" }).addTo(
-          blayer
+        L.polygon(site.boundary, { color: site.color ?? 'black' }).addTo(
+          blayer,
         );
         console.log(site.boundary);
       }
       _markers.set(
         site.name,
-        siteMarker(site, siteSummary[site.name], map).addTo(slayer)
+        siteMarker(site, siteSummary[site.name], map).addTo(slayer),
       );
     }
     _markers.forEach((marker, site) => {
-      if (selectedSites.some((s) => s.label === site)) {
+      if (selectedSites.some(s => s.label === site)) {
         marker.setOpacity(1);
       } else {
         marker.setOpacity(0.5);
       }
-      if (allSites.some((s) => s.name === site && s.status === "active")) {
+      if (allSites.some(s => s.name === site && s.status === 'active')) {
         marker.setIcon(greenIcon);
       } else if (
-        allSites.some((s) => s.name === site && s.status === "confirmed")
+        allSites.some(s => s.name === site && s.status === 'confirmed')
       ) {
         marker.setIcon(goldIcon);
       } else if (
-        allSites.some((s) => s.name === site && s.status === "in-conversation")
+        allSites.some(s => s.name === site && s.status === 'in-conversation')
       ) {
         marker.setIcon(redIcon);
       }
@@ -416,10 +423,10 @@ const MeasurementMap = ({
         setMarkerData([]);
         return;
       }
-      const markerRes = await axios.get(API_URL + "/api/markers", {
+      const markerRes = await axios.get(API_URL + '/api/markers', {
         params: {
-          sites: selectedSites.map((ss) => ss.label).join(","),
-          devices: selectedDevices.map((ss) => ss.label).join(","),
+          sites: selectedSites.map(ss => ss.label).join(','),
+          devices: selectedDevices.map(ss => ss.label).join(','),
           timeFrom: timeFrom.toISOString(),
           timeTo: timeTo.toISOString(),
         },
@@ -432,12 +439,12 @@ const MeasurementMap = ({
     if (!map || !markerData || !llayer) return;
     llayer.clearLayers();
     const _markers = new Map<string, L.Marker>();
-    markerData.forEach((m) =>
-      _markers.set(m.mid, siteSmallMarker(m).addTo(llayer))
+    markerData.forEach(m =>
+      _markers.set(m.mid, siteSmallMarker(m).addTo(llayer)),
     );
     const smallIcon = new L.Icon({
       iconUrl:
-        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png",
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
       // shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
       iconSize: [20, 35],
       iconAnchor: [12, 35],
@@ -459,20 +466,20 @@ const MeasurementMap = ({
       setBins(
         await fetchToJson(
           API_URL +
-            "/api/data?" +
+            '/api/data?' +
             new URLSearchParams([
-              ["width", bounds.width + ""],
-              ["height", bounds.height + ""],
-              ["left", bounds.left + ""],
-              ["top", bounds.top + ""],
-              ["binSizeShift", BIN_SIZE_SHIFT + ""],
-              ["zoom", DEFAULT_ZOOM + ""],
-              ["selectedSites", selectedSites.map((ss) => ss.label).join(",")],
-              ["mapType", mapType],
-              ["timeFrom", timeFrom.toISOString()],
-              ["timeTo", timeTo.toISOString()],
-            ])
-        )
+              ['width', bounds.width + ''],
+              ['height', bounds.height + ''],
+              ['left', bounds.left + ''],
+              ['top', bounds.top + ''],
+              ['binSizeShift', BIN_SIZE_SHIFT + ''],
+              ['zoom', DEFAULT_ZOOM + ''],
+              ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
+              ['mapType', mapType],
+              ['timeFrom', timeFrom.toISOString()],
+              ['timeTo', timeTo.toISOString()],
+            ]),
+        ),
       );
     })();
   }, [
@@ -492,15 +499,15 @@ const MeasurementMap = ({
     setLoading(true);
     (async () => {
       const colorDomain = [
-        d3.max(bins, (d) => d[1] * MULTIPLIERS[mapType]) ?? 1,
-        d3.min(bins, (d) => d[1] * MULTIPLIERS[mapType]) ?? 0,
+        d3.max(bins, d => d[1] * MULTIPLIERS[mapType]) ?? 1,
+        d3.min(bins, d => d[1] * MULTIPLIERS[mapType]) ?? 0,
       ];
 
       const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
       setCDomain(colorDomain);
 
       layer.clearLayers();
-      bins.forEach((p) => {
+      bins.forEach(p => {
         const idx = p[0];
         const bin = Number(p[1]);
         if (bin) {
@@ -510,7 +517,7 @@ const MeasurementMap = ({
           const sw = map.unproject([x, y], DEFAULT_ZOOM);
           const ne = map.unproject(
             [x + (1 << BIN_SIZE_SHIFT), y + (1 << BIN_SIZE_SHIFT)],
-            DEFAULT_ZOOM
+            DEFAULT_ZOOM,
           );
 
           L.rectangle(L.latLngBounds(sw, ne), {
@@ -519,10 +526,10 @@ const MeasurementMap = ({
             stroke: false,
           })
             .bindTooltip(`${bin.toFixed(2)} ${UNITS[mapType]}`, {
-              direction: "top",
+              direction: 'top',
             })
             .addTo(layer)
-            .on("click", (e) => {
+            .on('click', e => {
               const cs = cells;
               const c = cts({ x: x, y: y });
               if (cs.has(c)) {
@@ -555,7 +562,7 @@ const MeasurementMap = ({
       mlayer.clearLayers();
       var binSum: number = 0;
       var binNum: number = 0;
-      bins.forEach((p) => {
+      bins.forEach(p => {
         const idx = p[0];
         const bin = Number(p[1]);
         if (bin) {
@@ -565,19 +572,19 @@ const MeasurementMap = ({
           if (cells.has(c)) {
             const ct = map.unproject(
               [x + (1 << BIN_SIZE_SHIFT) / 2, y + (1 << BIN_SIZE_SHIFT) / 2],
-              DEFAULT_ZOOM
+              DEFAULT_ZOOM,
             );
             binSum += bin;
             binNum += 1;
             L.circle(L.latLng(ct), {
-              fillColor: "#FF0000",
+              fillColor: '#FF0000',
               fillOpacity: 0.75,
               radius: 24,
               stroke: false,
             })
-              .bindTooltip(`${bin.toFixed(2)}`, { direction: "top" })
+              .bindTooltip(`${bin.toFixed(2)}`, { direction: 'top' })
               .addTo(mlayer)
-              .on("click", (e) => {
+              .on('click', e => {
                 const cs = cells;
                 if (cs.has(c)) {
                   cs.delete(c);
@@ -607,12 +614,12 @@ const MeasurementMap = ({
   ]);
 
   return (
-    <div style={{ position: "relative", top: top }}>
+    <div style={{ position: 'relative', top: top }}>
       <div
-        id="map-id"
-        style={{ height, width, position: "absolute", zIndex: "1" }}
+        id='map-id'
+        style={{ height, width, position: 'absolute', zIndex: '1' }}
       ></div>
-      <div style={{ position: "fixed", right: 0, zIndex: "1" }}>
+      <div style={{ position: 'fixed', right: 0, zIndex: '1' }}>
         <MapLegend
           colorDomain={cDomain}
           title={`${MAP_TYPE_CONVERT[mapType]} (${UNITS[mapType]})`}

@@ -1,8 +1,10 @@
 const ENV_API_URL: string = 'REACT_APP__API_URL';
-export const SCRAPER_URL: string = '' + 
+export const SCRAPER_URL: string =
+  '' +
   (process.env['SCAPER_URL'] == null
     ? 'http://localhost:8000'
     : process.env['SCRAPER_URL']);
+console.log('loaded SCRAPER_URL:', SCRAPER_URL);
 /**
  * The value should be:
  * - When developing frontend only: 'https://coverage.seattlecommunitynetwork.org'.
