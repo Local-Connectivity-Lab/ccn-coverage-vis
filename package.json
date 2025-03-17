@@ -11,6 +11,7 @@
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.7",
     "@mui/x-date-pickers": "^7.27.3",
+    "add": "^2.0.6",
     "arquero": "^8.0.1",
     "axios": "^1.6.7",
     "cors": "^2.8.5",
@@ -24,6 +25,7 @@
     "react-dom": "^19.0.0",
     "react-router": "^7.3.0",
     "react-router-dom": "^7.3.0",
+    "react-select": "^5.10.1",
     "web-vitals": "^4.2.4"
   },
   "scripts": {

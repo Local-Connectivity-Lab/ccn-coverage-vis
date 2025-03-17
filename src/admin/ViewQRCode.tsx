@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Slider from '@mui/material/Slider';
 import QrCodeIcon from '@mui/icons-material/QrCode';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 interface ViewQRCodeProp {
   identity: string;
@@ -47,10 +47,10 @@ export default function ViewQRCode(props: ViewQRCodeProp) {
           <DialogContentText>
             The code will be valid for 30 minuites
           </DialogContentText>
-          <QRCode
+          <QRCodeCanvas
             size={size}
             value={props.qrCode.length > 1500 ? '' : props.qrCode}
-          ></QRCode>
+          ></QRCodeCanvas>
           <Slider
             defaultValue={512}
             min={64}

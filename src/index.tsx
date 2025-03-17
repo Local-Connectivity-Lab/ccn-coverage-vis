@@ -1,12 +1,21 @@
-// import React from 'react';
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Vis from './vis/Vis';
 import Login from './admin/Login';
 import AdminPortal from './admin/AdminPortal';
 import './index.css';
 
-ReactDOM.render(
+// Get the root element
+const rootElement = document.getElementById('root');
+
+// Make sure the element exists
+if (!rootElement) throw new Error('Failed to find the root element');
+
+// Create a root
+const root = createRoot(rootElement);
+
+// Render your app
+root.render(
   <BrowserRouter>
     <Routes>
       <Route path='/' element={<Vis />} />
@@ -23,6 +32,5 @@ ReactDOM.render(
         element={<AdminPortal page='edit-data' />}
       />
     </Routes>
-  </BrowserRouter>,
-  document.getElementById('root'),
+  </BrowserRouter>
 );
