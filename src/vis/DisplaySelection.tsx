@@ -5,7 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 
 interface DisplayOptionsProps {
   displayOptions: DisplayOption[];

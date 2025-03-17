@@ -8,9 +8,7 @@ const ENV_API_URL: string = 'REACT_APP__API_URL';
  */
 export const API_URL: string =
   '' +
-  (process.env[ENV_API_URL] == null
-    ? 'https://coverage.seattlecommunitynetwork.org'
-    : process.env[ENV_API_URL]);
+  (import.meta.env.ENV_API_URL ? 'https://coverage.seattlecommunitynetwork.org' : import.meta.env.ENV_API_URL);
 
 export const DEVICE_OPTIONS: DeviceOption[] = [
   {

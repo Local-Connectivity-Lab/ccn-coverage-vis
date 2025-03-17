@@ -7,50 +7,51 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SyncIcon from '@mui/icons-material/Sync';
 import HomeIcon from '@mui/icons-material/Home';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { ListItemButton } from '@mui/material';
 
 export const mainListItems = (
   <div>
     <ListSubheader inset>Admin Panel</ListSubheader>
-    <ListItem button onClick={() => window.open('/admin/users', '_self')}>
+    <ListItemButton onClick={() => window.open('/admin/users', '_self')}>
       <ListItemIcon>
         <ManageAccountsIcon />
       </ListItemIcon>
       <ListItemText primary='Manage users' />
-    </ListItem>
-    <ListItem button onClick={() => window.open('/admin/edit-site', '_self')}>
+    </ListItemButton>
+    <ListItemButton onClick={() => window.open('/admin/edit-site', '_self')}>
       <ListItemIcon>
         <EditLocationAltIcon />
       </ListItemIcon>
       <ListItemText primary='Edit Site Information' />
-    </ListItem>
-    <ListItem button onClick={() => window.open('/admin/edit-data', '_self')}>
+    </ListItemButton>
+    <ListItemButton onClick={() => window.open('/admin/edit-data', '_self')}>
       <ListItemIcon>
         <SyncIcon />
       </ListItemIcon>
       <ListItemText primary='Update Data' />
-    </ListItem>
+    </ListItemButton>
   </div>
 );
 
 export const secondaryListItems = (
   <div>
     <ListSubheader inset>User Panel</ListSubheader>
-    <ListItem button onClick={() => window.open('/')}>
+    <ListItemButton onClick={() => window.open('/')}>
       <ListItemIcon>
         <HomeIcon />
       </ListItemIcon>
       <ListItemText primary='Visualization' />
-    </ListItem>
+    </ListItemButton>
   </div>
 );
 
 export const homeListItems = (
   <div>
-    <ListItem button onClick={() => window.open('login')}>
+    <ListItemButton onClick={() => window.open('login')}>
       <ListItemIcon>
         <AdminPanelSettingsIcon />
       </ListItemIcon>
       <ListItemText primary='Admin Panel' />
-    </ListItem>
+    </ListItemButton>
   </div>
 );

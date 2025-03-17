@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { MultiSelect } from 'react-multi-select-component';
 import { DEVICE_OPTIONS } from '../utils/config';
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 
 interface SidebarProps {
   selectedDevices: DeviceOption[];
