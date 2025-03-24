@@ -10,11 +10,15 @@ import {
 } from '../leaflet-component/site-marker';
 import getBounds from '../utils/get-bounds';
 import MapLegend from './MapLegend';
-import fetchToJson from '../utils/fetch-to-json';
 import Loading from '../Loading';
 import axios from 'axios';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
+import { apiClient } from '../utils/fetch';
+import { components } from '../types/schema'
+
+type SitesSummaryType = components['schemas']['SitesSummary']
+type QueryDataType = components['schemas']['QueryData']
 
 // Updated with details from: https://stadiamaps.com/stamen/onboarding/migrate/
 const ATTRIBUTION =
@@ -93,7 +97,7 @@ const MeasurementMap = ({
 }: MapProps) => {
   const [cDomain, setCDomain] = useState<number[]>();
   const [map, setMap] = useState<L.Map>();
-  const [bins, setBins] = useState<number[][]>([]);
+  const [bins, setBins] = useState<QueryDataType[]>([]);
   const [bounds, setBounds] = useState<{
     left: number;
     top: number;
@@ -106,7 +110,7 @@ const MeasurementMap = ({
   const [blayer, setBLayer] = useState<L.LayerGroup>();
   // Markers for sites
   const [mlayer, setMLayer] = useState<L.LayerGroup>();
-  const [siteSummary, setSiteSummary] = useState<any>();
+  const [sitesSummary, setSiteSummary] = useState<SitesSummaryType>();
   // Markers for manual data points
   const [slayer, setSLayer] = useState<L.LayerGroup>();
   const [llayer, setLLayer] = useState<L.LayerGroup>();
@@ -114,9 +118,21 @@ const MeasurementMap = ({
 
   useEffect(() => {
     (async () => {
-      const dataRange = await fetchToJson(API_URL + '/api/dataRange');
-      const _map = L.map('map-id').setView(dataRange.center, DEFAULT_ZOOM);
-      const _bounds = getBounds({ ...dataRange, map: _map, width, height });
+      const { data, error } = await apiClient.GET('/api/dataRange');
+      if (!data) {
+        console.error(`unable to fetch data range: ${error}`)
+        return;
+      }
+
+      if (!(Array.isArray(data.center) && data.center.length === 2)) {
+        console.error(`data range is invalid.`);
+        return;
+      }
+
+      const center = data.center as [number, number]
+
+      const _map = L.map('map-id').setView({lat: center[0], lng: center[1]}, DEFAULT_ZOOM);
+      const _bounds = getBounds({ ...data, map: _map, center: center,   width, height });
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
@@ -151,20 +167,27 @@ const MeasurementMap = ({
       if (allSites.length === 0) {
         return;
       }
-      const _siteSummary = await fetchToJson(
-        API_URL +
-          '/api/sitesSummary?' +
-          new URLSearchParams([
-            ['timeFrom', timeFrom.toISOString()],
-            ['timeTo', timeTo.toISOString()],
-          ]),
-      );
-      setSiteSummary(_siteSummary);
+
+      const {data, error} = await apiClient.GET('/api/sitesSummary', {
+        params: {
+          query: {
+            timeFrom: timeFrom.toISOString(),
+            timeTo: timeTo.toISOString()
+          }
+        }
+      });
+
+      if (!data) {
+        console.error(`Unable to query site summary: ${error}`);
+        return;
+      }
+
+      setSiteSummary(data);
     })();
   }, [allSites, timeFrom, timeTo]);
 
   useEffect(() => {
-    if (!map || !siteSummary || !slayer || !blayer) return;
+    if (!map || !sitesSummary || !slayer || !blayer) return;
     // TODO: MOVE TO UTILS;
     const greenIcon = new L.Icon({
       iconUrl:
@@ -211,9 +234,14 @@ const MeasurementMap = ({
         );
         console.log(site.boundary);
       }
+      const summary = sitesSummary[site.name]
+      if (!summary) {
+        console.warn(`Unknown site: ${site.name}`)
+        continue;
+      }
       _markers.set(
         site.name,
-        siteMarker(site, siteSummary[site.name], map).addTo(slayer),
+        siteMarker(site, summary, map).addTo(slayer),
       );
     }
     _markers.forEach((marker, site) => {
@@ -234,7 +262,7 @@ const MeasurementMap = ({
         marker.setIcon(redIcon);
       }
     });
-  }, [selectedSites, map, allSites, siteSummary, slayer, blayer]);
+  }, [selectedSites, map, allSites, sitesSummary, slayer, blayer]);
 
   useEffect(() => {
     (async () => {
@@ -282,24 +310,30 @@ const MeasurementMap = ({
       if (!map) {
         return;
       }
-      setBins(
-        await fetchToJson(
-          API_URL +
-            '/api/data?' +
-            new URLSearchParams([
-              ['width', bounds.width + ''],
-              ['height', bounds.height + ''],
-              ['left', bounds.left + ''],
-              ['top', bounds.top + ''],
-              ['binSizeShift', BIN_SIZE_SHIFT + ''],
-              ['zoom', DEFAULT_ZOOM + ''],
-              ['selectedSites', selectedSites.map(ss => ss.label).join(',')],
-              ['mapType', mapType],
-              ['timeFrom', timeFrom.toISOString()],
-              ['timeTo', timeTo.toISOString()],
-            ]),
-        ),
-      );
+
+      const {data, error} = await apiClient.GET('/api/data', {
+        params: {
+          query: {
+            width: bounds.width,
+            height: bounds.height,
+            left: bounds.left,
+            top: bounds.top,
+            binSizeShift: BIN_SIZE_SHIFT,
+            zoom: DEFAULT_ZOOM,
+            selectedSites: selectedSites.map(ss => ss.label).join(','),
+            mapType: mapType,
+            timeFrom: timeFrom.toISOString(),
+            timeTo: timeTo.toISOString()
+          }
+        }
+      });
+
+      if (!data) {
+        console.error(`Cannot query data: ${error}`);
+        return;
+      }
+
+      setBins(data);
     })();
   }, [
     selectedSites,
@@ -318,8 +352,8 @@ const MeasurementMap = ({
     setLoading(true);
     (async () => {
       const colorDomain = [
-        d3.max(bins, d => d[1] * MULTIPLIERS[mapType]) ?? 1,
-        d3.min(bins, d => d[1] * MULTIPLIERS[mapType]) ?? 0,
+        d3.max(bins, b => Number(b.average) * MULTIPLIERS[mapType]) ?? 1,
+        d3.min(bins, b => Number(b.average) * MULTIPLIERS[mapType]) ?? 0,
       ];
 
       const colorScale = d3.scaleSequential(colorDomain, d3.interpolateViridis);
@@ -327,8 +361,8 @@ const MeasurementMap = ({
 
       layer.clearLayers();
       bins.forEach(p => {
-        const idx = p[0];
-        const bin = Number(p[1]);
+        const idx = p.bin;
+        const bin = Number(p.average);
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
           const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;
@@ -382,8 +416,8 @@ const MeasurementMap = ({
       var binSum: number = 0;
       var binNum: number = 0;
       bins.forEach(p => {
-        const idx = p[0];
-        const bin = Number(p[1]);
+        const idx = p.bin;
+        const bin = Number(p.average);
         if (bin) {
           const x = ((idx / bounds.height) << BIN_SIZE_SHIFT) + bounds.left;
           const y = (idx % bounds.height << BIN_SIZE_SHIFT) + bounds.top;

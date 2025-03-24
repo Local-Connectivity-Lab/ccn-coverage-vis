@@ -7,9 +7,11 @@ import IconButton from '@mui/material/IconButton';
 
 import { MULTIPLIERS } from './MeasurementMap';
 import { solveDisplayOptions } from './DisplaySelection';
-import { API_URL } from '../utils/config';
-import fetchToJson from '../utils/fetch-to-json';
 import Loading from '../Loading';
+import { components } from '../types/schema'
+import { apiClient } from '../utils/fetch';
+
+type LineSummaryItemType = components['schemas']['LineSummaryItem']
 
 interface LineChartProps {
   mapType: MapType;
@@ -62,7 +64,8 @@ const LineChart = ({
     useState<d3.Selection<SVGGElement, unknown, HTMLElement, any>>();
   const [yTitle, setYTitle] =
     useState<d3.Selection<SVGTextElement, unknown, HTMLElement, any>>();
-  const [lineSummary, setLineSummary] = useState<any>();
+  const [lineSummary, setLineSummary] = useState<LineSummaryItemType[]>();
+
   useEffect(() => {
     const svg = d3.select('#line-chart');
     const g = svg
@@ -84,17 +87,24 @@ const LineChart = ({
       if (selectedSites.length === 0) {
         return;
       }
-      const _lineSummary = await fetchToJson(
-        API_URL +
-          '/api/lineSummary?' +
-          new URLSearchParams([
-            ['mapType', mapType],
-            ['selectedSites', _selectedSites.join(',')],
-            ['timeFrom', timeFrom.toISOString()],
-            ['timeTo', timeTo.toISOString()],
-          ]),
-      );
-      setLineSummary(_lineSummary);
+
+      const { data, error } = await apiClient.GET('/api/lineSummary', {
+        params: {
+          query: {
+            mapType: mapType,
+            selectedSites: _selectedSites.join(','),
+            timeFrom: timeFrom.toISOString(),
+            timeTo: timeTo.toISOString()
+          }
+        }
+      });
+
+      if (!data) {
+        console.error(`Unable to query line summary: ${error}`);
+        return;
+      }
+
+      setLineSummary(data);
     })();
   }, [mapType, selectedSites, timeFrom, timeTo]);
   useEffect(() => {
@@ -217,12 +227,13 @@ const LineChart = ({
                   .html(
                     d.site +
                       '<br>' +
-                      d.values[
-                        Math.floor(
-                          d.values.length *
-                            ((event.offsetX - margin.left) / chartWidth),
-                        )
-                      ].value.toFixed(2),
+                      (() => {
+
+                        const idx = Math.floor(
+                            d.values.length *
+                              ((event.offsetX - margin.left) / chartWidth));
+                        return (idx >= 0 && idx < d.values.length) ? d.values[idx]?.value.toFixed(2) : "";
+                      })()
                   )
                   .style('left', event.offsetX - 120 + 'px')
                   .style('top', event.offsetY - 50 + 'px'),

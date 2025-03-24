@@ -256,11 +256,11 @@ export default function Vis() {
               loading={loadingLine || loadingMap}
               allSites={sites}
             />
-            <DeviceSelect
+            {/* <DeviceSelect
               selectedDevices={selectedDevices}
               setSelectedDevices={setSelectedDevices}
               loading={loadingLine || loadingMap}
-            />
+            /> */}
           </Container>
           <Divider />
           <Container>
