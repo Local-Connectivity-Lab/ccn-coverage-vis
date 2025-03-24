@@ -17,7 +17,7 @@ interface SidebarProps {
   loading: boolean;
 }
 
-const DateSelect = (props: SidebarProps) => { 
+const DateSelect = (props: SidebarProps) => {
   const handleChangeTimeFrom = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
       props.setTimeFrom(newValue.toDate());

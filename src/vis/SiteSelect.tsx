@@ -15,9 +15,9 @@ const SiteSelect = (props: SidebarProps) => {
   const siteOptions = props.allSites.map(({ name, status }) => ({
     label: name,
     value: name,
-    status: status
+    status: status,
   }));
-  
+
   return (
     <Box mb={3}>
       <Typography variant='overline'>Select Sites</Typography>
@@ -25,9 +25,9 @@ const SiteSelect = (props: SidebarProps) => {
         isMulti
         options={siteOptions}
         value={props.selectedSites}
-        onChange={(selected) => props.setSelectedSites(selected as SiteOption[])}
+        onChange={selected => props.setSelectedSites(selected as SiteOption[])}
         isDisabled={props.loading}
-        placeholder="Select..."
+        placeholder='Select...'
       />
     </Box>
   );

@@ -8,10 +8,10 @@ import IconButton from '@mui/material/IconButton';
 import { MULTIPLIERS } from './MeasurementMap';
 import { solveDisplayOptions } from './DisplaySelection';
 import Loading from '../Loading';
-import { components } from '../types/schema'
+import { components } from '../types/schema';
 import { apiClient } from '../utils/fetch';
 
-type LineSummaryItemType = components['schemas']['LineSummaryItem']
+type LineSummaryItemType = components['schemas']['LineSummaryItem'];
 
 interface LineChartProps {
   mapType: MapType;
@@ -94,9 +94,9 @@ const LineChart = ({
             mapType: mapType,
             selectedSites: _selectedSites.join(','),
             timeFrom: timeFrom.toISOString(),
-            timeTo: timeTo.toISOString()
-          }
-        }
+            timeTo: timeTo.toISOString(),
+          },
+        },
       });
 
       if (!data) {
@@ -228,12 +228,14 @@ const LineChart = ({
                     d.site +
                       '<br>' +
                       (() => {
-
                         const idx = Math.floor(
-                            d.values.length *
-                              ((event.offsetX - margin.left) / chartWidth));
-                        return (idx >= 0 && idx < d.values.length) ? d.values[idx]?.value.toFixed(2) : "";
-                      })()
+                          d.values.length *
+                            ((event.offsetX - margin.left) / chartWidth),
+                        );
+                        return idx >= 0 && idx < d.values.length
+                          ? d.values[idx]?.value.toFixed(2)
+                          : '';
+                      })(),
                   )
                   .style('left', event.offsetX - 120 + 'px')
                   .style('top', event.offsetY - 50 + 'px'),

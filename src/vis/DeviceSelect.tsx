@@ -16,7 +16,7 @@ const DeviceSelect = (props: SidebarProps) => {
     label: value,
     value: value,
   }));
-  
+
   return (
     <Box mb={2} sx={{ zIndex: 1450 }}>
       <Typography variant='overline'>Display markers</Typography>
@@ -24,9 +24,11 @@ const DeviceSelect = (props: SidebarProps) => {
         isMulti
         options={deviceOptions}
         value={props.selectedDevices}
-        onChange={(selected) => props.setSelectedDevices(selected as DeviceOption[])}
+        onChange={selected =>
+          props.setSelectedDevices(selected as DeviceOption[])
+        }
         isDisabled={props.loading}
-        placeholder="Select..."
+        placeholder='Select...'
       />
     </Box>
   );

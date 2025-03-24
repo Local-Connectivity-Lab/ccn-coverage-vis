@@ -32,5 +32,5 @@ root.render(
         element={<AdminPortal page='edit-data' />}
       />
     </Routes>
-  </BrowserRouter>
+  </BrowserRouter>,
 );

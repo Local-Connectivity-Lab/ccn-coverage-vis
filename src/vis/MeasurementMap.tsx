@@ -15,10 +15,10 @@ import axios from 'axios';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import { apiClient } from '../utils/fetch';
-import { components } from '../types/schema'
+import { components } from '../types/schema';
 
-type SitesSummaryType = components['schemas']['SitesSummary']
-type QueryDataType = components['schemas']['QueryData']
+type SitesSummaryType = components['schemas']['SitesSummary'];
+type QueryDataType = components['schemas']['QueryData'];
 
 // Updated with details from: https://stadiamaps.com/stamen/onboarding/migrate/
 const ATTRIBUTION =
@@ -120,7 +120,7 @@ const MeasurementMap = ({
     (async () => {
       const { data, error } = await apiClient.GET('/api/dataRange');
       if (!data) {
-        console.error(`unable to fetch data range: ${error}`)
+        console.error(`unable to fetch data range: ${error}`);
         return;
       }
 
@@ -129,10 +129,19 @@ const MeasurementMap = ({
         return;
       }
 
-      const center = data.center as [number, number]
+      const center = data.center as [number, number];
 
-      const _map = L.map('map-id').setView({lat: center[0], lng: center[1]}, DEFAULT_ZOOM);
-      const _bounds = getBounds({ ...data, map: _map, center: center,   width, height });
+      const _map = L.map('map-id').setView(
+        { lat: center[0], lng: center[1] },
+        DEFAULT_ZOOM,
+      );
+      const _bounds = getBounds({
+        ...data,
+        map: _map,
+        center: center,
+        width,
+        height,
+      });
 
       L.tileLayer(URL, {
         attribution: ATTRIBUTION,
@@ -168,13 +177,13 @@ const MeasurementMap = ({
         return;
       }
 
-      const {data, error} = await apiClient.GET('/api/sitesSummary', {
+      const { data, error } = await apiClient.GET('/api/sitesSummary', {
         params: {
           query: {
             timeFrom: timeFrom.toISOString(),
-            timeTo: timeTo.toISOString()
-          }
-        }
+            timeTo: timeTo.toISOString(),
+          },
+        },
       });
 
       if (!data) {
@@ -234,15 +243,12 @@ const MeasurementMap = ({
         );
         console.log(site.boundary);
       }
-      const summary = sitesSummary[site.name]
+      const summary = sitesSummary[site.name];
       if (!summary) {
-        console.warn(`Unknown site: ${site.name}`)
+        console.warn(`Unknown site: ${site.name}`);
         continue;
       }
-      _markers.set(
-        site.name,
-        siteMarker(site, summary, map).addTo(slayer),
-      );
+      _markers.set(site.name, siteMarker(site, summary, map).addTo(slayer));
     }
     _markers.forEach((marker, site) => {
       if (selectedSites.some(s => s.label === site)) {
@@ -311,7 +317,7 @@ const MeasurementMap = ({
         return;
       }
 
-      const {data, error} = await apiClient.GET('/api/data', {
+      const { data, error } = await apiClient.GET('/api/data', {
         params: {
           query: {
             width: bounds.width,
@@ -323,9 +329,9 @@ const MeasurementMap = ({
             selectedSites: selectedSites.map(ss => ss.label).join(','),
             mapType: mapType,
             timeFrom: timeFrom.toISOString(),
-            timeTo: timeTo.toISOString()
-          }
-        }
+            timeTo: timeTo.toISOString(),
+          },
+        },
       });
 
       if (!data) {
