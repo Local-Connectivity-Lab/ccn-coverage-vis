@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import { UNITS, MULTIPLIERS } from '../vis/MeasurementMap';
+import { UNITS, MULTIPLIERS } from '../utils/measurementMapUtils';
 import round2 from '../utils/round-2';
 
 const statusColor: Map<SiteStatus, string> = new Map([

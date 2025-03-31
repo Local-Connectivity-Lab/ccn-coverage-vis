@@ -39,13 +39,13 @@ const DateSelect = (props: SidebarProps) => {
             label='Start Date'
             value={dayjs(props.timeFrom)}
             onChange={handleChangeTimeFrom}
-            disabled={!props.loading}
+            disabled={props.loading}
           />
           <DateTimePicker
             label='End Date'
             value={dayjs(props.timeTo)}
             onChange={handleChangeTimeTo}
-            disabled={!props.loading}
+            disabled={props.loading}
           />
         </Stack>
       </LocalizationProvider>

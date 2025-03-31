@@ -11,14 +11,19 @@ import {
 import getBounds from '../utils/get-bounds';
 import MapLegend from './MapLegend';
 import Loading from '../Loading';
-import axios from 'axios';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import { apiClient } from '../utils/fetch';
-import { components } from '../types/schema';
+import { components } from '../types/api';
+import {
+  MULTIPLIERS,
+  UNITS,
+  MAP_TYPE_CONVERT,
+} from '../utils/measurementMapUtils';
 
 type SitesSummaryType = components['schemas']['SitesSummary'];
 type QueryDataType = components['schemas']['QueryData'];
+type MarkerData = components['schemas']['MarkerData'];
 
 // Updated with details from: https://stadiamaps.com/stamen/onboarding/migrate/
 const ATTRIBUTION =
@@ -38,27 +43,6 @@ const LEGEND_WIDTH = 25;
 function cts(p: Cell): string {
   return p.x + ',' + p.y;
 }
-
-export const UNITS = {
-  dbm: 'dBm',
-  ping: 'ms',
-  download_speed: 'Mbps',
-  upload_speed: 'Mbps',
-} as const;
-
-export const MULTIPLIERS = {
-  dbm: 1,
-  ping: 1,
-  download_speed: 1,
-  upload_speed: 1,
-} as const;
-
-export const MAP_TYPE_CONVERT = {
-  dbm: 'Signal Strength',
-  ping: 'Ping',
-  download_speed: 'Download Speed',
-  upload_speed: 'Upload Speed',
-} as const;
 
 interface MapProps {
   mapType: MapType;
@@ -114,7 +98,7 @@ const MeasurementMap = ({
   // Markers for manual data points
   const [slayer, setSLayer] = useState<L.LayerGroup>();
   const [llayer, setLLayer] = useState<L.LayerGroup>();
-  const [markerData, setMarkerData] = useState<Marker[]>();
+  const [markerData, setMarkerData] = useState<MarkerData[]>();
 
   useEffect(() => {
     (async () => {
@@ -241,7 +225,6 @@ const MeasurementMap = ({
         L.polygon(site.boundary, { color: site.color ?? 'black' }).addTo(
           blayer,
         );
-        console.log(site.boundary);
       }
       const summary = sitesSummary[site.name];
       if (!summary) {
@@ -276,15 +259,29 @@ const MeasurementMap = ({
         setMarkerData([]);
         return;
       }
-      const markerRes = await axios.get(API_URL + '/api/markers', {
-        params: {
-          sites: selectedSites.map(ss => ss.label).join(','),
-          devices: selectedDevices.map(ss => ss.label).join(','),
-          timeFrom: timeFrom.toISOString(),
-          timeTo: timeTo.toISOString(),
-        },
-      });
-      setMarkerData(markerRes.data);
+
+      try {
+        const { data, error } = await apiClient.GET('/api/markers', {
+          params: {
+            query: {
+              sites: selectedSites.map(ss => ss.label).join(','),
+              devices: selectedDevices.map(ss => ss.label).join(','),
+              timeFrom: timeFrom.toISOString(),
+              timeTo: timeTo.toISOString(),
+            },
+          },
+        });
+
+        if (!data || error) {
+          console.error(`Unable to fetch marker data: ${error}`);
+          return;
+        }
+
+        setMarkerData(data);
+      } catch (error) {
+        console.error(`Error occurred while fetching marker data: ${error}`);
+        setMarkerData([]);
+      }
     })();
   }, [selectedSites, selectedDevices, timeFrom, timeTo]);
 

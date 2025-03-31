@@ -5,10 +5,10 @@ import { MapType } from './MapSelectionRadio';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 
-import { MULTIPLIERS } from './MeasurementMap';
+import { MULTIPLIERS } from '../utils/measurementMapUtils';
 import { solveDisplayOptions } from './DisplaySelection';
 import Loading from '../Loading';
-import { components } from '../types/schema';
+import { components } from '../types/api';
 import { apiClient } from '../utils/fetch';
 
 type LineSummaryItemType = components['schemas']['LineSummaryItem'];

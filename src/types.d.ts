@@ -22,8 +22,6 @@ type DisplayOption = {
 
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation' | 'unknown';
 
-type DeviceType = 'CPEL' | 'CPEH' | 'LGG8' | 'Pixel4';
-
 type AdminPage = 'users' | 'edit-site' | 'edit-data';
 
 type UserRow = {

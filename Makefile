@@ -21,5 +21,5 @@ dev:
 	docker run --rm -it \
 		-v $(CURRENT_DIR):/app \
 		-w /app \
-		-p $(PORT):$(PORT) \
+		-p $(EXPOSED_PORT):$(EXPOSED_PORT) \
 		$(DOCKER_IMAGE) /bin/bash

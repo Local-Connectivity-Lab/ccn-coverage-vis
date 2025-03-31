@@ -10,9 +10,8 @@ import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Footer from '../Footer';
-import axios from 'axios';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { API_URL } from '../utils/config';
+import { apiClient } from '@/utils/fetch';
 const theme = createTheme();
 
 export default function Login() {
@@ -31,20 +30,41 @@ export default function Login() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    axios
-      .post(API_URL + '/secure/login', {
-        username: data.get('username'),
-        password: data.get('password'),
+
+    if (!data.has('username')) {
+      return;
+    }
+
+    if (!data.has('password')) {
+      return;
+    }
+
+    const username = data.get('username')?.toString() as string;
+    const password = data.get('password')?.toString() as string;
+
+    apiClient
+      .POST('/secure/login', {
+        body: {
+          username: username,
+          password: password,
+        },
       })
       .then(res => {
-        if (res.data === 'success') {
+        const { data, error } = res;
+        if (!data || error) {
+          console.log(`Unable to login: ${error}`);
+          setOpen(true);
+          return;
+        }
+
+        if (data === 'success') {
           window.open('/admin/users', '_self');
         } else {
           setOpen(true);
         }
       })
       .catch(err => {
-        console.log(err);
+        console.error(`Error occurred while logging in: ${err}`);
         setOpen(true);
       });
   };

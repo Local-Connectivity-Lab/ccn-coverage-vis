@@ -1,16 +1,14 @@
-const ENV_API_URL: string = 'REACT_APP__API_URL';
-
 /**
  * The value should be:
  * - When developing frontend only: 'https://coverage.seattlecommunitynetwork.org'.
  * - When developing with local backend: 'http://localhost:3000'.
  * - On production: ''.
  */
-export const API_URL: string =
-  '' +
-  (import.meta.env.ENV_API_URL
-    ? 'https://coverage.seattlecommunitynetwork.org'
-    : import.meta.env.ENV_API_URL);
+export const API_URL: string = import.meta.env.DEV
+  ? String(
+      `http://${import.meta.env.VITE_ENV_API_URL}:${import.meta.env.VITE_PORT}`,
+    )
+  : '';
 
 export const DEVICE_OPTIONS: DeviceOption[] = [
   {

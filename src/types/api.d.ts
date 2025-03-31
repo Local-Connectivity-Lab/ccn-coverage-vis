@@ -415,6 +415,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/sites': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get all sites
+     * @description Returns a list of all available sites with their location and status information
+     */
+    get: operations['getSites'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/secure/get_groups': {
     parameters: {
       query?: never;
@@ -695,7 +715,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': components['schemas']['UserListResponse'];
+            'application/json': components['schemas']['GetUserResponse'];
           };
         };
         /** @description Unauthorized - redirects to /api/failure */
@@ -855,7 +875,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/secure/logout': {
+  '/api/logout': {
     parameters: {
       query?: never;
       header?: never;
@@ -972,7 +992,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/secure/new_user': {
+  '/secure/new-user': {
     parameters: {
       query?: never;
       header?: never;
@@ -1174,11 +1194,11 @@ export interface components {
        */
       lastOnline: string;
     };
-    UserListResponse: {
+    GetUserResponse: {
       /** @description List of pending users (not yet registered) whose issue date is within the expiry limit */
-      pending?: components['schemas']['User'][];
+      pending: components['schemas']['User'][];
       /** @description List of registered users */
-      registered?: components['schemas']['User'][];
+      registered: components['schemas']['User'][];
     };
     ToggleUserRequest: {
       /**
@@ -1269,8 +1289,15 @@ export interface components {
        * @example 5740 Martin Luther King Jr Way S, Seattle, WA 98118
        */
       address: string;
-      /** @description Optional array of cell identifiers associated with the site */
-      cell_id?: string[];
+      /** @description Array of cell identifiers associated with the site */
+      cell_id: string[];
+      /**
+       * @description Optional color identifier for the site in hex code
+       * @example #FF5733
+       */
+      color?: string;
+      /** @description Optional geographical boundary coordinates defining the site perimeter as [latitude, longitude] pairs */
+      boundary?: [number, number][];
     };
     /** @example {
      *       "Filipino Community Center": {
@@ -1314,23 +1341,23 @@ export interface components {
        * @description Geographic latitude coordinate
        * @example 47.681932654395915
        */
-      latitude?: number;
+      latitude: number;
       /**
        * Format: double
        * @description Geographic longitude coordinate
        * @example -122.31829217664796
        */
-      longitude?: number;
+      longitude: number;
       /**
        * @description Identifier for the device that collected the data
        * @example 1e683a49d71ffd0
        */
-      device_id?: string;
+      device_id: string;
       /**
        * @description Name of the site
        * @example Filipino Community Center
        */
-      site?: string;
+      site: string;
       /**
        * Format: double
        * @description Signal strength in dBm (optional)
@@ -1342,24 +1369,24 @@ export interface components {
        * @description Upload speed measurement
        * @example 7.28
        */
-      upload_speed?: number;
+      upload_speed: number;
       /**
        * Format: double
        * @description Download speed measurement
        * @example 5.23
        */
-      download_speed?: number;
+      download_speed: number;
       /**
        * Format: double
        * @description Network latency measurement
        * @example 137.41
        */
-      ping?: number;
+      ping: number;
       /**
        * @description Measurement identifier
        * @example 614157263c28e1a473ede843
        */
-      mid?: string;
+      mid: string;
     };
     LineSummaryItem: {
       /**
@@ -1671,6 +1698,26 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+    };
+  };
+  getSites: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List of sites */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Site'][];
+        };
       };
     };
   };

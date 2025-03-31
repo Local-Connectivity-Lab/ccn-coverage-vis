@@ -18,10 +18,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
-
-import { API_URL } from '../utils/config';
 import '../utils/fonts.css';
+import { apiClient } from '@/utils/fetch';
 
 const Input = styled('input')({
   display: 'none',
@@ -33,7 +31,7 @@ export default function EditData() {
   const [csv, setCsv] = useState('');
   const [group, setGroup] = useState('');
   const [newGroup, setNewGroup] = useState('');
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = React.useState(false);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,12 +54,20 @@ export default function EditData() {
   };
 
   const handleClick = () => {
-    axios
-      .post(API_URL + '/secure/upload_data', {
-        csv: csv,
-        group: group === '' ? newGroup : group,
+    apiClient
+      .POST('/secure/upload_data', {
+        body: {
+          csv: csv,
+          group: group === '' ? newGroup : group,
+        },
       })
       .then(res => {
+        const { data, error } = res;
+        if (error || !data) {
+          console.log(`Unable to upload data: ${error}`);
+          return;
+        }
+
         setLoading(true);
         alert('Successfully replaced');
       })
@@ -73,11 +79,19 @@ export default function EditData() {
   };
 
   const handleDeleteClick = () => {
-    axios
-      .post(API_URL + '/secure/delete_group', {
-        group: group,
+    apiClient
+      .POST('/secure/delete_group', {
+        body: {
+          group: group,
+        },
       })
       .then(res => {
+        const { data, error } = res;
+        if (error || !data) {
+          console.log(`Unable to delete group: ${error}`);
+          return;
+        }
+
         setLoading(true);
         alert('Successfully deleted');
       })
@@ -97,9 +111,15 @@ export default function EditData() {
   };
 
   const handleDeleteAllClick = () => {
-    axios
-      .post(API_URL + '/secure/delete_manual')
+    apiClient
+      .POST('/secure/delete_manual')
       .then(res => {
+        const { data, error } = res;
+        if (error || !data) {
+          console.log(`Unable to delete manually: ${error}`);
+          return;
+        }
+
         setLoading(true);
         alert('Successfully deleted');
         handleClose();
@@ -112,10 +132,15 @@ export default function EditData() {
   };
 
   useEffect(() => {
-    axios
-      .post(API_URL + '/secure/get_groups')
+    apiClient
+      .POST('/secure/get_groups')
       .then(res => {
-        setGroups(res.data);
+        const { data, error } = res;
+        if (!data || error) {
+          console.log(`Unable to get group: ${error}`);
+          return;
+        }
+        setGroups(data);
         setLoading(false);
       })
       .catch(err => {

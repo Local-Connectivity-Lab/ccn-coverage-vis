@@ -55,7 +55,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
                   checked={option.checked}
                   name={option.name}
                   onChange={handleChange}
-                  disabled={!props.loading}
+                  disabled={props.loading}
                 />
               }
               label={option.label}
