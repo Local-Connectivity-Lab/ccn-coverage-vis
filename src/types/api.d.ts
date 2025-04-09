@@ -847,16 +847,11 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'text/plain': string;
+            'application/json': {
+              /** @example success */
+              result: string;
+            };
           };
-        };
-        /** @description Redirect to success or failure page */
-        302: {
-          headers: {
-            Location?: string;
-            [name: string]: unknown;
-          };
-          content?: never;
         };
         /** @description Authentication failed */
         401: {
@@ -864,7 +859,22 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'text/plain': string;
+            'application/json': {
+              /** @example Invalid credentials */
+              error: string;
+            };
+          };
+        };
+        /** @description Server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @example Failed to establish session */
+              error: string;
+            };
           };
         };
       };

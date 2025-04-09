@@ -16,6 +16,7 @@ const theme = createTheme();
 
 export default function Login() {
   const [open, setOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
   const handleClose = (
     event?: React.SyntheticEvent | Event,
     reason?: string,
@@ -52,12 +53,14 @@ export default function Login() {
       .then(res => {
         const { data, error } = res;
         if (!data || error) {
-          console.log(`Unable to login: ${error}`);
+          console.log(`Unable to login: ${error.error}`);
+          setErrorMessage(error.error);
           setOpen(true);
           return;
         }
 
-        if (data === 'success') {
+        if (data.result === 'success') {
+          console.log('Login successful');
           window.open('/admin/users', '_self');
         } else {
           setOpen(true);
@@ -133,7 +136,7 @@ export default function Login() {
                 severity='error'
                 sx={{ width: '100%' }}
               >
-                Incorrect username or password
+                Incorrect username or password: {errorMessage}
               </Alert>
             </Snackbar>
           </Box>
