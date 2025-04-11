@@ -42,7 +42,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
         }
         return option;
       }),
-    )
+    );
   };
 
   return (
