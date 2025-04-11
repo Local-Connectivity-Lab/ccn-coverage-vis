@@ -5,6 +5,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY script/setup.sh ./script/
+
+RUN chmod +x ./script/setup.sh
+RUN ./script/setup.sh
 
 RUN npm ci
 

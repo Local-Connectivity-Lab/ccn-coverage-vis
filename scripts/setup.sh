@@ -7,7 +7,6 @@ if [ -f /etc/os-release ]; then
 
         apt update
         apt install -y python3 pkg-config build-essential libcairo2-dev libpango1.0-dev
-        npm ci
         
         echo "Script execution completed successfully."
     else
