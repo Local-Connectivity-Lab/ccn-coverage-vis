@@ -34,12 +34,15 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
     const checked = event.target.checked;
     const name = event.target.name;
     const _displayOptions = [...props.displayOptions];
-    for (let i = 0; i < _displayOptions.length; i++) {
-      if (_displayOptions[i].name === name) {
-        _displayOptions[i].checked = checked;
-      }
-    }
-    props.setDisplayOptions(_displayOptions);
+
+    props.setDisplayOptions(
+      _displayOptions.map(option => {
+        if (option.name === name) {
+          option.checked = checked;
+        }
+        return option;
+      }),
+    )
   };
 
   return (
