@@ -18,6 +18,9 @@ jobs:
         with:
           node-version-file: ".node-version"
 
+      - name: Set up dependencies
+        run: ./scripts/setup.sh
+
       - name: Install Node dependencies
         run: npm ci
 
