@@ -10,17 +10,10 @@ To install this service, the fist time, you will need to:
 
 1. Required tools and versions:
     1. Install `node` and `npm` according to the directions at https://nodejs.org/en/download/package-manager 
-    2. Install `pm2` using: `npm install pm2 -g` (as per https://www.npmjs.com/package/pm2#installing-pm2)
 2. Clone the service: `https://github.com/Local-Connectivity-Lab/ccn-coverage-vis` 
-2. Configure:
+3. Configure:
     1. `cd cd ccn-coverage-vis`     
     1. Edit `src/utils/config.ts` and set the correct URL for your API host (if you're testing or you're deploying to a new URL).
-4. Deploy as below.
-5. When starting the ccn-coverage-vis service the first time, use:
-    ```
-    pm2 start --name "Vis Server" npm -- run start
-    ```
-    This will register ccn-coverage-vis with [PM2](https://pm2.keymetrics.io/docs/usage/quick-start/).
 
 
 ## Deploying
@@ -135,6 +128,3 @@ npm install
   - Toggle Active
 - Better compatibility with local development
 
-# Maybe
-
-- More map information

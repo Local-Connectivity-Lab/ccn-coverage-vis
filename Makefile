@@ -9,6 +9,8 @@ CURRENT_DIR=$(shell pwd)
 clean:
 	@echo "Clean"
 	rm -rf build
+	docker volume rm ccn-coverage-vis_certs
+	docker rmi $(docker images --filter=reference='ccn-coverage-vis*' -q)
 
 .PHONY: build
 build:
