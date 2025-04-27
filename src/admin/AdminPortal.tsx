@@ -83,7 +83,7 @@ const logout = () => {
         console.log(`Unable to logout: ${error}`);
         return;
       }
-      window.open('/', '_self');
+      window.location.href = '/login';
     })
     .catch(err => {
       console.log(`Error occurred while logging out: ${err}`);

@@ -6,18 +6,16 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY scripts/setup.sh ./scripts/
 
-RUN chmod +x ./scripts/setup.sh
-RUN ./scripts/setup.sh
-
-RUN npm ci
+RUN chmod +x ./scripts/setup.sh && \
+    ./scripts/setup.sh && \
+    npm ci && \
+    npm cache clean --force
 
 COPY . .
 
-RUN npm run build
+RUN npm run build && npm prune --production
 
-RUN npm prune --production
-
-FROM nginx:stable
+FROM nginx:stable-alpine
 
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 COPY configs/nginx.conf /etc/nginx/conf.d/default.conf

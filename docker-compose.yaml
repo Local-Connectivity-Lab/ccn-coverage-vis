@@ -15,7 +15,8 @@ services:
     ports:
       - 443:443
     depends_on:
-      - cert-generator
+      cert-generator:
+        condition: service_completed_successfully
 
 volumes:
   certs:
