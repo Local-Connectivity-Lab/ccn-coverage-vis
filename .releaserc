@@ -11,11 +11,19 @@
                 "changelogFile": "CHANGELOG.md"
             }
         ],
-        "@semantic-release/git"
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "CHANGELOG.md"
+                ],
+                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ]
     ],
     "prepare": [
-        {
-            "path": "./scripts/publish-docker.js"
-        }
+        "@semantic-release/changelog",
+        "./publish-docker.js",
+        "@semantic-release/git"
     ]
 }

@@ -10,27 +10,14 @@ To install this service, the fist time, you will need to:
 
 1. Required tools and versions:
     1. Install `node` and `npm` according to the directions at https://nodejs.org/en/download/package-manager 
+    2. `make` and `docker` are used for local development
 2. Clone the service: `https://github.com/Local-Connectivity-Lab/ccn-coverage-vis` 
 3. Configure:
     1. `cd cd ccn-coverage-vis`     
     1. Edit `src/utils/config.ts` and set the correct URL for your API host (if you're testing or you're deploying to a new URL).
 
-
-## Deploying
-Once the service has been setup (as above), it can be deployed using the following process:
-1. Login to the coverage-host
-2. Pull the lastest version from github
-3. Restart the service
-
-The shell commands are:
-```
-ssh coverage-host
-cd ccn-coverage-vis
-git pull
-npm install
-npm run build
-pm2 restart Vis Server 
-```
+## Development
+Avoid committing your change directly to the `main` branch. Check out your own private branch for your development and submit a pull request when the feature/bug fix/cleanup is ready for review. Follow the [Angular Commit Message Conventions](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md) for your commit message. Versions will be managed based on those commit messages. 
 
 ## Troubleshooting & Recovery
 When a problem occurs, there are several checks to determine where the failure is:
@@ -54,22 +41,6 @@ Look in the first column, Status:
 * `500` errors: problem with nxginx. Look in `/var/log/nginx/error.log` for details.
 * `400` errors: problem with the service. Check the service logs and nginx logs.
 * Timeout or unreachable error: Something is broken in the network between your web browser and the coverage-vis host.
-
-
-### Checking ccn-coverage-vis with pm2
-Next, confirm ccn-coverage-vis is operating as expected. To do this, you will need to be able to log into the server hosting the coverage service.
-
-Use `pm2 list` to confirm the "Vis Server" is **online**
-```
-ssh coverage-host
-pm2 list
-```
-![Online services under PM2](pm2-running-services.png "Online services under PM2")
-
-If the "Vis Server" is not online as expected, restart it with:
-```
-pm2 restart Vis Server
-```
 
 
 ### Checking nginx
@@ -100,18 +71,7 @@ If nothing else works, the last option is a clean reinstall of the service. The 
 
 ## Testing
 
-Changes to the main branch are automically built and deployed to: https://seattlecommunitynetwork.org/ccn-coverage-vis/
-
-Once changes have been validated, they can be deployed with:
-
-```
-ssh coverage-api.westus2.cloudapp.azure.com
-cd ccn-coverage-vis/
-git switch main
-git stash
-git pull
-npm install
-```
+We provide a docker compose environment for local testing. Run `docker compose up -d`, and the web server will be running on your local host at port `443`.
 
 
 # Issues
