@@ -14,6 +14,12 @@ clean:
 	docker volume rm ccn-coverage-vis_certs
 	docker rmi $(docker images --filter=reference='ccn-coverage-vis*' -q)
 
+.PHONY: build-test
+build-test:
+	@echo "Create test docker container for $(VIS_DOCKER_IMAGE_NAME)"
+
+	docker build --build-arg NGINX_CONFIG="local-nginx.conf" -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
+
 .PHONY: build
 build:
 	@echo "Create docker container for $(VIS_DOCKER_IMAGE_NAME)"

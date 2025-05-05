@@ -16,9 +16,10 @@ COPY . .
 RUN npm run build && npm prune --production
 
 FROM nginx:stable-alpine
+ARG NGINX_CONFIG="nginx.conf"
 
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
-COPY configs/nginx.conf /etc/nginx/conf.d/default.conf
+COPY configs/${NGINX_CONFIG} /etc/nginx/conf.d/default.conf
 
 EXPOSE 443
 
