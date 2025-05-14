@@ -20,11 +20,24 @@ build-test:
 
 	docker build --build-arg NGINX_CONFIG="local-nginx.conf" -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
 
+# Validate semantic version format
+validate-semver-%:
+	@echo "Validating version format: $*"
+	@if ! echo "$*" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$$' > /dev/null; then \
+		echo "Error: Version must be in semantic version format (e.g., 1.2.3)"; \
+		exit 1; \
+	fi
+
 .PHONY: build
 build:
 	@echo "Create docker container for $(VIS_DOCKER_IMAGE_NAME)"
-
 	docker build -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
+
+# Build with specific version (e.g., make build-1.2.3)
+build-%: validate-semver-%
+	@echo "Create docker container for $(VIS_DOCKER_IMAGE_NAME) with version $*"
+	docker build -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME):$* -f vis.dockerfile .
+
 
 # The target for development
 .PHONY: dev

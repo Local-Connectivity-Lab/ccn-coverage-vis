@@ -3,27 +3,99 @@
         "main"
     ],
     "plugins": [
-        "@semantic-release/commit-analyzer",
-        "@semantic-release/release-notes-generator",
         [
-            "@semantic-release/changelog",
+            "@semantic-release/commit-analyzer",
             {
-                "changelogFile": "CHANGELOG.md"
+                "preset": "angular",
+                "releaseRules": [
+                    {
+                        "type": "feat",
+                        "release": "minor"
+                    },
+                    {
+                        "type": "fix",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "refactor",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "perf",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "build",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "ci",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "chore",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "docs",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "style",
+                        "release": "patch"
+                    }
+                ]
             }
         ],
+        "@semantic-release/release-notes-generator",
         [
-            "@semantic-release/git",
+            "@semantic-release/commit-analyzer",
             {
-                "assets": [
-                    "CHANGELOG.md"
-                ],
-                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+                "preset": "angular",
+                "releaseRules": [
+                    {
+                        "type": "feat",
+                        "release": "minor"
+                    },
+                    {
+                        "type": "fix",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "refactor",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "perf",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "build",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "ci",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "chore",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "docs",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "style",
+                        "release": "patch"
+                    }
+                ]
             }
-        ]
+        ],
+        "@semantic-release/release-notes-generator"
     ],
     "prepare": [
         "@semantic-release/changelog",
-        "./publish-docker.js",
-        "@semantic-release/git"
+        "./scripts/publish-docker.js"
     ]
 }
