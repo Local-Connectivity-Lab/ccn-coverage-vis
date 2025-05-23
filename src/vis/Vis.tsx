@@ -23,10 +23,9 @@ import DeviceSelect from './DeviceSelect';
 import DateSelect from './DateSelect';
 import MeasurementMap from './MeasurementMap';
 import LineChart from './LineChart';
-import axios from 'axios';
-import { API_URL } from '../utils/config';
-import { UNITS, MAP_TYPE_CONVERT } from './MeasurementMap';
+import { UNITS, MAP_TYPE_CONVERT } from '../utils/measurementMapUtils';
 import { solveDisplayOptions } from './DisplaySelection';
+import { apiClient } from '@/utils/fetch';
 
 // import { setOptions } from 'leaflet';
 
@@ -149,22 +148,25 @@ export default function Vis() {
   const [overlayData, setOverlayData] = useState<number>(0);
   useEffect(() => {
     (async () => {
-      axios
-        .get(API_URL + '/api/sites')
-        .then(res => {
-          const ss: Site[] = res.data;
-          const siteOptions = ss.map(({ name, status }) => ({
-            label: name,
-            value: name,
-            status: status,
-          }));
-          setSites(ss);
-          setSiteOptions(siteOptions);
-          setSelectedSites(siteOptions);
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      try {
+        const { data, error } = await apiClient.GET('/api/sites');
+        if (!data || error) {
+          console.log(`Cannot fetch site info: ${error}`);
+          return;
+        }
+
+        const siteOptions = data.map(({ name, status }) => ({
+          label: name,
+          value: name,
+          status: status,
+        }));
+        setSites(data);
+        setSiteOptions(siteOptions);
+        setSelectedSites(siteOptions);
+      } catch (error) {
+        console.error(`Error while fetching site data: ${error}`);
+        return;
+      }
     })();
   }, []);
   const [loadingMap, setLoadingMap] = useState(true);
@@ -256,11 +258,11 @@ export default function Vis() {
               loading={loadingLine || loadingMap}
               allSites={sites}
             />
-            <DeviceSelect
+            {/* <DeviceSelect
               selectedDevices={selectedDevices}
               setSelectedDevices={setSelectedDevices}
               loading={loadingLine || loadingMap}
-            />
+            /> */}
           </Container>
           <Divider />
           <Container>

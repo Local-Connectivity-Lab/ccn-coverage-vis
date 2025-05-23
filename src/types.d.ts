@@ -20,9 +20,7 @@ type DisplayOption = {
   checked: boolean;
 };
 
-type SiteStatus = 'active' | 'confirmed' | 'in-conversation';
-
-type DeviceType = 'CPEL' | 'CPEH' | 'LGG8' | 'Pixel4';
+type SiteStatus = 'active' | 'confirmed' | 'in-conversation' | 'unknown';
 
 type AdminPage = 'users' | 'edit-site' | 'edit-data';
 

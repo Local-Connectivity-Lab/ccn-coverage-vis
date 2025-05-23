@@ -16,8 +16,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { mainListItems, secondaryListItems } from '../ListItems';
 import Footer from '../Footer';
 import AdminBody from './AdminBody';
-import axios from 'axios';
-import { API_URL } from '../utils/config';
+import { apiClient } from '@/utils/fetch';
 
 const drawerWidth: number = 240;
 
@@ -75,6 +74,22 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
+const logout = () => {
+  apiClient
+    .GET('/api/logout')
+    .then(res => {
+      const { data, error } = res;
+      if (!data || error) {
+        console.log(`Unable to logout: ${error}`);
+        return;
+      }
+      window.location.href = '/login';
+    })
+    .catch(err => {
+      console.log(`Error occurred while logging out: ${err}`);
+    });
+};
+
 export default function AdminPortal(props: AdminPortalProps) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
@@ -117,19 +132,7 @@ export default function AdminPortal(props: AdminPortalProps) {
             >
               Admin Portal
             </Typography>
-            <Button
-              color='inherit'
-              onClick={() => {
-                axios
-                  .get(API_URL + '/api/logout')
-                  .then(function (response) {
-                    window.open('/', '_self');
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                  });
-              }}
-            >
+            <Button color='inherit' onClick={logout}>
               Logout
             </Button>
           </Toolbar>

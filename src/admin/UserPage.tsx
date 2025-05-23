@@ -14,8 +14,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ViewQRCode from './ViewQRCode';
 import ViewIdentity from './ViewIdentity';
 import Loading from '../Loading';
-import axios from 'axios';
-import { API_URL } from '../utils/config';
+import { apiClient } from '@/utils/fetch';
 
 function handleEnabledChange() {
   return;
@@ -26,15 +25,27 @@ export default function UserPage() {
   const [called, setCalled] = useState(false);
   const [pendingUsersRows, setPendingUsersRows] = useState<UserRow[]>([]);
   const [activeUsersRows, setActiveUsersRows] = useState<UserRow[]>([]);
+
   useEffect(() => {
     if (!called) {
-      axios
-        .post(API_URL + '/secure/get-users')
-        .then(res => {
-          const data: UserRow[] = res.data.pending;
-          setPendingUsersRows(data);
-          const dataReg: UserRow[] = res.data.registered;
-          setActiveUsersRows(dataReg);
+      apiClient
+        .POST('/secure/get-users')
+        .then(resp => {
+          const { data, error } = resp;
+          if (!data || error) {
+            console.log(`Unable to get user: ${error}`);
+            return;
+          }
+          const pending: UserRow[] = data.pending.map(p => ({
+            ...p,
+            issueDate: new Date(p.issueDate),
+          }));
+          setPendingUsersRows(pending);
+          const registered: UserRow[] = data.registered.map(r => ({
+            ...r,
+            issueDate: new Date(r.issueDate),
+          }));
+          setActiveUsersRows(registered);
           setLoadingUser(false);
           setCalled(true);
         })
@@ -42,6 +53,7 @@ export default function UserPage() {
           alert(err);
           window.open('/login', '_self');
           setLoadingUser(false);
+          console.error(`Error occurred while querying user: ${err}`);
           return <div></div>;
         });
     }

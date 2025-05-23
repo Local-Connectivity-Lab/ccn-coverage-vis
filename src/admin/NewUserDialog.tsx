@@ -8,8 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import AddIcon from '@mui/icons-material/Add';
-import axios from 'axios';
-import { API_URL } from '../utils/config';
+import { apiClient } from '@/utils/fetch';
 
 interface NewUserDialogProp {
   setCalled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,18 +28,27 @@ export default function NewUserDialog(props: NewUserDialogProp) {
   };
 
   const handleSubmit = () => {
-    axios
-      .post(API_URL + '/secure/new-user', {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
+    apiClient
+      .POST('/secure/new-user', {
+        body: {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+        },
       })
       .then(res => {
+        const { error } = res;
+        if (error) {
+          console.log(`Unable to create user: ${error}`);
+          setOpen(true);
+          return;
+        }
+
         props.setCalled(false);
         setOpen(false);
       })
       .catch(err => {
-        console.log(err);
+        console.log(`Unable to create user: ${err}`);
         setOpen(true);
       });
   };

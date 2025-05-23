@@ -3,10 +3,11 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import dayjs from 'dayjs';
 
 interface SidebarProps {
   timeFrom: Date;
@@ -17,34 +18,34 @@ interface SidebarProps {
 }
 
 const DateSelect = (props: SidebarProps) => {
-  const handleChangeTimeFrom = (newValue: Date | null) => {
+  const handleChangeTimeFrom = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
-      props.setTimeFrom(newValue);
+      props.setTimeFrom(newValue.toDate());
     }
   };
 
-  const handleChangeTimeTo = (newValue: Date | null) => {
+  const handleChangeTimeTo = (newValue: dayjs.Dayjs | null) => {
     if (newValue) {
-      props.setTimeTo(newValue);
+      props.setTimeTo(newValue.toDate());
     }
   };
 
   return (
     <Box mb={2}>
       <Typography variant='overline'>Filter Date Time</Typography>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Stack mt={1} spacing={3}>
           <DateTimePicker
             label='Start Date'
-            value={props.timeFrom}
+            value={dayjs(props.timeFrom)}
             onChange={handleChangeTimeFrom}
-            renderInput={params => <TextField {...params} />}
+            disabled={props.loading}
           />
           <DateTimePicker
             label='End Date'
-            value={props.timeTo}
+            value={dayjs(props.timeTo)}
             onChange={handleChangeTimeTo}
-            renderInput={params => <TextField {...params} />}
+            disabled={props.loading}
           />
         </Stack>
       </LocalizationProvider>

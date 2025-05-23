@@ -5,7 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 
 interface DisplayOptionsProps {
   displayOptions: DisplayOption[];
@@ -34,12 +34,15 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
     const checked = event.target.checked;
     const name = event.target.name;
     const _displayOptions = [...props.displayOptions];
-    for (let i = 0; i < _displayOptions.length; i++) {
-      if (_displayOptions[i].name === name) {
-        _displayOptions[i].checked = checked;
-      }
-    }
-    props.setDisplayOptions(_displayOptions);
+
+    props.setDisplayOptions(
+      _displayOptions.map(option => {
+        if (option.name === name) {
+          option.checked = checked;
+        }
+        return option;
+      }),
+    );
   };
 
   return (
@@ -55,6 +58,7 @@ export default function DisplaySelection(props: DisplayOptionsProps) {
                   checked={option.checked}
                   name={option.name}
                   onChange={handleChange}
+                  disabled={props.loading}
                 />
               }
               label={option.label}

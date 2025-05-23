@@ -1,8 +1,8 @@
 import React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { MultiSelect } from 'react-multi-select-component';
-import 'fontsource-roboto';
+import Select from 'react-select';
+import '@fontsource/roboto';
 
 interface SidebarProps {
   selectedSites: SiteOption[];
@@ -12,19 +12,22 @@ interface SidebarProps {
 }
 
 const SiteSelect = (props: SidebarProps) => {
-  const siteOptions = props.allSites.map(({ name }) => ({
+  const siteOptions = props.allSites.map(({ name, status }) => ({
     label: name,
     value: name,
+    status: status,
   }));
+
   return (
-    <Box mb={2}>
+    <Box mb={3}>
       <Typography variant='overline'>Select Sites</Typography>
-      <MultiSelect
+      <Select
+        isMulti
         options={siteOptions}
         value={props.selectedSites}
-        onChange={props.setSelectedSites}
-        labelledBy='Select'
-        disabled={props.loading}
+        onChange={selected => props.setSelectedSites(selected as SiteOption[])}
+        isDisabled={props.loading}
+        placeholder='Select...'
       />
     </Box>
   );

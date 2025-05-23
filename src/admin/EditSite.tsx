@@ -10,9 +10,9 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 import Loading from '../Loading';
-import axios from 'axios';
-import { API_URL } from '../utils/config';
 import '../utils/fonts.css';
+import { apiClient } from '@/utils/fetch';
+
 var newSites = '';
 export default function EditSite() {
   const [loadingSites, setLoadingSites] = useState(true);
@@ -62,31 +62,45 @@ export default function EditSite() {
       setOpenJsonError(true);
       return;
     }
-    axios
-      .post(API_URL + '/secure/edit_sites', {
-        sites: sitesJson,
+
+    apiClient
+      .POST('/secure/edit_sites', {
+        body: {
+          sites: sitesJson,
+        },
       })
       .then(res => {
+        const { data, error } = res;
+        if (error || !data) {
+          console.log(`Unable to edit site: ${error}`);
+          return;
+        }
+
         setOpenApiError(false);
         setOpenJsonError(false);
         setOpenSuccess(true);
         reloadSites();
       })
       .catch(err => {
+        console.error(`Error occurred while editting site: ${err}`);
         setOpenApiError(false);
         setOpenSuccess(false);
         setOpenApiError(true);
-        console.log(err);
       });
   };
   const reloadSites = () => {
-    axios
-      .get(API_URL + '/api/sites')
+    apiClient
+      .GET('/api/sites')
       .then(res => {
-        const sites = res.data;
+        const { data, error } = res;
+        if (error || !data) {
+          console.log(`Unable to query sites: ${error}`);
+          return;
+        }
+
         setLoadingSites(false);
-        setSites(JSON.stringify(sites, null, 2));
-        newSites = JSON.stringify(sites, null, 2);
+        setSites(JSON.stringify(data, null, 2));
+        newSites = JSON.stringify(data, null, 2);
       })
       .catch(err => {
         setLoadingSites(false);

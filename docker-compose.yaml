@@ -1,0 +1,22 @@
+services:
+  cert-generator:
+    build:
+      context: .
+      dockerfile: cert.dockerfile
+    volumes:
+      - certs:/certs
+    
+  web:
+    build:
+      context: .
+      dockerfile: vis.dockerfile
+    volumes:
+      - certs:/etc/nginx/ssl/certs
+    ports:
+      - 443:443
+    depends_on:
+      cert-generator:
+        condition: service_completed_successfully
+
+volumes:
+  certs:

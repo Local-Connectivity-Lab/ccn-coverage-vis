@@ -5,7 +5,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import 'fontsource-roboto';
+import '@fontsource/roboto';
 
 const MAP_TYPE_INDEX = {
   dbm: 1,
