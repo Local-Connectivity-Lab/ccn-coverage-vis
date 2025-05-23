@@ -34,5 +34,5 @@ jobs:
           GIT_COMMITTER_NAME: ${{ vars.SCN_GIT_NAME }}
           REPO_OWNER: "Local-Connectivity-Lab"
           REPO_NAME: "ccn-coverage-docker"
-          TARGET_ARTIFACT_NAME: "ccn-coverage-backup-helper"
+          TARGET_ARTIFACT_NAME: "ccn-coverage-vis"
         run: npx semantic-release
