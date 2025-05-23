@@ -50,8 +50,10 @@
     ]
   },
   "devDependencies": {
+    "@octokit/rest": "^21.1.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.2",
     "@types/cors": "^2.8.17",
     "@types/d3": "^7.4.3",
     "@types/jsonwebtoken": "^9.0.5",
@@ -62,8 +64,9 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "canvas": "^3.1.0",
+    "js-yaml": "^4.1.0",
     "prettier": "^3.2.5",
-    "semantic-release": "^24.2.3",
+    "semantic-release": "^24.2.4",
     "typescript": "^5.8.2",
     "vite": "^6.2.2"
   }

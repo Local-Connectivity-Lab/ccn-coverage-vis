@@ -14,19 +14,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
       - name: Install dependencies
-        run: npm ci
+        run: npm install --include=dev
 
       - name: Run semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GIT_AUTHOR_EMAIL: ${{ vars.SCN_GIT_EMAIL }}
+          GIT_AUTHOR_NAME: ${{ vars.SCN_GIT_NAME }}
+          GIT_COMMITTER_EMAIL: ${{ vars.SCN_GIT_EMAIL }}
+          GIT_COMMITTER_NAME: ${{ vars.SCN_GIT_NAME }}
+          REPO_OWNER: "Local-Connectivity-Lab"
+          REPO_NAME: "ccn-coverage-docker"
+          TARGET_ARTIFACT_NAME: "ccn-coverage-backup-helper"
         run: npx semantic-release
