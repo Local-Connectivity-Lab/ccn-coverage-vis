@@ -1,6 +1,5 @@
 # Name of the Docker container
 DOCKER_IMAGE=node:22-slim
-VIS_DOCKER_IMAGE_NAME_PREFIX=ghcr.io/local-connectivity-lab
 VIS_DOCKER_IMAGE_NAME=ccn-coverage-vis
 include .env
 
@@ -18,7 +17,7 @@ clean:
 build-test:
 	@echo "Create test docker container for $(VIS_DOCKER_IMAGE_NAME)"
 
-	docker build --build-arg NGINX_CONFIG="local-nginx.conf" -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
+	docker build --build-arg NGINX_CONFIG="local-nginx.conf" -t $(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
 
 # Validate semantic version format
 validate-semver-%:
@@ -31,12 +30,12 @@ validate-semver-%:
 .PHONY: build
 build:
 	@echo "Create docker container for $(VIS_DOCKER_IMAGE_NAME)"
-	docker build -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
+	docker build -t $(VIS_DOCKER_IMAGE_NAME) -f vis.dockerfile .
 
 # Build with specific version (e.g., make build-1.2.3)
 build-%: validate-semver-%
 	@echo "Create docker container for $(VIS_DOCKER_IMAGE_NAME) with version $*"
-	docker build -t $(VIS_DOCKER_IMAGE_NAME_PREFIX)/$(VIS_DOCKER_IMAGE_NAME):$* -f vis.dockerfile .
+	docker build -t $(VIS_DOCKER_IMAGE_NAME):$* -f vis.dockerfile .
 
 
 # The target for development
