@@ -22,7 +22,7 @@ type DisplayOption = {
 
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation' | 'unknown';
 
-type AdminPage = 'users' | 'edit-site' | 'edit-data';
+type AdminPage = 'users' | 'edit-site' | 'edit-data' | 'new-edit-site' | 'test';
 
 type UserRow = {
   identity: string;
