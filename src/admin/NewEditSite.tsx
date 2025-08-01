@@ -30,20 +30,20 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
         address: site.address,
         cell_id: site.cell_id,
         color: site.color,
-        boundary: site.boundary?.map((point: any) => ({
-          lat: point.lat,
-          lng: point.lng
-        })) ?? [],
+        boundary:
+          site.boundary?.map((point: any) => ({
+            lat: point.lat,
+            lng: point.lng,
+          })) ?? [],
       };
     });
 
     return sites;
   } catch (error) {
-    console.error("Failed to parse sites JSON:", error);
+    console.error('Failed to parse sites JSON:', error);
     return [];
   }
 };
-
 
 export default function NewEditSite() {
   const [sites, setSites] = useState<Site[]>([]);
@@ -79,14 +79,14 @@ export default function NewEditSite() {
   });
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography variant='h4' component='h1' gutterBottom>
           Site Management
         </Typography>
-        
+
         <List>
-          {sites.map((site) => (
+          {sites.map(site => (
             <ListItem
               key={site.name}
               sx={{
@@ -98,7 +98,7 @@ export default function NewEditSite() {
             >
               <ListItemText
                 primary={
-                  <Typography variant="h6" component="div">
+                  <Typography variant='h6' component='div'>
                     {site.name}
                   </Typography>
                 }
@@ -106,8 +106,8 @@ export default function NewEditSite() {
               />
               <Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
                 <Button
-                  variant="contained"
-                  color="warning"
+                  variant='contained'
+                  color='warning'
                   onClick={() => handleEdit(site.name)}
                   sx={{
                     backgroundColor: '#d4af37',
@@ -120,8 +120,8 @@ export default function NewEditSite() {
                   Edit
                 </Button>
                 <Button
-                  variant="contained"
-                  color="error"
+                  variant='contained'
+                  color='error'
                   onClick={() => handleDelete(site.name)}
                   sx={{
                     backgroundColor: '#d32f2f',
@@ -140,8 +140,8 @@ export default function NewEditSite() {
 
       {/* Floating Action Button */}
       <Fab
-        color="primary"
-        aria-label="add"
+        color='primary'
+        aria-label='add'
         onClick={handleAdd}
         sx={{
           position: 'fixed',

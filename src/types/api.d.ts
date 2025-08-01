@@ -435,6 +435,57 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/public-sites': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get sites list
+     * @description Returns a list of public sites
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description List of public sites */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @description List of sites */
+              sites?: components['schemas']['Site'][];
+            };
+          };
+        };
+        /** @description Server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/secure/get_groups': {
     parameters: {
       query?: never;
@@ -1070,6 +1121,184 @@ export interface paths {
       };
     };
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/secure-site': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Update an existing site
+     * @description Updates an existing site with the provided information
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['Site'];
+        };
+      };
+      responses: {
+        /** @description Site successfully updated */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Bad request - invalid site data */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Unauthorized - User not logged in */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Server error while updating site */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+      };
+    };
+    /**
+     * Add a new site
+     * @description Creates a new site with the provided information
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['Site'];
+        };
+      };
+      responses: {
+        /** @description Site successfully created */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Bad request - invalid site data */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Unauthorized - User not logged in */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Server error while creating site */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+      };
+    };
+    /**
+     * Delete a site
+     * @description Removes an existing site from the system
+     */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['Site'];
+        };
+      };
+      responses: {
+        /** @description Site successfully deleted */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Bad request - invalid site data */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Unauthorized - User not logged in */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+        /** @description Server error while deleting site */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'text/plain': string;
+          };
+        };
+      };
+    };
     options?: never;
     head?: never;
     patch?: never;

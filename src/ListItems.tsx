@@ -31,7 +31,9 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary='Update Data' />
     </ListItemButton>
-    <ListItemButton onClick={() => window.open('/admin/new-edit-site', '_self')}>
+    <ListItemButton
+      onClick={() => window.open('/admin/new-edit-site', '_self')}
+    >
       <ListItemIcon>
         <EditIcon />
       </ListItemIcon>
