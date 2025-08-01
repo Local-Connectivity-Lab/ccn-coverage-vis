@@ -1,7 +1,7 @@
 import UserPage from './UserPage';
 import EditSite from './EditSite';
 import EditData from './EditData';
-import NewEditSite from './NewEditSite';
+import ListSites from './ListSites';
 
 interface AdminBodyProps {
   page: AdminPage;
@@ -15,8 +15,8 @@ export default function AdminBody(props: AdminBodyProps) {
       return <EditSite />;
     case 'edit-data':
       return <EditData />;
-    case 'new-edit-site':
-      return <NewEditSite />;
+    case 'list-sites':
+      return <ListSites />;
     default:
       return <h1>Error</h1>;
   }

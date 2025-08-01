@@ -45,7 +45,7 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
   }
 };
 
-export default function NewEditSite() {
+export default function ListSites() {
   const [sites, setSites] = useState<Site[]>([]);
   const handleEdit = (siteName: string) => {
     console.log(`Edit site with ID: ${siteName}`);
