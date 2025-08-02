@@ -12,8 +12,9 @@ import {
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { apiClient } from '@/utils/fetch';
+import { components } from '@/types/api';
 
-const parseSitesFromJSON = (jsonString: string): Site[] => {
+const parseSitesFromJSON = (jsonString: string): components['schemas']['Site'][] => {
   try {
     const parsed = JSON.parse(jsonString);
 
@@ -21,20 +22,16 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
       throw new Error("Invalid format: 'sites' should be an array");
     }
 
-    const sites: Site[] = parsed.sites.map((site: any): Site => {
+    const sites: components['schemas']['Site'][] = parsed.sites.map((site: any): components['schemas']['Site'] => {
       return {
         name: site.name,
         latitude: site.latitude,
         longitude: site.longitude,
-        status: site.status as SiteStatus,
+        status: site.status,
         address: site.address,
         cell_id: site.cell_id,
         color: site.color,
-        boundary:
-          site.boundary?.map((point: any) => ({
-            lat: point.lat,
-            lng: point.lng,
-          })) ?? [],
+        boundary: site.boundary?.map((point: any) => [point.lat, point.lng] as [number, number]) ?? undefined,
       };
     });
 
@@ -46,13 +43,17 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
 };
 
 export default function ListSites() {
-  const [sites, setSites] = useState<Site[]>([]);
+  const [sites, setSites] = useState<components['schemas']['Site'][]>([]);
   const handleEdit = (siteName: string) => {
     console.log(`Edit site with ID: ${siteName}`);
   };
 
   const handleDelete = (siteName: string) => {
-    console.log(`Delete site with ID: ${siteName}`);
+    const site = sites.find(s => s.name === siteName);
+    if (site) {
+      deleteSite(site);
+      reloadSites();
+    }
   };
 
   const handleAdd = () => {
@@ -77,6 +78,53 @@ export default function ListSites() {
   useEffect(() => {
     reloadSites();
   });
+
+  const deleteSite = (site: components['schemas']['Site']) => {
+    apiClient.DELETE('/api/secure-site', {
+      body: site
+    }).then(res => {
+      const { data, error } = res;
+      if (error) {
+        console.error(`Failed to delete site: ${error}`);
+        return;
+      }
+      console.log(`Successfully deleted site: ${site.name}`);
+      reloadSites();
+    }).catch(err => {
+      console.error(`Error deleting site: ${err}`);
+    });
+  };
+
+  const editSite = (site: components['schemas']['Site']) => {
+    apiClient.PUT('/api/secure-site', {
+      body: site
+    }).then(res => {
+      const { data, error } = res;
+      if (error) {
+        console.error(`Failed to edit site: ${error}`);
+        return;
+      }
+      console.log(`Successfully edited site: ${site.name}`);
+      reloadSites();
+    }).catch(err => {
+      console.error(`Error editing site: ${err}`);
+    });
+  };
+
+  const createSite = (site: components['schemas']['Site']) => {
+    apiClient.POST('/api/secure-site', {
+      body: site
+    }).then(res => {
+      const { data, error } = res;
+      if (error) {
+        console.error(`Failed to create site: ${error}`);
+        return;
+      }
+      console.log(`Successfully created site: ${site.name}`);
+      reloadSites();
+    }).catch(err => {
+      console.error(`Error creating site: ${err}`);
+    });
 
   return (
     <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
@@ -157,4 +205,5 @@ export default function ListSites() {
       </Fab>
     </Container>
   );
+}
 }
