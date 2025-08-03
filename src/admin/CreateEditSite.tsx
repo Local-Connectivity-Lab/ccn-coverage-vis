@@ -33,7 +33,11 @@ interface BoundaryPoint {
   lng: string;
 }
 
-export default function CreateEditSite() {
+interface CreateEditSiteProps {
+  mode: 'create' | 'edit';
+}
+
+export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   const [name, setName] = useState('');
   const [longitude, setLongitude] = useState('');
   const [latitude, setLatitude] = useState('');
@@ -129,6 +133,41 @@ export default function CreateEditSite() {
     }
     return true;
   } 
+
+  useEffect(() => {
+    if (mode === 'edit') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const siteParam = urlParams.get('site');
+      if (siteParam) {
+        try {
+          const siteData = JSON.parse(decodeURIComponent(siteParam));
+          setName(siteData.name);
+          setLatitude(siteData.latitude.toString());
+          setLongitude(siteData.longitude.toString());
+          setStatus(siteData.status);
+          setAddress(siteData.address);
+          setCells(siteData.cell_id.map((cellId: string) => ({
+            id: Date.now().toString() + cellId,
+            cellId: cellId
+          })));
+          if (siteData.color) {
+            setColorEnabled(true);
+            setColorValue(siteData.color);
+          }
+          if (siteData.boundary) {
+            setBoundaryEnabled(true);
+            setBoundaryPoints(siteData.boundary.map((point: [number, number]) => ({
+              id: Date.now().toString() + point.join(','),
+              lat: point[0].toString(),
+              lng: point[1].toString()
+            })));
+          }
+        } catch (error) {
+          console.error('Failed to parse site data from URL:', error);
+        }
+      }
+    }
+  }, [mode]);
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>

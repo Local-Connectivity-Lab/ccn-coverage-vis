@@ -46,7 +46,11 @@ export default function ListSites() {
   const [sites, setSites] = useState<Site[]>([]);
   const handleEdit = (siteName: string) => {
     console.log(`Edit site with ID: ${siteName}`);
-    window.open('/admin/new-edit-site', '_self');
+    const site = sites.find(s => s.name === siteName);
+    if (site) {
+      const siteData = encodeURIComponent(JSON.stringify(site));
+      window.open(`/admin/new-edit-site?site=${siteData}`, '_self');
+    }
   };
 
   const handleDelete = (siteName: string) => {
