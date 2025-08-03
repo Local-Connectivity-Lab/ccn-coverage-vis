@@ -33,12 +33,7 @@ interface BoundaryPoint {
   lng: string;
 }
 
-interface CreateEditSiteProps {
-  mode: 'create' | 'edit';
-  site?: Site;
-}
-
-export default function CreateEditSite({ mode, site }: CreateEditSiteProps) {
+export default function CreateEditSite() {
   const [name, setName] = useState('');
   const [longitude, setLongitude] = useState('');
   const [latitude, setLatitude] = useState('');
