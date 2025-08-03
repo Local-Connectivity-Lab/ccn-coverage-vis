@@ -46,6 +46,7 @@ export default function ListSites() {
   const [sites, setSites] = useState<components['schemas']['Site'][]>([]);
   const handleEdit = (siteName: string) => {
     console.log(`Edit site with ID: ${siteName}`);
+    window.open('/admin/create-edit-site', '_self');
   };
 
   const handleDelete = (siteName: string) => {
@@ -58,6 +59,7 @@ export default function ListSites() {
 
   const handleAdd = () => {
     console.log('Add new site');
+    window.open('/admin/create-edit-site', '_self')
   };
 
   const reloadSites = () => {
@@ -125,7 +127,7 @@ export default function ListSites() {
     }).catch(err => {
       console.error(`Error creating site: ${err}`);
     });
-
+  }
   return (
     <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
@@ -185,8 +187,6 @@ export default function ListSites() {
           ))}
         </List>
       </Paper>
-
-      {/* Floating Action Button */}
       <Fab
         color='primary'
         aria-label='add'
@@ -205,5 +205,4 @@ export default function ListSites() {
       </Fab>
     </Container>
   );
-}
 }
