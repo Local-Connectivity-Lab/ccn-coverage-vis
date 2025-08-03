@@ -18,8 +18,10 @@ export default function AdminBody(props: AdminBodyProps) {
       return <EditData />;
     case 'list-sites':
       return <ListSites />;
-    case 'create-edit-site':
-      return <CreateEditSite />;
+    case 'create-site':
+      return <CreateEditSite mode="create" />;
+    case 'new-edit-site':
+      return <CreateEditSite mode="edit" />;
     default:
       return <h1>Error</h1>;
   }

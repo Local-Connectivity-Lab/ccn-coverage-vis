@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -20,6 +20,7 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
+import ColorPicker from 'react-pick-color';
 
 interface CellEntry {
   id: string;
@@ -32,7 +33,12 @@ interface BoundaryPoint {
   lng: string;
 }
 
-export default function CreateEditSite() {
+interface CreateEditSiteProps {
+  mode: 'create' | 'edit';
+  site?: Site;
+}
+
+export default function CreateEditSite({ mode, site }: CreateEditSiteProps) {
   const [name, setName] = useState('');
   const [longitude, setLongitude] = useState('');
   const [latitude, setLatitude] = useState('');
@@ -40,9 +46,10 @@ export default function CreateEditSite() {
   const [address, setAddress] = useState('');
   const [cells, setCells] = useState<CellEntry[]>([]);
   const [colorEnabled, setColorEnabled] = useState(true);
-  const [colorValue, setColorValue] = useState('');
+  const [colorValue, setColorValue] = useState('#fff');
   const [boundaryEnabled, setBoundaryEnabled] = useState(true);
   const [boundaryPoints, setBoundaryPoints] = useState<BoundaryPoint[]>([]);
+
 
   const handleBack = () => {
     console.log('Navigate back');
@@ -51,6 +58,18 @@ export default function CreateEditSite() {
 
   const handleSave = () => {
     console.log('Save site');
+    if (validateSite()) {
+      const site: Site = {
+        name,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        status: status as SiteStatus,
+        address,
+        cell_id: cells.map(cell => cell.cellId),
+        color: colorEnabled ? colorValue : undefined,
+        boundary: boundaryEnabled ? boundaryPoints.map(point => [parseFloat(point.lat), parseFloat(point.lng)]) : undefined,
+      };
+    }
   };
 
   const addCell = () => {
@@ -87,6 +106,34 @@ export default function CreateEditSite() {
       point.id === id ? { ...point, [field]: value } : point
     ));
   };
+
+  const validateSite = () : boolean => {
+    if (name === '') {
+      alert('Name is required');
+      return false;
+    }
+    if (longitude === '' || isNaN(Number(longitude))) {
+      alert('Valid Longitude is required');
+      return false;
+    }
+    if (latitude === '' || isNaN(Number(latitude))) {
+      alert('Valid Latitude is required');
+      return false;
+    }
+    if (status === '') {
+      alert('Status is required');
+      return false;
+    }
+    if (address === '') {
+      alert('Address is required');
+      return false;
+    }
+    if (cells.length === 0) {
+      alert('At least one Cell ID is required');
+      return false;
+    }
+    return true;
+  } 
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -212,12 +259,7 @@ export default function CreateEditSite() {
             label="Color"
           />
           {colorEnabled && (
-            <TextField
-              fullWidth
-              value={colorValue}
-              onChange={(e) => setColorValue(e.target.value)}
-              sx={{ mt: 1 }}
-            />
+            <ColorPicker color={colorValue} onChange={color => setColorValue(color.hex)} />
           )}
         </Box>
         <Box sx={{ mb: 3 }}>

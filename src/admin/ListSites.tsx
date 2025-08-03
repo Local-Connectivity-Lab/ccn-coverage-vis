@@ -14,7 +14,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { apiClient } from '@/utils/fetch';
 import { components } from '@/types/api';
 
-const parseSitesFromJSON = (jsonString: string): components['schemas']['Site'][] => {
+const parseSitesFromJSON = (jsonString: string): Site[] => {
   try {
     const parsed = JSON.parse(jsonString);
 
@@ -22,7 +22,7 @@ const parseSitesFromJSON = (jsonString: string): components['schemas']['Site'][]
       throw new Error("Invalid format: 'sites' should be an array");
     }
 
-    const sites: components['schemas']['Site'][] = parsed.sites.map((site: any): components['schemas']['Site'] => {
+    const sites: Site[] = parsed.sites.map((site: any): Site => {
       return {
         name: site.name,
         latitude: site.latitude,
@@ -43,10 +43,10 @@ const parseSitesFromJSON = (jsonString: string): components['schemas']['Site'][]
 };
 
 export default function ListSites() {
-  const [sites, setSites] = useState<components['schemas']['Site'][]>([]);
+  const [sites, setSites] = useState<Site[]>([]);
   const handleEdit = (siteName: string) => {
     console.log(`Edit site with ID: ${siteName}`);
-    window.open('/admin/create-edit-site', '_self');
+    window.open('/admin/new-edit-site', '_self');
   };
 
   const handleDelete = (siteName: string) => {
@@ -59,7 +59,7 @@ export default function ListSites() {
 
   const handleAdd = () => {
     console.log('Add new site');
-    window.open('/admin/create-edit-site', '_self')
+    window.open('/admin/create-site', '_self')
   };
 
   const reloadSites = () => {
@@ -81,9 +81,30 @@ export default function ListSites() {
     reloadSites();
   });
 
-  const deleteSite = (site: components['schemas']['Site']) => {
+  const siteToSchema = (site: Site): components['schemas']['Site'] => {
+    return {
+      name: site.name,
+      latitude: site.latitude,
+      longitude: site.longitude,
+      status: siteStatusToSchema(site.status),
+      address: site.address,
+      cell_id: site.cell_id,
+      color: site.color,
+      boundary: site.boundary
+    };
+  }
+
+  const siteStatusToSchema = (siteStatus: SiteStatus): components['parameters']['SiteStatus'] => {
+    if (siteStatus === 'unknown') {
+      throw new Error(`Invalid site status: ${siteStatus}`);
+    } else {
+      return siteStatus as components['parameters']['SiteStatus'];
+    }
+  }
+
+  const deleteSite = (site: Site) => {
     apiClient.DELETE('/api/secure-site', {
-      body: site
+      body: siteToSchema(site)
     }).then(res => {
       const { data, error } = res;
       if (error) {
@@ -97,9 +118,9 @@ export default function ListSites() {
     });
   };
 
-  const editSite = (site: components['schemas']['Site']) => {
+  const editSite = (site: Site) => {
     apiClient.PUT('/api/secure-site', {
-      body: site
+      body: siteToSchema(site)
     }).then(res => {
       const { data, error } = res;
       if (error) {
@@ -113,9 +134,9 @@ export default function ListSites() {
     });
   };
 
-  const createSite = (site: components['schemas']['Site']) => {
+  const createSite = (site: Site) => {
     apiClient.POST('/api/secure-site', {
-      body: site
+      body: siteToSchema(site)
     }).then(res => {
       const { data, error } = res;
       if (error) {
@@ -127,7 +148,7 @@ export default function ListSites() {
     }).catch(err => {
       console.error(`Error creating site: ${err}`);
     });
-  }
+  };
   return (
     <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
