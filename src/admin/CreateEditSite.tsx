@@ -21,6 +21,8 @@ import {
   Delete as DeleteIcon,
 } from '@mui/icons-material';
 import ColorPicker from 'react-pick-color';
+import { apiClient } from '@/utils/fetch';
+import { siteToSchema } from '@/utils/siteUtils';
 
 interface CellEntry {
   id: string;
@@ -49,6 +51,37 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   const [boundaryEnabled, setBoundaryEnabled] = useState(true);
   const [boundaryPoints, setBoundaryPoints] = useState<BoundaryPoint[]>([]);
 
+    const editSite = (site: Site) => {
+      apiClient.PUT('/api/secure-site', {
+        body: siteToSchema(site)
+      }).then(res => {
+        const { data, error } = res;
+        if (error) {
+          console.error(`Failed to edit site: ${error}`);
+          return;
+        }
+        console.log(`Successfully edited site: ${site.name}`);
+
+      }).catch(err => {
+        console.error(`Error editing site: ${err}`);
+      });
+    };
+
+    const createSite = (site: Site) => {
+      apiClient.POST('/api/secure-site', {
+        body: siteToSchema(site)
+      }).then(res => {
+        const { data, error } = res;
+        if (error) {
+          console.error(`Failed to create site: ${error}`);
+          return;
+        }
+        console.log(`Successfully created site: ${site.name}`);
+      }).catch(err => {
+        console.error(`Error creating site: ${err}`);
+      });
+    };
+
 
   const handleBack = () => {
     console.log('Navigate back');
@@ -68,6 +101,11 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
         color: colorEnabled ? colorValue : undefined,
         boundary: boundaryEnabled ? boundaryPoints.map(point => [parseFloat(point.lat), parseFloat(point.lng)]) : undefined,
       };
+      if (mode === 'edit') {
+        editSite(site);
+      } else {
+        createSite(site);
+      }
     }
   };
 
@@ -156,11 +194,13 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
           }
           if (siteData.boundary) {
             setBoundaryEnabled(true);
-            setBoundaryPoints(siteData.boundary.map((point: [number, number]) => ({
-              id: Date.now().toString() + point.join(','),
-              lat: point[0].toString(),
-              lng: point[1].toString()
-            })));
+            setBoundaryPoints(siteData.boundary
+              .filter((point: [number, number]) => point && point[0] !== null && point[1] !== null)
+              .map((point: [number, number], index: number) => ({
+                id: Date.now().toString() + index,
+                lat: point[0].toString(),
+                lng: point[1].toString()
+              })));
           }
         } catch (error) {
           console.error('Failed to parse site data from URL:', error);
@@ -221,8 +261,8 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
               label="Status"
             >
               <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="inactive">Inactive</MenuItem>
-              <MenuItem value="maintenance">Maintenance</MenuItem>
+              <MenuItem value="confirmed">Confirmed</MenuItem>
+              <MenuItem value="in-conversation">In Conversation</MenuItem>
             </Select>
           </FormControl>
 

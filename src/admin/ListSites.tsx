@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { apiClient } from '@/utils/fetch';
-import { components } from '@/types/api';
+import { siteToSchema } from '@/utils/siteUtils';
 
 const parseSitesFromJSON = (jsonString: string): Site[] => {
   try {
@@ -85,27 +85,6 @@ export default function ListSites() {
     reloadSites();
   });
 
-  const siteToSchema = (site: Site): components['schemas']['Site'] => {
-    return {
-      name: site.name,
-      latitude: site.latitude,
-      longitude: site.longitude,
-      status: siteStatusToSchema(site.status),
-      address: site.address,
-      cell_id: site.cell_id,
-      color: site.color,
-      boundary: site.boundary
-    };
-  }
-
-  const siteStatusToSchema = (siteStatus: SiteStatus): components['parameters']['SiteStatus'] => {
-    if (siteStatus === 'unknown') {
-      throw new Error(`Invalid site status: ${siteStatus}`);
-    } else {
-      return siteStatus as components['parameters']['SiteStatus'];
-    }
-  }
-
   const deleteSite = (site: Site) => {
     apiClient.DELETE('/api/secure-site', {
       body: siteToSchema(site)
@@ -122,37 +101,7 @@ export default function ListSites() {
     });
   };
 
-  const editSite = (site: Site) => {
-    apiClient.PUT('/api/secure-site', {
-      body: siteToSchema(site)
-    }).then(res => {
-      const { data, error } = res;
-      if (error) {
-        console.error(`Failed to edit site: ${error}`);
-        return;
-      }
-      console.log(`Successfully edited site: ${site.name}`);
-      reloadSites();
-    }).catch(err => {
-      console.error(`Error editing site: ${err}`);
-    });
-  };
 
-  const createSite = (site: Site) => {
-    apiClient.POST('/api/secure-site', {
-      body: siteToSchema(site)
-    }).then(res => {
-      const { data, error } = res;
-      if (error) {
-        console.error(`Failed to create site: ${error}`);
-        return;
-      }
-      console.log(`Successfully created site: ${site.name}`);
-      reloadSites();
-    }).catch(err => {
-      console.error(`Error creating site: ${err}`);
-    });
-  };
   return (
     <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
