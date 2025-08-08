@@ -31,7 +31,7 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
         address: site.address,
         cell_id: site.cell_id,
         color: site.color,
-        boundary: site.boundary?.map((point: any) => [point.lat, point.lng] as [number, number]) ?? undefined,
+        boundary: site.boundary?.map((point: any) => [point[0], point[1]] as [number, number]) ?? undefined,
       };
     });
 
