@@ -19,7 +19,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary='Manage users' />
     </ListItemButton>
-    <ListItemButton onClick={() => window.open('/admin/edit-site', '_self')}>
+    <ListItemButton onClick={() => window.open('/admin/list-sites', '_self')}>
       <ListItemIcon>
         <EditLocationAltIcon />
       </ListItemIcon>
@@ -31,12 +31,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary='Update Data' />
     </ListItemButton>
-    <ListItemButton onClick={() => window.open('/admin/list-sites', '_self')}>
-      <ListItemIcon>
-        <EditIcon />
-      </ListItemIcon>
-      <ListItemText primary='New Edit Site' />
-    </ListItemButton>
+   
   </div>
 );
 
