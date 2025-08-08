@@ -164,11 +164,21 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
       alert('Name is required');
       return false;
     }
-    if (longitude === '' || isNaN(Number(longitude))) {
+    if (
+      longitude === '' ||
+      isNaN(Number(longitude)) ||
+      Number(longitude) < -180 ||
+      Number(longitude) > 180
+    ) {
       alert('Valid Longitude is required');
       return false;
     }
-    if (latitude === '' || isNaN(Number(latitude))) {
+    if (
+      latitude === '' ||
+      isNaN(Number(latitude)) ||
+      Number(latitude) < -90 ||
+      Number(latitude) > 90
+    ) {
       alert('Valid Latitude is required');
       return false;
     }
@@ -183,6 +193,28 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
     if (cells.length === 0) {
       alert('At least one Cell ID is required');
       return false;
+    }
+    if (boundaryEnabled) {
+      for (const point of boundaryPoints) {
+        if (
+          point.lat === '' ||
+          isNaN(Number(point.lat)) ||
+          Number(point.lat) < -90 ||
+          Number(point.lat) > 90
+        ) {
+          alert('Valid Latitude for Boundary Point is required');
+          return false;
+        }
+        if (
+          point.lng === '' ||
+          isNaN(Number(point.lng)) ||
+          Number(point.lng) < -180 ||
+          Number(point.lng) > 180
+        ) {
+          alert('Valid Longitude for Boundary Point is required');
+          return false;
+        }
+      }
     }
     return true;
   };
