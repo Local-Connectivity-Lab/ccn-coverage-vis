@@ -9,11 +9,13 @@ export const siteToSchema = (site: Site): components['schemas']['Site'] => {
     address: site.address,
     cell_id: site.cell_id,
     color: site.color,
-    boundary: site.boundary
+    boundary: site.boundary,
   };
 };
 
-export const siteStatusToSchema = (siteStatus: SiteStatus): components['parameters']['SiteStatus'] => {
+export const siteStatusToSchema = (
+  siteStatus: SiteStatus,
+): components['parameters']['SiteStatus'] => {
   if (siteStatus === 'unknown') {
     throw new Error(`Invalid site status: ${siteStatus}`);
   } else {

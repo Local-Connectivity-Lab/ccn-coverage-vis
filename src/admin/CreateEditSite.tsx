@@ -51,37 +51,41 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   const [boundaryEnabled, setBoundaryEnabled] = useState(true);
   const [boundaryPoints, setBoundaryPoints] = useState<BoundaryPoint[]>([]);
 
-    const editSite = (site: Site) => {
-      apiClient.PUT('/api/secure-site', {
-        body: siteToSchema(site)
-      }).then(res => {
+  const editSite = (site: Site) => {
+    apiClient
+      .PUT('/api/secure-site', {
+        body: siteToSchema(site),
+      })
+      .then(res => {
         const { data, error } = res;
         if (error) {
           console.error(`Failed to edit site: ${error}`);
           return;
         }
         console.log(`Successfully edited site: ${site.name}`);
-
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error(`Error editing site: ${err}`);
       });
-    };
+  };
 
-    const createSite = (site: Site) => {
-      apiClient.POST('/api/secure-site', {
-        body: siteToSchema(site)
-      }).then(res => {
+  const createSite = (site: Site) => {
+    apiClient
+      .POST('/api/secure-site', {
+        body: siteToSchema(site),
+      })
+      .then(res => {
         const { data, error } = res;
         if (error) {
           console.error(`Failed to create site: ${error}`);
           return;
         }
         console.log(`Successfully created site: ${site.name}`);
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error(`Error creating site: ${err}`);
       });
-    };
-
+  };
 
   const handleBack = () => {
     console.log('Navigate back');
@@ -99,7 +103,12 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
         address,
         cell_id: cells.map(cell => cell.cellId),
         color: colorEnabled ? colorValue : undefined,
-        boundary: boundaryEnabled ? boundaryPoints.map(point => [parseFloat(point.lat), parseFloat(point.lng)]) : undefined,
+        boundary: boundaryEnabled
+          ? boundaryPoints.map(point => [
+              parseFloat(point.lat),
+              parseFloat(point.lng),
+            ])
+          : undefined,
       };
       if (mode === 'edit') {
         editSite(site);
@@ -112,7 +121,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   const addCell = () => {
     const newCell: CellEntry = {
       id: Date.now().toString(),
-      cellId: ''
+      cellId: '',
     };
     setCells([...cells, newCell]);
   };
@@ -122,14 +131,14 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   };
 
   const updateCellId = (id: string, cellId: string) => {
-    setCells(cells.map(cell => cell.id === id ? { ...cell, cellId } : cell));
+    setCells(cells.map(cell => (cell.id === id ? { ...cell, cellId } : cell)));
   };
 
   const addBoundaryPoint = () => {
     const newPoint: BoundaryPoint = {
       id: Date.now().toString(),
       lat: '',
-      lng: ''
+      lng: '',
     };
     setBoundaryPoints([...boundaryPoints, newPoint]);
   };
@@ -138,13 +147,19 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
     setBoundaryPoints(boundaryPoints.filter(point => point.id !== id));
   };
 
-  const updateBoundaryPoint = (id: string, field: 'lat' | 'lng', value: string) => {
-    setBoundaryPoints(boundaryPoints.map(point => 
-      point.id === id ? { ...point, [field]: value } : point
-    ));
+  const updateBoundaryPoint = (
+    id: string,
+    field: 'lat' | 'lng',
+    value: string,
+  ) => {
+    setBoundaryPoints(
+      boundaryPoints.map(point =>
+        point.id === id ? { ...point, [field]: value } : point,
+      ),
+    );
   };
 
-  const validateSite = () : boolean => {
+  const validateSite = (): boolean => {
     if (name === '') {
       alert('Name is required');
       return false;
@@ -170,7 +185,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
       return false;
     }
     return true;
-  } 
+  };
 
   useEffect(() => {
     if (mode === 'edit') {
@@ -184,23 +199,30 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
           setLongitude(siteData.longitude.toString());
           setStatus(siteData.status);
           setAddress(siteData.address);
-          setCells(siteData.cell_id.map((cellId: string) => ({
-            id: Date.now().toString() + cellId,
-            cellId: cellId
-          })));
+          setCells(
+            siteData.cell_id.map((cellId: string) => ({
+              id: Date.now().toString() + cellId,
+              cellId: cellId,
+            })),
+          );
           if (siteData.color) {
             setColorEnabled(true);
             setColorValue(siteData.color);
           }
           if (siteData.boundary) {
             setBoundaryEnabled(true);
-            setBoundaryPoints(siteData.boundary
-              .filter((point: [number, number]) => point && point[0] !== null && point[1] !== null)
-              .map((point: [number, number], index: number) => ({
-                id: Date.now().toString() + index,
-                lat: point[0].toString(),
-                lng: point[1].toString()
-              })));
+            setBoundaryPoints(
+              siteData.boundary
+                .filter(
+                  (point: [number, number]) =>
+                    point && point[0] !== null && point[1] !== null,
+                )
+                .map((point: [number, number], index: number) => ({
+                  id: Date.now().toString() + index,
+                  lat: point[0].toString(),
+                  lng: point[1].toString(),
+                })),
+            );
           }
         } catch (error) {
           console.error('Failed to parse site data from URL:', error);
@@ -210,14 +232,14 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   }, [mode]);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
           <IconButton onClick={handleBack} sx={{ mr: 2 }}>
             <ArrowBackIcon />
           </IconButton>
           <Button
-            variant="contained"
+            variant='contained'
             onClick={handleSave}
             sx={{
               backgroundColor: '#4caf50',
@@ -232,24 +254,24 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
         <Box sx={{ mb: 3 }}>
           <TextField
             fullWidth
-            label="Name"
+            label='Name'
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             sx={{ mb: 2 }}
           />
-          
+
           <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
             <TextField
               fullWidth
-              label="Longitude"
+              label='Longitude'
               value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
+              onChange={e => setLongitude(e.target.value)}
             />
             <TextField
               fullWidth
-              label="Latitude"
+              label='Latitude'
               value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
+              onChange={e => setLatitude(e.target.value)}
             />
           </Box>
 
@@ -257,26 +279,28 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
             <InputLabel>Status</InputLabel>
             <Select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              label="Status"
+              onChange={e => setStatus(e.target.value)}
+              label='Status'
             >
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="confirmed">Confirmed</MenuItem>
-              <MenuItem value="in-conversation">In Conversation</MenuItem>
+              <MenuItem value='active'>Active</MenuItem>
+              <MenuItem value='confirmed'>Confirmed</MenuItem>
+              <MenuItem value='in-conversation'>In Conversation</MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             fullWidth
-            label="Address"
+            label='Address'
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={e => setAddress(e.target.value)}
             sx={{ mb: 2 }}
           />
         </Box>
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" sx={{ mr: 2 }}>Cells</Typography>
+            <Typography variant='h6' sx={{ mr: 2 }}>
+              Cells
+            </Typography>
             <IconButton
               onClick={addCell}
               sx={{
@@ -293,18 +317,23 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
             </IconButton>
           </Box>
 
-          {cells.map((cell) => (
-            <Box key={cell.id} sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2 }}>
-              <Typography variant="body2" sx={{ minWidth: 60 }}>Cell ID</Typography>
+          {cells.map(cell => (
+            <Box
+              key={cell.id}
+              sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2 }}
+            >
+              <Typography variant='body2' sx={{ minWidth: 60 }}>
+                Cell ID
+              </Typography>
               <TextField
-                size="small"
+                size='small'
                 value={cell.cellId}
-                onChange={(e) => updateCellId(cell.id, e.target.value)}
+                onChange={e => updateCellId(cell.id, e.target.value)}
                 sx={{ flexGrow: 1 }}
               />
               <Button
-                variant="contained"
-                color="error"
+                variant='contained'
+                color='error'
                 onClick={() => deleteCell(cell.id)}
                 sx={{
                   backgroundColor: '#d32f2f',
@@ -327,13 +356,16 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
             control={
               <Checkbox
                 checked={colorEnabled}
-                onChange={(e) => setColorEnabled(e.target.checked)}
+                onChange={e => setColorEnabled(e.target.checked)}
               />
             }
-            label="Color"
+            label='Color'
           />
           {colorEnabled && (
-            <ColorPicker color={colorValue} onChange={color => setColorValue(color.hex)} />
+            <ColorPicker
+              color={colorValue}
+              onChange={color => setColorValue(color.hex)}
+            />
           )}
         </Box>
         <Box sx={{ mb: 3 }}>
@@ -342,10 +374,10 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
               control={
                 <Checkbox
                   checked={boundaryEnabled}
-                  onChange={(e) => setBoundaryEnabled(e.target.checked)}
+                  onChange={e => setBoundaryEnabled(e.target.checked)}
                 />
               }
-              label="Boundary"
+              label='Boundary'
             />
             {boundaryEnabled && (
               <IconButton
@@ -366,39 +398,49 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
             )}
           </Box>
 
-          {boundaryEnabled && boundaryPoints.map((point) => (
-            <Box key={point.id} sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2 }}>
-              <Typography variant="body2" sx={{ minWidth: 80 }}>(Lat, Long)</Typography>
-              <TextField
-                size="small"
-                placeholder="Lat"
-                value={point.lat}
-                onChange={(e) => updateBoundaryPoint(point.id, 'lat', e.target.value)}
-                sx={{ flexGrow: 1 }}
-              />
-              <TextField
-                size="small"
-                placeholder="Long"
-                value={point.lng}
-                onChange={(e) => updateBoundaryPoint(point.id, 'lng', e.target.value)}
-                sx={{ flexGrow: 1 }}
-              />
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => deleteBoundaryPoint(point.id)}
-                sx={{
-                  backgroundColor: '#d32f2f',
-                  minWidth: 80,
-                  '&:hover': {
-                    backgroundColor: '#b71c1c',
-                  },
-                }}
+          {boundaryEnabled &&
+            boundaryPoints.map(point => (
+              <Box
+                key={point.id}
+                sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 2 }}
               >
-                Delete
-              </Button>
-            </Box>
-          ))}
+                <Typography variant='body2' sx={{ minWidth: 80 }}>
+                  (Lat, Long)
+                </Typography>
+                <TextField
+                  size='small'
+                  placeholder='Lat'
+                  value={point.lat}
+                  onChange={e =>
+                    updateBoundaryPoint(point.id, 'lat', e.target.value)
+                  }
+                  sx={{ flexGrow: 1 }}
+                />
+                <TextField
+                  size='small'
+                  placeholder='Long'
+                  value={point.lng}
+                  onChange={e =>
+                    updateBoundaryPoint(point.id, 'lng', e.target.value)
+                  }
+                  sx={{ flexGrow: 1 }}
+                />
+                <Button
+                  variant='contained'
+                  color='error'
+                  onClick={() => deleteBoundaryPoint(point.id)}
+                  sx={{
+                    backgroundColor: '#d32f2f',
+                    minWidth: 80,
+                    '&:hover': {
+                      backgroundColor: '#b71c1c',
+                    },
+                  }}
+                >
+                  Delete
+                </Button>
+              </Box>
+            ))}
         </Box>
       </Paper>
     </Container>

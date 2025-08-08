@@ -31,7 +31,10 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
         address: site.address,
         cell_id: site.cell_id,
         color: site.color,
-        boundary: site.boundary?.map((point: any) => [point[0], point[1]] as [number, number]) ?? undefined,
+        boundary:
+          site.boundary?.map(
+            (point: any) => [point[0], point[1]] as [number, number],
+          ) ?? undefined,
       };
     });
 
@@ -63,7 +66,7 @@ export default function ListSites() {
 
   const handleAdd = () => {
     console.log('Add new site');
-    window.open('/admin/create-site', '_self')
+    window.open('/admin/create-site', '_self');
   };
 
   const reloadSites = () => {
@@ -86,21 +89,23 @@ export default function ListSites() {
   });
 
   const deleteSite = (site: Site) => {
-    apiClient.DELETE('/api/secure-site', {
-      body: siteToSchema(site)
-    }).then(res => {
-      const { data, error } = res;
-      if (error) {
-        console.error(`Failed to delete site: ${error}`);
-        return;
-      }
-      console.log(`Successfully deleted site: ${site.name}`);
-      reloadSites();
-    }).catch(err => {
-      console.error(`Error deleting site: ${err}`);
-    });
+    apiClient
+      .DELETE('/api/secure-site', {
+        body: siteToSchema(site),
+      })
+      .then(res => {
+        const { data, error } = res;
+        if (error) {
+          console.error(`Failed to delete site: ${error}`);
+          return;
+        }
+        console.log(`Successfully deleted site: ${site.name}`);
+        reloadSites();
+      })
+      .catch(err => {
+        console.error(`Error deleting site: ${err}`);
+      });
   };
-
 
   return (
     <Container maxWidth='md' sx={{ mt: 4, mb: 4 }}>

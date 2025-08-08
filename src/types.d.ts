@@ -24,7 +24,13 @@ type DisplayOption = {
 
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation' | 'unknown';
 
-type AdminPage = 'users' | 'edit-site' | 'edit-data' | 'list-sites' | 'create-site' | 'new-edit-site';
+type AdminPage =
+  | 'users'
+  | 'edit-site'
+  | 'edit-data'
+  | 'list-sites'
+  | 'create-site'
+  | 'new-edit-site';
 
 type UserRow = {
   identity: string;
@@ -80,5 +86,3 @@ type Measurement = {
   site: string;
   device_id: number;
 };
-
-
