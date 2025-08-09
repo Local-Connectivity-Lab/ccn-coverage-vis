@@ -415,6 +415,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/old-sites': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get all sites
+     * @description Returns a list of all available sites with their location and status information
+     */
+    get: operations['getSitesOld'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/sites': {
     parameters: {
       query?: never;
@@ -427,57 +447,6 @@ export interface paths {
      * @description Returns a list of all available sites with their location and status information
      */
     get: operations['getSites'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/public-sites': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get sites list
-     * @description Returns a list of public sites
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description List of public sites */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': {
-              /** @description List of sites */
-              sites?: components['schemas']['Site'][];
-            };
-          };
-        };
-        /** @description Server error */
-        500: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'text/plain': string;
-          };
-        };
-      };
-    };
     put?: never;
     post?: never;
     delete?: never;
@@ -1937,6 +1906,26 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+    };
+  };
+  getSitesOld: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List of sites */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Site'][];
+        };
       };
     };
   };

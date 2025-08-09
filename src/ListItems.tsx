@@ -31,7 +31,6 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary='Update Data' />
     </ListItemButton>
-   
   </div>
 );
 

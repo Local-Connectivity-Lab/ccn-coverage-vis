@@ -18,11 +18,11 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
   try {
     const parsed = JSON.parse(jsonString);
 
-    if (!Array.isArray(parsed.sites)) {
-      throw new Error("Invalid format: 'sites' should be an array");
+    if (!Array.isArray(parsed)) {
+      throw new Error('Invalid format: response should be an array of sites');
     }
 
-    const sites: Site[] = parsed.sites.map((site: any): Site => {
+    const sites: Site[] = parsed.map((site: any): Site => {
       return {
         name: site.name,
         latitude: site.latitude,
@@ -71,7 +71,7 @@ export default function ListSites() {
 
   const reloadSites = () => {
     apiClient
-      .GET('/api/public-sites')
+      .GET('/api/sites')
       .then(res => {
         const { data, error } = res;
         if (error || !data) {
