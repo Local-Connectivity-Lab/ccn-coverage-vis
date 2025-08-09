@@ -149,20 +149,22 @@ export default function Vis() {
   useEffect(() => {
     (async () => {
       try {
-        const { data, error } = await apiClient.GET('/api/sites');
+        const { data, error } = await apiClient.GET('/api/public-sites');
         if (!data || error) {
           console.log(`Cannot fetch site info: ${error}`);
           return;
         }
-
-        const siteOptions = data.map(({ name, status }) => ({
-          label: name,
-          value: name,
-          status: status,
-        }));
-        setSites(data);
-        setSiteOptions(siteOptions);
-        setSelectedSites(siteOptions);
+        if (data.sites) {
+          const siteOptions = data.sites.map(({ name, status }) => ({
+            label: name,
+            value: name,
+            status: status,
+          }));
+          setSites(data.sites);
+          setSiteOptions(siteOptions);
+          setSelectedSites(siteOptions);
+        }
+        
       } catch (error) {
         console.error(`Error while fetching site data: ${error}`);
         return;
