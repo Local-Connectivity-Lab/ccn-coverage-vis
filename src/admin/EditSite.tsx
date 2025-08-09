@@ -90,7 +90,7 @@ export default function EditSite() {
   };
   const reloadSites = () => {
     apiClient
-      .GET('/api/public-sites')
+      .GET('/api/sites')
       .then(res => {
         const { data, error } = res;
         if (error || !data) {
