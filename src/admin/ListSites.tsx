@@ -59,10 +59,14 @@ export default function ListSites() {
   const handleDelete = (siteName: string) => {
     const site = sites.find(s => s.name === siteName);
     if (site) {
-      deleteSite(site);
-      reloadSites();
+      const confirmed = window.confirm(`Are you sure you want to delete "${site.name}"?`);
+      if (confirmed) {
+        deleteSite(site);
+        reloadSites();
+      }
     }
   };
+
 
   const handleAdd = () => {
     console.log('Add new site');

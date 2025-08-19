@@ -52,7 +52,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   const [boundaryPoints, setBoundaryPoints] = useState<BoundaryPoint[]>([]);
 
   const editSite = (site: Site) => {
-    apiClient
+    return apiClient
       .PUT('/api/secure-site', {
         body: siteToSchema(site),
       })
@@ -60,17 +60,20 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
         const { data, error } = res;
         if (error) {
           console.error(`Failed to edit site: ${error}`);
-          return;
+          return Promise.reject(error);
         }
         console.log(`Successfully edited site: ${site.name}`);
+        return data;
       })
       .catch(err => {
         console.error(`Error editing site: ${err}`);
+        return Promise.reject(err);
       });
   };
 
+
   const createSite = (site: Site) => {
-    apiClient
+    return apiClient
       .POST('/api/secure-site', {
         body: siteToSchema(site),
       })
@@ -78,12 +81,14 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
         const { data, error } = res;
         if (error) {
           console.error(`Failed to create site: ${error}`);
-          return;
+          return Promise.reject(error);
         }
         console.log(`Successfully created site: ${site.name}`);
+        return data;
       })
       .catch(err => {
         console.error(`Error creating site: ${err}`);
+        return Promise.reject(err);
       });
   };
 
@@ -110,11 +115,12 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
             ])
           : undefined,
       };
-      if (mode === 'edit') {
-        editSite(site);
-      } else {
-        createSite(site);
-      }
+      const savePromise =
+        mode === 'edit' ? editSite(site) : createSite(site);
+
+      savePromise.then(() => {
+        handleBack();
+      });
     }
   };
 
