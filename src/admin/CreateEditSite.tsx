@@ -71,7 +71,6 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
       });
   };
 
-
   const createSite = (site: Site) => {
     return apiClient
       .POST('/api/secure-site', {
@@ -115,8 +114,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
             ])
           : undefined,
       };
-      const savePromise =
-        mode === 'edit' ? editSite(site) : createSite(site);
+      const savePromise = mode === 'edit' ? editSite(site) : createSite(site);
 
       savePromise.then(() => {
         handleBack();
