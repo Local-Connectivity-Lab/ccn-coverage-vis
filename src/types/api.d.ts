@@ -415,26 +415,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/old-sites': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all sites
-     * @description Returns a list of all available sites with their location and status information
-     */
-    get: operations['getSitesOld'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/sites': {
     parameters: {
       query?: never;
