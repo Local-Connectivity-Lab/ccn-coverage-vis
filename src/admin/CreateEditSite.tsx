@@ -53,7 +53,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
 
   const editSite = (site: Site) => {
     return apiClient
-      .PUT('/api/secure-site', {
+      .PUT('/secure/edit-sites', {
         body: siteToSchema(site),
       })
       .then(res => {
@@ -73,7 +73,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
 
   const createSite = (site: Site) => {
     return apiClient
-      .POST('/api/secure-site', {
+      .POST('/secure/edit-sites', {
         body: siteToSchema(site),
       })
       .then(res => {

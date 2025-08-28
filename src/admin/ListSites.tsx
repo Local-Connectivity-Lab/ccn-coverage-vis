@@ -95,7 +95,7 @@ export default function ListSites() {
 
   const deleteSite = (site: Site) => {
     apiClient
-      .DELETE('/api/secure-site', {
+      .DELETE('/secure/edit-sites', {
         body: siteToSchema(site),
       })
       .then(res => {

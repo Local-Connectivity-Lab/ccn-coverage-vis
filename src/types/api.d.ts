@@ -1075,7 +1075,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/secure-site': {
+  '/secure/edit-sites': {
     parameters: {
       query?: never;
       header?: never;
@@ -1886,26 +1886,6 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
-      };
-    };
-  };
-  getSitesOld: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of sites */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['Site'][];
-        };
       };
     };
   };
