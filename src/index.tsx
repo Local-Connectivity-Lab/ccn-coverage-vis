@@ -24,6 +24,18 @@ root.render(
       <Route path='/admin' element={<AdminPortal />} />
       <Route path='/admin/users' element={<AdminPortal page={'users'} />} />
       <Route
+        path='/admin/list-sites'
+        element={<AdminPortal page='list-sites' />}
+      />
+      <Route
+        path='/admin/create-site'
+        element={<AdminPortal page='create-site' />}
+      />
+      <Route
+        path='/admin/new-edit-site'
+        element={<AdminPortal page='new-edit-site' />}
+      />
+      <Route
         path='/admin/edit-site'
         element={<AdminPortal page='edit-site' />}
       />

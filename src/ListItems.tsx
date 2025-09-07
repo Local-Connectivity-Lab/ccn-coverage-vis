@@ -7,6 +7,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SyncIcon from '@mui/icons-material/Sync';
 import HomeIcon from '@mui/icons-material/Home';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import EditIcon from '@mui/icons-material/Edit';
 import { ListItemButton } from '@mui/material';
 
 export const mainListItems = (
@@ -18,7 +19,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary='Manage users' />
     </ListItemButton>
-    <ListItemButton onClick={() => window.open('/admin/edit-site', '_self')}>
+    <ListItemButton onClick={() => window.open('/admin/list-sites', '_self')}>
       <ListItemIcon>
         <EditLocationAltIcon />
       </ListItemIcon>

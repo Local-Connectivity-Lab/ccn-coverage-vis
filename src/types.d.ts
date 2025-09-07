@@ -1,3 +1,5 @@
+type LatLng = [number, number];
+
 type SiteOption = {
   label: string;
   value: string;
@@ -22,7 +24,13 @@ type DisplayOption = {
 
 type SiteStatus = 'active' | 'confirmed' | 'in-conversation' | 'unknown';
 
-type AdminPage = 'users' | 'edit-site' | 'edit-data';
+type AdminPage =
+  | 'users'
+  | 'edit-site'
+  | 'edit-data'
+  | 'list-sites'
+  | 'create-site'
+  | 'new-edit-site';
 
 type UserRow = {
   identity: string;
