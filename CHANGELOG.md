@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Local-Connectivity-Lab/ccn-coverage-vis/compare/v1.0.1...v1.1.0) (2025-09-07)
+
+
+### Features
+
+* release new site editor change ([#48](https://github.com/Local-Connectivity-Lab/ccn-coverage-vis/issues/48)) ([a76bdd2](https://github.com/Local-Connectivity-Lab/ccn-coverage-vis/commit/a76bdd2044785f79f94c977ceba86d324423cd35))
+
 ## [1.0.1](https://github.com/Local-Connectivity-Lab/ccn-coverage-vis/compare/v1.0.0...v1.0.1) (2025-05-23)
 
 # 1.0.0 (2025-05-23)
