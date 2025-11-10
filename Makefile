@@ -37,6 +37,16 @@ build-%: validate-semver-%
 	@echo "Create docker container for $(VIS_DOCKER_IMAGE_NAME) with version $*"
 	docker build -t $(VIS_DOCKER_IMAGE_NAME):$* -f vis.dockerfile .
 
+# Publish to Docker registry (e.g., make publish VERSION=1.2.3)
+.PHONY: publish
+publish: validate-semver-$(VERSION)
+	@echo "Building and publishing $(VIS_DOCKER_IMAGE_NAME):$(VERSION)"
+	docker build -t $(VIS_DOCKER_IMAGE_NAME):$(VERSION) -f vis.dockerfile .
+	docker tag $(VIS_DOCKER_IMAGE_NAME):$(VERSION) icr.infra.seattlecommunitynetwork.org/$(VIS_DOCKER_IMAGE_NAME):$(VERSION)
+	docker tag $(VIS_DOCKER_IMAGE_NAME):$(VERSION) icr.infra.seattlecommunitynetwork.org/$(VIS_DOCKER_IMAGE_NAME):latest
+	docker push icr.infra.seattlecommunitynetwork.org/$(VIS_DOCKER_IMAGE_NAME):$(VERSION)
+	docker push icr.infra.seattlecommunitynetwork.org/$(VIS_DOCKER_IMAGE_NAME):latest
+	@echo "Successfully published $(VIS_DOCKER_IMAGE_NAME):$(VERSION) to registry"
 
 # The target for development
 .PHONY: dev
@@ -45,4 +55,5 @@ dev:
 		-v $(CURRENT_DIR):/app \
 		-w /app \
 		-p $(EXPOSED_PORT):$(EXPOSED_PORT) \
+		--network ccn-coverage-api_coverage-app-network \
 		$(DOCKER_IMAGE) /bin/bash
