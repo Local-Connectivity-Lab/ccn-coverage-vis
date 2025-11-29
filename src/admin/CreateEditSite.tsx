@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 import ColorPicker from 'react-pick-color';
 import { apiClient } from '@/utils/fetch';
-import { siteToSchema } from '@/utils/siteUtils';
+import { siteToSchema, siteToNewSiteRequest } from '@/utils/siteUtils';
 
 interface CellEntry {
   id: string;
@@ -40,6 +40,7 @@ interface CreateEditSiteProps {
 }
 
 export default function CreateEditSite({ mode }: CreateEditSiteProps) {
+  const [identity, setIdentity] = useState('');
   const [name, setName] = useState('');
   const [longitude, setLongitude] = useState('');
   const [latitude, setLatitude] = useState('');
@@ -74,7 +75,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
   const createSite = (site: Site) => {
     return apiClient
       .POST('/secure/edit-sites', {
-        body: siteToSchema(site),
+        body: siteToNewSiteRequest(site),
       })
       .then(res => {
         const { data, error } = res;
@@ -100,14 +101,15 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
     console.log('Save site');
     if (validateSite()) {
       const site: Site = {
+        identity,
         name,
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
         status: status as SiteStatus,
         address,
-        cell_id: cells.map(cell => cell.cellId),
+        cell_ids: cells.map(cell => cell.cellId),
         color: colorEnabled ? colorValue : undefined,
-        boundary: boundaryEnabled
+        boundaries: boundaryEnabled
           ? boundaryPoints.map(point => [
               parseFloat(point.lat),
               parseFloat(point.lng),
@@ -230,14 +232,15 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
       if (siteParam) {
         try {
           const siteData = JSON.parse(decodeURIComponent(siteParam));
+          setIdentity(siteData.identity);
           setName(siteData.name);
           setLatitude(siteData.latitude.toString());
           setLongitude(siteData.longitude.toString());
           setStatus(siteData.status);
           setAddress(siteData.address);
           setCells(
-            siteData.cell_id.map((cellId: string) => ({
-              id: Date.now().toString() + cellId,
+            siteData.cell_id.map((cellId: string, index: number) => ({
+              id: `${Date.now()}-cell-${index}`,
               cellId: cellId,
             })),
           );
@@ -254,7 +257,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
                     point && point[0] !== null && point[1] !== null,
                 )
                 .map((point: [number, number], index: number) => ({
-                  id: Date.now().toString() + index,
+                  id: `${Date.now()}-boundary-${index}`,
                   lat: point[0].toString(),
                   lng: point[1].toString(),
                 })),

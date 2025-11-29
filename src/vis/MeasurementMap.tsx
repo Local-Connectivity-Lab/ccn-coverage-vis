@@ -228,25 +228,25 @@ const MeasurementMap = ({
       }
       const summary = sitesSummary[site.name];
       if (!summary) {
-        console.warn(`Unknown site: ${site.name}`);
+        console.warn(`Unknown site: ${site.name} (identity: ${site.identity})`);
         continue;
       }
-      _markers.set(site.name, siteMarker(site, summary, map).addTo(slayer));
+      _markers.set(site.identity, siteMarker(site, summary, map).addTo(slayer));
     }
-    _markers.forEach((marker, site) => {
-      if (selectedSites.some(s => s.label === site)) {
+    _markers.forEach((marker, siteIdentity) => {
+      if (selectedSites.some(s => s.value === siteIdentity)) {
         marker.setOpacity(1);
       } else {
         marker.setOpacity(0.5);
       }
-      if (allSites.some(s => s.name === site && s.status === 'active')) {
+      if (allSites.some(s => s.identity === siteIdentity && s.status === 'active')) {
         marker.setIcon(greenIcon);
       } else if (
-        allSites.some(s => s.name === site && s.status === 'confirmed')
+        allSites.some(s => s.identity === siteIdentity && s.status === 'confirmed')
       ) {
         marker.setIcon(goldIcon);
       } else if (
-        allSites.some(s => s.name === site && s.status === 'in-conversation')
+        allSites.some(s => s.identity === siteIdentity && s.status === 'in-conversation')
       ) {
         marker.setIcon(redIcon);
       }
@@ -264,7 +264,7 @@ const MeasurementMap = ({
         const { data, error } = await apiClient.GET('/api/markers', {
           params: {
             query: {
-              sites: selectedSites.map(ss => ss.label).join(','),
+              sites: selectedSites.map(ss => ss.value).join(','),
               devices: selectedDevices.map(ss => ss.label).join(','),
               timeFrom: timeFrom.toISOString(),
               timeTo: timeTo.toISOString(),
@@ -323,7 +323,7 @@ const MeasurementMap = ({
             top: bounds.top,
             binSizeShift: BIN_SIZE_SHIFT,
             zoom: DEFAULT_ZOOM,
-            selectedSites: selectedSites.map(ss => ss.label).join(','),
+            selectedSites: selectedSites.map(ss => ss.value).join(','),
             mapType: mapType,
             timeFrom: timeFrom.toISOString(),
             timeTo: timeTo.toISOString(),

@@ -24,15 +24,16 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
 
     const sites: Site[] = parsed.map((site: any): Site => {
       return {
+        identity: site.identity,
         name: site.name,
         latitude: site.latitude,
         longitude: site.longitude,
         status: site.status,
         address: site.address,
-        cell_id: site.cell_id,
+        cell_id: site.cell_ids || site.cell_id,
         color: site.color,
         boundary:
-          site.boundary?.map(
+          (site.boundaries || site.boundary)?.map(
             (point: any) => [point[0], point[1]] as [number, number],
           ) ?? undefined,
       };
@@ -47,17 +48,17 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
 
 export default function ListSites() {
   const [sites, setSites] = useState<Site[]>([]);
-  const handleEdit = (siteName: string) => {
-    console.log(`Edit site with ID: ${siteName}`);
-    const site = sites.find(s => s.name === siteName);
+  const handleEdit = (siteIdentity: string) => {
+    console.log(`Edit site with identity: ${siteIdentity}`);
+    const site = sites.find(s => s.identity === siteIdentity);
     if (site) {
       const siteData = encodeURIComponent(JSON.stringify(site));
       window.open(`/admin/new-edit-site?site=${siteData}`, '_self');
     }
   };
 
-  const handleDelete = (siteName: string) => {
-    const site = sites.find(s => s.name === siteName);
+  const handleDelete = (siteIdentity: string) => {
+    const site = sites.find(s => s.identity === siteIdentity);
     if (site) {
       const confirmed = window.confirm(
         `Are you sure you want to delete "${site.name}"?`,
@@ -91,12 +92,14 @@ export default function ListSites() {
   };
   useEffect(() => {
     reloadSites();
-  });
+  }, []);
 
   const deleteSite = (site: Site) => {
     apiClient
       .DELETE('/secure/edit-sites', {
-        body: siteToSchema(site),
+        body: {
+          identity: site.identity,
+        },
       })
       .then(res => {
         const { data, error } = res;
@@ -104,7 +107,7 @@ export default function ListSites() {
           console.error(`Failed to delete site: ${error}`);
           return;
         }
-        console.log(`Successfully deleted site: ${site.name}`);
+        console.log(`Successfully deleted site: ${site.name} (identity: ${site.identity})`);
         reloadSites();
       })
       .catch(err => {
@@ -122,7 +125,7 @@ export default function ListSites() {
         <List>
           {sites.map(site => (
             <ListItem
-              key={site.name}
+              key={site.identity}
               sx={{
                 border: '1px solid #e0e0e0',
                 borderRadius: 1,
@@ -142,7 +145,7 @@ export default function ListSites() {
                 <Button
                   variant='contained'
                   color='warning'
-                  onClick={() => handleEdit(site.name)}
+                  onClick={() => handleEdit(site.identity)}
                   sx={{
                     backgroundColor: '#d4af37',
                     color: 'black',
@@ -156,7 +159,7 @@ export default function ListSites() {
                 <Button
                   variant='contained'
                   color='error'
-                  onClick={() => handleDelete(site.name)}
+                  onClick={() => handleDelete(site.identity)}
                   sx={{
                     backgroundColor: '#d32f2f',
                     '&:hover': {

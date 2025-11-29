@@ -155,10 +155,11 @@ export default function Vis() {
           return;
         }
 
-        const siteOptions = data.map(({ name, status }) => ({
+        const siteOptions = data.map(({ identity, name, status }) => ({
           label: name,
-          value: name,
+          value: identity,
           status: status,
+          identity: identity,
         }));
         setSites(data);
         setSiteOptions(siteOptions);

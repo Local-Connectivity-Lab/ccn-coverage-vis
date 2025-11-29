@@ -4,6 +4,7 @@ type SiteOption = {
   label: string;
   value: string;
   status: SiteStatus;
+  identity: string;
 };
 
 type DeviceOption = {
@@ -44,14 +45,15 @@ type UserRow = {
 };
 
 type Site = {
+  identity: string;
   name: string;
   latitude: number;
   longitude: number;
   status: SiteStatus;
   address: string;
-  cell_id: string[];
+  cell_ids?: string[];
   color?: string;
-  boundary?: LatLng[];
+  boundaries?: LatLng[];
 };
 
 type SiteData = {

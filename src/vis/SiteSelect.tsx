@@ -12,10 +12,11 @@ interface SidebarProps {
 }
 
 const SiteSelect = (props: SidebarProps) => {
-  const siteOptions = props.allSites.map(({ name, status }) => ({
+  const siteOptions = props.allSites.map(({ identity, name, status }) => ({
     label: name,
-    value: name,
+    value: identity,
     status: status,
+    identity: identity,
   }));
 
   return (

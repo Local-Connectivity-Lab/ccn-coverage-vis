@@ -83,7 +83,7 @@ const LineChart = ({
   }, [setXAxis, setYAxis, setLines, setYTitle, setLoading]);
   useEffect(() => {
     (async () => {
-      const _selectedSites = selectedSites.map(ss => ss.label);
+      const _selectedSites = selectedSites.map(ss => ss.value);
       if (selectedSites.length === 0) {
         return;
       }
@@ -111,9 +111,9 @@ const LineChart = ({
     if (!xAxis || !yAxis || !lines || !yTitle || !lineSummary) return;
     (async function () {
       setLoading(true);
-      let colors: { [name: string]: string } = {};
+      let colors: { [identity: string]: string } = {};
       for (let site of allSites) {
-        colors[site.name] = site.color ?? '#000000';
+        colors[site.identity] = site.color ?? '#000000';
       }
       const data: {
         site: string;

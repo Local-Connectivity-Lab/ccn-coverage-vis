@@ -18,6 +18,7 @@ export function isMarkerArray(marker: any[]): marker is Marker[] {
 
 export function isSite(prop: any): prop is Site {
   return (
+    typeof prop?.identity === 'string' ||
     typeof prop?.name === 'string' ||
     typeof prop?.latitude === 'number' ||
     typeof prop?.longitude === 'number' ||
