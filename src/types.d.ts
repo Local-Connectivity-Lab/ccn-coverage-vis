@@ -53,7 +53,7 @@ type Site = {
   address: string;
   cell_ids?: string[];
   color?: string;
-  boundaries?: LatLng[];
+  boundary?: LatLng[];
 };
 
 type SiteData = {

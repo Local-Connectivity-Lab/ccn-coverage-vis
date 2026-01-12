@@ -24,16 +24,16 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
 
     const sites: Site[] = parsed.map((site: any): Site => {
       return {
-        identity: site.identity,
+        identity: site._id,
         name: site.name,
         latitude: site.latitude,
         longitude: site.longitude,
         status: site.status,
         address: site.address,
-        cell_id: site.cell_ids || site.cell_id,
+        cell_ids: site.cell_ids,
         color: site.color,
         boundary:
-          (site.boundaries || site.boundary)?.map(
+          (site.boundary)?.map(
             (point: any) => [point[0], point[1]] as [number, number],
           ) ?? undefined,
       };

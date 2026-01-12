@@ -109,7 +109,7 @@ export default function CreateEditSite({ mode }: CreateEditSiteProps) {
         address,
         cell_ids: cells.map(cell => cell.cellId),
         color: colorEnabled ? colorValue : undefined,
-        boundaries: boundaryEnabled
+        boundary: boundaryEnabled
           ? boundaryPoints.map(point => [
               parseFloat(point.lat),
               parseFloat(point.lng),
