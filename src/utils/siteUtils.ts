@@ -8,20 +8,22 @@ export const siteToSchema = (site: Site): components['schemas']['Site'] => {
     longitude: site.longitude,
     status: siteStatusToSchema(site.status),
     address: site.address,
-    cell_ids: site.cell_id,
+    cell_ids: site.cell_ids,
     color: site.color,
     boundaries: site.boundary,
   };
 };
 
-export const siteToNewSiteRequest = (site: Site): components['schemas']['NewSiteRequest'] => {
+export const siteToNewSiteRequest = (
+  site: Site,
+): components['schemas']['NewSiteRequest'] => {
   return {
     name: site.name,
     latitude: site.latitude,
     longitude: site.longitude,
     status: siteStatusToNewSiteRequestSchema(site.status),
     address: site.address,
-    cell_ids: site.cell_id,
+    cell_ids: site.cell_ids,
     color: site.color,
     boundaries: site.boundary,
   };

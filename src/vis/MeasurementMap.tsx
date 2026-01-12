@@ -239,14 +239,20 @@ const MeasurementMap = ({
       } else {
         marker.setOpacity(0.5);
       }
-      if (allSites.some(s => s.identity === siteIdentity && s.status === 'active')) {
+      if (
+        allSites.some(s => s.identity === siteIdentity && s.status === 'active')
+      ) {
         marker.setIcon(greenIcon);
       } else if (
-        allSites.some(s => s.identity === siteIdentity && s.status === 'confirmed')
+        allSites.some(
+          s => s.identity === siteIdentity && s.status === 'confirmed',
+        )
       ) {
         marker.setIcon(goldIcon);
       } else if (
-        allSites.some(s => s.identity === siteIdentity && s.status === 'in-conversation')
+        allSites.some(
+          s => s.identity === siteIdentity && s.status === 'in-conversation',
+        )
       ) {
         marker.setIcon(redIcon);
       }

@@ -33,7 +33,7 @@ const parseSitesFromJSON = (jsonString: string): Site[] => {
         cell_ids: site.cell_ids,
         color: site.color,
         boundary:
-          (site.boundary)?.map(
+          site.boundary?.map(
             (point: any) => [point[0], point[1]] as [number, number],
           ) ?? undefined,
       };
@@ -107,7 +107,9 @@ export default function ListSites() {
           console.error(`Failed to delete site: ${error}`);
           return;
         }
-        console.log(`Successfully deleted site: ${site.name} (identity: ${site.identity})`);
+        console.log(
+          `Successfully deleted site: ${site.name} (identity: ${site.identity})`,
+        );
         reloadSites();
       })
       .catch(err => {
